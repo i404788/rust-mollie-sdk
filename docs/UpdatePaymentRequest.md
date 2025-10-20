@@ -1,0 +1,24 @@
+# UpdatePaymentRequest
+
+## Properties
+
+Name | Type | Description | Notes
+------------ | ------------- | ------------- | -------------
+**description** | Option<**String**> | The description of the payment. This will be shown to your customer on their card or bank statement when possible. We truncate the description automatically according to the limits of the used payment method. The description is also visible in any exports you generate.  We recommend you use a unique identifier so that you can always link the payment to the order in your back office. This is particularly useful for bookkeeping.  The maximum length of the description field differs per payment method, with the absolute maximum being 255 characters. The API will not reject strings longer than the maximum length but it will truncate them to fit. | [optional]
+**redirect_url** | Option<**String**> | The URL your customer will be redirected to after the payment process.  It could make sense for the redirectUrl to contain a unique identifier – like your order ID – so you can show the right page referencing the order when your customer returns.  The parameter is normally required, but can be omitted for recurring payments (`sequenceType: recurring`) and for Apple Pay payments with an `applePayPaymentToken`. | [optional]
+**cancel_url** | Option<**String**> | The URL your customer will be redirected to when the customer explicitly cancels the payment. If this URL is not provided, the customer will be redirected to the `redirectUrl` instead — see above.  Mollie will always give you status updates via webhooks, including for the canceled status. This parameter is therefore entirely optional, but can be useful when implementing a dedicated customer-facing flow to handle payment cancellations. | [optional]
+**webhook_url** | Option<**String**> | The webhook URL where we will send payment status updates to.  The webhookUrl is optional, but without a webhook you will miss out on important status changes to your payment.  The webhookUrl must be reachable from Mollie's point of view, so you cannot use `localhost`. If you want to use webhook during development on `localhost`, you must use a tool like ngrok to have the webhooks delivered to your local machine. | [optional]
+**metadata** | Option<[**models::Metadata**](metadata.md)> |  | [optional]
+**method** | Option<[**models::Method**](method.md)> |  | [optional]
+**locale** | Option<[**models::Locale**](locale.md)> |  | [optional]
+**due_date** | Option<**String**> | The date by which the payment should be completed in `YYYY-MM-DD` format | [optional]
+**restrict_payment_methods_to_country** | Option<**String**> | For digital goods in most jurisdictions, you must apply the VAT rate from your customer's country. Choose the VAT rates you have used for the order to ensure your customer's country matches the VAT country.  Use this parameter to restrict the payment methods available to your customer to those from a single country.  If available, the credit card method will still be offered, but only cards from the allowed country are accepted.  The field expects a country code in ISO 3166-1 alpha-2 format, for example `NL`. | [optional]
+**testmode** | Option<**bool**> | Whether to create the entity in test mode or live mode.  Most API credentials are specifically created for either live mode or test mode, in which case this parameter can be omitted. For organization-level credentials such as OAuth access tokens, you can enable test mode by setting `testmode` to `true`. | [optional]
+**issuer** | Option<**String**> | **Only relevant for iDEAL, KBC/CBC, gift card, and voucher payments.**  **⚠️ With the introduction of iDEAL 2 in 2025, this field will be ignored for iDEAL payments. For more information on the migration, refer to our [help center](https://help.mollie.com/hc/articles/19100313768338-iDEAL-2-0).**  Some payment methods are a network of connected banks or card issuers. In these cases, after selecting the payment method, the customer may still need to select the appropriate issuer before the payment can proceed.  We provide hosted issuer selection screens, but these screens can be skipped by providing the `issuer` via the API up front.  The full list of issuers for a specific method can be retrieved via the Methods API by using the optional `issuers` include.  A valid issuer for iDEAL is for example `ideal_INGBNL2A` (for ING Bank). | [optional]
+**billing_address** | Option<[**models::BillingAddress**](billingAddress.md)> |  | [optional]
+**shipping_address** | Option<[**models::PaymentAddress**](payment-address.md)> |  | [optional]
+**billing_email** | Option<**String**> |  | [optional]
+
+[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
+
+

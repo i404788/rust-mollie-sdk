@@ -1,0 +1,13 @@
+# CapabilityStatusReason
+
+## Enum Variants
+
+| Name | Value |
+|---- | -----|
+| RequirementPastDue | requirement-past-due |
+| OnboardingInformationNeeded | onboarding-information-needed |
+
+
+[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
+
+
