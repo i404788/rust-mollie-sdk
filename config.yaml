@@ -1,0 +1,8 @@
+additionalProperties:
+  avoidBoxedModels: true
+  library: "reqwest"
+  appDescription: "Mollie.com API wrapper for Rust"
+  licenseInfo: "MIT"
+  repositoryUrl: "https://github.com/stoatchat/rust-mollie-sdk"
+  infoEmail: "Zomatree <me@zomatree.live>"
+packageName: mollie

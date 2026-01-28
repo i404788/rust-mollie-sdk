@@ -1,5 +1,4 @@
 .gitignore
-.travis.yml
 Cargo.toml
 README.md
 docs/Address.md
@@ -378,7 +377,6 @@ docs/WebhookEventTypesResponse.md
 docs/WebhookEventsApiApi.md
 docs/WebhookStatus.md
 docs/WebhooksApiApi.md
-git_push.sh
 src/apis/balance_transfers_api_api.rs
 src/apis/balances_api_api.rs
 src/apis/capabilities_api_api.rs

@@ -5,6 +5,7 @@ authors = ["Zomatree <me@zomatree.live>"]
 description = "Mollie.com API wrapper for Rust"
 license = "MIT"
 edition = "2021"
+repository = "https://github.com/stoatchat/rust-mollie-sdk"
 
 [dependencies]
 serde = { version = "^1.0", features = ["derive"] }
