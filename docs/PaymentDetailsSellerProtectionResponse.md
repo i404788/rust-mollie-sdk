@@ -4,11 +4,14 @@
 
 | Name | Value |
 |---- | -----|
-| Eligible | Eligible |
+| Eligible | ELIGIBLE |
+| PartiallyEligible | PARTIALLY_ELIGIBLE |
+| NotEligible | NOT_ELIGIBLE |
+| Eligible2 | Eligible |
 | Ineligible | Ineligible |
 | PartiallyEligibleInrOnly | Partially Eligible - INR Only |
 | PartiallyEligibleUnauthOnly | Partially Eligible - Unauth Only |
-| PartiallyEligible | Partially Eligible |
+| PartiallyEligible2 | Partially Eligible |
 | None | None |
 | Active | Active |
 | FraudControlUnauthPremiumEligible | Fraud Control - Unauth Premium Eligible |

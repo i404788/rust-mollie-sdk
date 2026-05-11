@@ -14,20 +14,20 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
 pub struct ListCapabilities200Response {
     /// The number of items in this result set.
-    #[serde(rename = "count", skip_serializing_if = "Option::is_none")]
-    pub count: Option<i32>,
-    #[serde(rename = "_embedded", skip_serializing_if = "Option::is_none")]
-    pub _embedded: Option<models::ListCapabilities200ResponseEmbedded>,
-    #[serde(rename = "_links", skip_serializing_if = "Option::is_none")]
-    pub _links: Option<models::ListCapabilities200ResponseLinks>,
+    #[serde(rename = "count")]
+    pub count: i32,
+    #[serde(rename = "_embedded")]
+    pub _embedded: models::ListCapabilities200ResponseEmbedded,
+    #[serde(rename = "_links")]
+    pub _links: models::ListCapabilities200ResponseLinks,
 }
 
 impl ListCapabilities200Response {
-    pub fn new() -> ListCapabilities200Response {
+    pub fn new(count: i32, _embedded: models::ListCapabilities200ResponseEmbedded, _links: models::ListCapabilities200ResponseLinks) -> ListCapabilities200Response {
         ListCapabilities200Response {
-            count: None,
-            _embedded: None,
-            _links: None,
+            count,
+            _embedded,
+            _links,
         }
     }
 }

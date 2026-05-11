@@ -16,18 +16,21 @@ pub struct EntityChargeback {
     /// Indicates the response contains a chargeback object. Will always contain the string `chargeback` for this endpoint.
     #[serde(rename = "resource")]
     pub resource: String,
+    /// The identifier uniquely referring to this chargeback. Example: `chb_n9z0tp`.
     #[serde(rename = "id")]
     pub id: String,
     /// The amount charged back by the customer.
     #[serde(rename = "amount")]
     pub amount: models::Amount,
-    /// This optional field will contain the approximate amount that will be deducted from your account balance, converted to the currency your account is settled in.  The amount is a **negative** amount.  Since the field contains an estimated amount during chargeback processing, it may change over time. To retrieve accurate settlement amounts we recommend using the [List balance transactions endpoint](list-balance-transactions) instead.
+    /// **Deprecated.** This field will be removed on January 1st, 2027. Use the [Settlements API](list-settlements) or the [List balance transactions endpoint](list-balance-transactions) for settlement data.  The amount deducted from your account balance for this chargeback, converted to the currency your account is settled in. Always a **negative** amount. Only available once the chargeback is finalized and the final settlement amount has been determined.
     #[serde(rename = "settlementAmount", skip_serializing_if = "Option::is_none")]
     pub settlement_amount: Option<models::AmountNullable>,
     #[serde(rename = "reason", skip_serializing_if = "Option::is_none")]
     pub reason: Option<models::EntityChargebackReason>,
+    /// The unique identifier of the payment this chargeback was created for. For example: `tr_5B8cwPMGnU6qLbRvo7qEZo`. The full payment object can be retrieved via the payment URL in the `_links` object.
     #[serde(rename = "paymentId")]
     pub payment_id: String,
+    /// The identifier referring to the settlement this payment was settled with. For example, `stl_BkEjN2eBb`. This field is omitted if the refund is not settled (yet).
     #[serde(rename = "settlementId", skip_serializing_if = "Option::is_none")]
     pub settlement_id: Option<String>,
     /// The entity's date and time of creation, in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format.
@@ -37,11 +40,11 @@ pub struct EntityChargeback {
     #[serde(rename = "reversedAt", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
     pub reversed_at: Option<Option<String>>,
     #[serde(rename = "_links")]
-    pub _links: models::EntityRefundLinks,
+    pub _links: models::EntityChargebackLinks,
 }
 
 impl EntityChargeback {
-    pub fn new(resource: String, id: String, amount: models::Amount, payment_id: String, created_at: String, _links: models::EntityRefundLinks) -> EntityChargeback {
+    pub fn new(resource: String, id: String, amount: models::Amount, payment_id: String, created_at: String, _links: models::EntityChargebackLinks) -> EntityChargeback {
         EntityChargeback {
             resource,
             id,

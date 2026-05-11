@@ -16,6 +16,7 @@ pub struct EntityCapture {
     /// Indicates the response contains a capture object. Will always contain the string `capture` for this endpoint.
     #[serde(rename = "resource", skip_serializing_if = "Option::is_none")]
     pub resource: Option<String>,
+    /// The identifier uniquely referring to this capture. Example: `cpt_mNepDkEtco6ah3QNPUGYH`.
     #[serde(rename = "id", skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
     #[serde(rename = "mode", skip_serializing_if = "Option::is_none")]
@@ -26,17 +27,20 @@ pub struct EntityCapture {
     /// The amount captured. If no amount is provided, the full authorized amount is captured.
     #[serde(rename = "amount", skip_serializing_if = "Option::is_none")]
     pub amount: Option<models::AmountNullable>,
-    /// This optional field will contain the approximate amount that will be settled to your account, converted to the currency your account is settled in.  Since the field contains an estimated amount during capture processing, it may change over time. To retrieve accurate settlement amounts we recommend using the [List balance transactions endpoint](list-balance-transactions) instead.
+    /// **Deprecated.** This field will be removed on January 1st, 2027. Use the [Settlements API](list-settlements) or the [List balance transactions endpoint](list-balance-transactions) for settlement data.  The amount that will be settled to your account for this capture, converted to the currency your account is settled in. Only available once the capture is finalized and the final settlement amount has been determined.
     #[serde(rename = "settlementAmount", skip_serializing_if = "Option::is_none")]
     pub settlement_amount: Option<models::AmountNullable>,
     #[serde(rename = "status", skip_serializing_if = "Option::is_none")]
     pub status: Option<models::CaptureStatus>,
     #[serde(rename = "metadata", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
     pub metadata: Option<Option<models::Metadata>>,
+    /// The unique identifier of the payment this capture was created for. For example: `tr_5B8cwPMGnU6qLbRvo7qEZo`. The full payment object can be retrieved via the payment URL in the `_links` object.
     #[serde(rename = "paymentId", skip_serializing_if = "Option::is_none")]
     pub payment_id: Option<String>,
+    /// The unique identifier of the shipment that triggered the creation of this capture, if applicable. For example: `shp_gNapNy9qQTUFZYnCrCF7J`.
     #[serde(rename = "shipmentId", skip_serializing_if = "Option::is_none")]
     pub shipment_id: Option<String>,
+    /// The identifier referring to the settlement this capture was settled with. For example, `stl_BkEjN2eBb`. This field is omitted if the capture is not settled (yet).
     #[serde(rename = "settlementId", skip_serializing_if = "Option::is_none")]
     pub settlement_id: Option<String>,
     /// The entity's date and time of creation, in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format.

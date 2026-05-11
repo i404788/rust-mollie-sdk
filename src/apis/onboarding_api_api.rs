@@ -35,7 +35,7 @@ pub async fn get_onboarding_status(configuration: &configuration::Configuration,
     // add a prefix to parameters to efficiently prevent name collisions
     let p_header_idempotency_key = idempotency_key;
 
-    let uri_str = format!("{}/onboarding/me", configuration.base_path);
+    let uri_str = format!("{}/v2/onboarding/me", configuration.base_path);
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
     if let Some(ref user_agent) = configuration.user_agent {
@@ -45,6 +45,9 @@ pub async fn get_onboarding_status(configuration: &configuration::Configuration,
         req_builder = req_builder.header("idempotency-key", param_value.to_string());
     }
     if let Some(ref token) = configuration.oauth_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
 
@@ -74,12 +77,12 @@ pub async fn get_onboarding_status(configuration: &configuration::Configuration,
 }
 
 /// **⚠️ We no longer recommend implementing this endpoint. Please refer to the Client Links API instead to kick off the onboarding process for your merchants.**  Submit data that will be prefilled in the merchant's onboarding. The data you submit will only be processed when the onboarding status is `needs-data`.   Information that the merchant has entered in their dashboard will not be overwritten.
-pub async fn submit_onboarding_data(configuration: &configuration::Configuration, idempotency_key: Option<&str>, submit_onboarding_data_request: Option<models::SubmitOnboardingDataRequest>) -> Result<serde_json::Value, Error<SubmitOnboardingDataError>> {
+pub async fn submit_onboarding_data(configuration: &configuration::Configuration, idempotency_key: Option<&str>, submit_onboarding_data_request: Option<models::SubmitOnboardingDataRequest>) -> Result<(), Error<SubmitOnboardingDataError>> {
     // add a prefix to parameters to efficiently prevent name collisions
     let p_header_idempotency_key = idempotency_key;
     let p_body_submit_onboarding_data_request = submit_onboarding_data_request;
 
-    let uri_str = format!("{}/onboarding/me", configuration.base_path);
+    let uri_str = format!("{}/v2/onboarding/me", configuration.base_path);
     let mut req_builder = configuration.client.request(reqwest::Method::POST, &uri_str);
 
     if let Some(ref user_agent) = configuration.user_agent {
@@ -91,26 +94,18 @@ pub async fn submit_onboarding_data(configuration: &configuration::Configuration
     if let Some(ref token) = configuration.oauth_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
+    if let Some(ref token) = configuration.bearer_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
     req_builder = req_builder.json(&p_body_submit_onboarding_data_request);
 
     let req = req_builder.build()?;
     let resp = configuration.client.execute(req).await?;
 
     let status = resp.status();
-    let content_type = resp
-        .headers()
-        .get("content-type")
-        .and_then(|v| v.to_str().ok())
-        .unwrap_or("application/octet-stream");
-    let content_type = super::ContentType::from(content_type);
 
     if !status.is_client_error() && !status.is_server_error() {
-        let content = resp.text().await?;
-        match content_type {
-            ContentType::Json => serde_json::from_str(&content).map_err(Error::from),
-            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `serde_json::Value`"))),
-            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `serde_json::Value`")))),
-        }
+        Ok(())
     } else {
         let content = resp.text().await?;
         let entity: Option<SubmitOnboardingDataError> = serde_json::from_str(&content).ok();

@@ -75,14 +75,14 @@ pub enum UpdateSubscriptionError {
 
 
 /// Cancel an existing subscription. Canceling a subscription has no effect on the mandates of the customer.
-pub async fn cancel_subscription(configuration: &configuration::Configuration, customer_id: &str, subscription_id: &str, idempotency_key: Option<&str>, delete_webhook_request: Option<models::DeleteWebhookRequest>) -> Result<models::SubscriptionResponse, Error<CancelSubscriptionError>> {
+pub async fn cancel_subscription(configuration: &configuration::Configuration, customer_id: &str, subscription_id: &str, idempotency_key: Option<&str>, delete_payment_link_request: Option<models::DeletePaymentLinkRequest>) -> Result<models::SubscriptionResponse, Error<CancelSubscriptionError>> {
     // add a prefix to parameters to efficiently prevent name collisions
     let p_path_customer_id = customer_id;
     let p_path_subscription_id = subscription_id;
     let p_header_idempotency_key = idempotency_key;
-    let p_body_delete_webhook_request = delete_webhook_request;
+    let p_body_delete_payment_link_request = delete_payment_link_request;
 
-    let uri_str = format!("{}/customers/{customerId}/subscriptions/{subscriptionId}", configuration.base_path, customerId=crate::apis::urlencode(p_path_customer_id), subscriptionId=crate::apis::urlencode(p_path_subscription_id));
+    let uri_str = format!("{}/v2/customers/{customerId}/subscriptions/{subscriptionId}", configuration.base_path, customerId=crate::apis::urlencode(p_path_customer_id), subscriptionId=crate::apis::urlencode(p_path_subscription_id));
     let mut req_builder = configuration.client.request(reqwest::Method::DELETE, &uri_str);
 
     if let Some(ref user_agent) = configuration.user_agent {
@@ -97,7 +97,10 @@ pub async fn cancel_subscription(configuration: &configuration::Configuration, c
     if let Some(ref token) = configuration.oauth_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
-    req_builder = req_builder.json(&p_body_delete_webhook_request);
+    if let Some(ref token) = configuration.bearer_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    req_builder = req_builder.json(&p_body_delete_payment_link_request);
 
     let req = req_builder.build()?;
     let resp = configuration.client.execute(req).await?;
@@ -131,7 +134,7 @@ pub async fn create_subscription(configuration: &configuration::Configuration, c
     let p_header_idempotency_key = idempotency_key;
     let p_body_subscription_request = subscription_request;
 
-    let uri_str = format!("{}/customers/{customerId}/subscriptions", configuration.base_path, customerId=crate::apis::urlencode(p_path_customer_id));
+    let uri_str = format!("{}/v2/customers/{customerId}/subscriptions", configuration.base_path, customerId=crate::apis::urlencode(p_path_customer_id));
     let mut req_builder = configuration.client.request(reqwest::Method::POST, &uri_str);
 
     if let Some(ref user_agent) = configuration.user_agent {
@@ -144,6 +147,9 @@ pub async fn create_subscription(configuration: &configuration::Configuration, c
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
     if let Some(ref token) = configuration.oauth_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
     req_builder = req_builder.json(&p_body_subscription_request);
@@ -181,7 +187,7 @@ pub async fn get_subscription(configuration: &configuration::Configuration, cust
     let p_query_testmode = testmode;
     let p_header_idempotency_key = idempotency_key;
 
-    let uri_str = format!("{}/customers/{customerId}/subscriptions/{subscriptionId}", configuration.base_path, customerId=crate::apis::urlencode(p_path_customer_id), subscriptionId=crate::apis::urlencode(p_path_subscription_id));
+    let uri_str = format!("{}/v2/customers/{customerId}/subscriptions/{subscriptionId}", configuration.base_path, customerId=crate::apis::urlencode(p_path_customer_id), subscriptionId=crate::apis::urlencode(p_path_subscription_id));
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
     if let Some(ref param_value) = p_query_testmode {
@@ -197,6 +203,9 @@ pub async fn get_subscription(configuration: &configuration::Configuration, cust
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
     if let Some(ref token) = configuration.oauth_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
 
@@ -234,7 +243,7 @@ pub async fn list_all_subscriptions(configuration: &configuration::Configuration
     let p_query_testmode = testmode;
     let p_header_idempotency_key = idempotency_key;
 
-    let uri_str = format!("{}/subscriptions", configuration.base_path);
+    let uri_str = format!("{}/v2/subscriptions", configuration.base_path);
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
     if let Some(ref param_value) = p_query_from {
@@ -259,6 +268,9 @@ pub async fn list_all_subscriptions(configuration: &configuration::Configuration
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
     if let Some(ref token) = configuration.oauth_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
 
@@ -288,7 +300,7 @@ pub async fn list_all_subscriptions(configuration: &configuration::Configuration
 }
 
 /// Retrieve all payments of a specific subscription.  The results are paginated.
-pub async fn list_subscription_payments(configuration: &configuration::Configuration, customer_id: &str, subscription_id: &str, from: Option<&str>, limit: Option<i32>, sort: Option<&str>, profile_id: Option<&str>, testmode: Option<bool>, idempotency_key: Option<&str>) -> Result<models::ListSettlementPayments200Response, Error<ListSubscriptionPaymentsError>> {
+pub async fn list_subscription_payments(configuration: &configuration::Configuration, customer_id: &str, subscription_id: &str, from: Option<&str>, limit: Option<i32>, sort: Option<models::Sorting>, profile_id: Option<&str>, testmode: Option<bool>, idempotency_key: Option<&str>) -> Result<models::ListPayments200Response, Error<ListSubscriptionPaymentsError>> {
     // add a prefix to parameters to efficiently prevent name collisions
     let p_path_customer_id = customer_id;
     let p_path_subscription_id = subscription_id;
@@ -299,7 +311,7 @@ pub async fn list_subscription_payments(configuration: &configuration::Configura
     let p_query_testmode = testmode;
     let p_header_idempotency_key = idempotency_key;
 
-    let uri_str = format!("{}/customers/{customerId}/subscriptions/{subscriptionId}/payments", configuration.base_path, customerId=crate::apis::urlencode(p_path_customer_id), subscriptionId=crate::apis::urlencode(p_path_subscription_id));
+    let uri_str = format!("{}/v2/customers/{customerId}/subscriptions/{subscriptionId}/payments", configuration.base_path, customerId=crate::apis::urlencode(p_path_customer_id), subscriptionId=crate::apis::urlencode(p_path_subscription_id));
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
     if let Some(ref param_value) = p_query_from {
@@ -329,6 +341,9 @@ pub async fn list_subscription_payments(configuration: &configuration::Configura
     if let Some(ref token) = configuration.oauth_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
+    if let Some(ref token) = configuration.bearer_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
 
     let req = req_builder.build()?;
     let resp = configuration.client.execute(req).await?;
@@ -345,8 +360,8 @@ pub async fn list_subscription_payments(configuration: &configuration::Configura
         let content = resp.text().await?;
         match content_type {
             ContentType::Json => serde_json::from_str(&content).map_err(Error::from),
-            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `models::ListSettlementPayments200Response`"))),
-            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `models::ListSettlementPayments200Response`")))),
+            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `models::ListPayments200Response`"))),
+            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `models::ListPayments200Response`")))),
         }
     } else {
         let content = resp.text().await?;
@@ -356,7 +371,7 @@ pub async fn list_subscription_payments(configuration: &configuration::Configura
 }
 
 /// Retrieve all subscriptions of a customer.  The results are paginated.
-pub async fn list_subscriptions(configuration: &configuration::Configuration, customer_id: &str, from: Option<&str>, limit: Option<i32>, sort: Option<&str>, testmode: Option<bool>, idempotency_key: Option<&str>) -> Result<models::ListSubscriptions200Response, Error<ListSubscriptionsError>> {
+pub async fn list_subscriptions(configuration: &configuration::Configuration, customer_id: &str, from: Option<&str>, limit: Option<i32>, sort: Option<models::Sorting>, testmode: Option<bool>, idempotency_key: Option<&str>) -> Result<models::ListSubscriptions200Response, Error<ListSubscriptionsError>> {
     // add a prefix to parameters to efficiently prevent name collisions
     let p_path_customer_id = customer_id;
     let p_query_from = from;
@@ -365,7 +380,7 @@ pub async fn list_subscriptions(configuration: &configuration::Configuration, cu
     let p_query_testmode = testmode;
     let p_header_idempotency_key = idempotency_key;
 
-    let uri_str = format!("{}/customers/{customerId}/subscriptions", configuration.base_path, customerId=crate::apis::urlencode(p_path_customer_id));
+    let uri_str = format!("{}/v2/customers/{customerId}/subscriptions", configuration.base_path, customerId=crate::apis::urlencode(p_path_customer_id));
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
     if let Some(ref param_value) = p_query_from {
@@ -390,6 +405,9 @@ pub async fn list_subscriptions(configuration: &configuration::Configuration, cu
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
     if let Some(ref token) = configuration.oauth_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
 
@@ -426,7 +444,7 @@ pub async fn update_subscription(configuration: &configuration::Configuration, c
     let p_header_idempotency_key = idempotency_key;
     let p_body_update_subscription_request = update_subscription_request;
 
-    let uri_str = format!("{}/customers/{customerId}/subscriptions/{subscriptionId}", configuration.base_path, customerId=crate::apis::urlencode(p_path_customer_id), subscriptionId=crate::apis::urlencode(p_path_subscription_id));
+    let uri_str = format!("{}/v2/customers/{customerId}/subscriptions/{subscriptionId}", configuration.base_path, customerId=crate::apis::urlencode(p_path_customer_id), subscriptionId=crate::apis::urlencode(p_path_subscription_id));
     let mut req_builder = configuration.client.request(reqwest::Method::PATCH, &uri_str);
 
     if let Some(ref user_agent) = configuration.user_agent {
@@ -439,6 +457,9 @@ pub async fn update_subscription(configuration: &configuration::Configuration, c
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
     if let Some(ref token) = configuration.oauth_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
     req_builder = req_builder.json(&p_body_update_subscription_request);

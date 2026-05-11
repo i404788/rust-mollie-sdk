@@ -60,12 +60,12 @@ pub enum UpdateSalesInvoiceError {
 
 
 /// > 🚧 Beta feature > > This feature is currently in beta testing, and the final specification may still change.  With the Sales Invoice API you can generate sales invoices to send to your customers.
-pub async fn create_sales_invoice(configuration: &configuration::Configuration, idempotency_key: Option<&str>, entity_sales_invoice: Option<models::EntitySalesInvoice>) -> Result<models::EntitySalesInvoiceResponse, Error<CreateSalesInvoiceError>> {
+pub async fn create_sales_invoice(configuration: &configuration::Configuration, idempotency_key: Option<&str>, sales_invoice_request: Option<models::SalesInvoiceRequest>) -> Result<models::SalesInvoiceResponse, Error<CreateSalesInvoiceError>> {
     // add a prefix to parameters to efficiently prevent name collisions
     let p_header_idempotency_key = idempotency_key;
-    let p_body_entity_sales_invoice = entity_sales_invoice;
+    let p_body_sales_invoice_request = sales_invoice_request;
 
-    let uri_str = format!("{}/sales-invoices", configuration.base_path);
+    let uri_str = format!("{}/v2/sales-invoices", configuration.base_path);
     let mut req_builder = configuration.client.request(reqwest::Method::POST, &uri_str);
 
     if let Some(ref user_agent) = configuration.user_agent {
@@ -80,7 +80,10 @@ pub async fn create_sales_invoice(configuration: &configuration::Configuration, 
     if let Some(ref token) = configuration.oauth_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
-    req_builder = req_builder.json(&p_body_entity_sales_invoice);
+    if let Some(ref token) = configuration.bearer_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    req_builder = req_builder.json(&p_body_sales_invoice_request);
 
     let req = req_builder.build()?;
     let resp = configuration.client.execute(req).await?;
@@ -97,8 +100,8 @@ pub async fn create_sales_invoice(configuration: &configuration::Configuration, 
         let content = resp.text().await?;
         match content_type {
             ContentType::Json => serde_json::from_str(&content).map_err(Error::from),
-            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `models::EntitySalesInvoiceResponse`"))),
-            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `models::EntitySalesInvoiceResponse`")))),
+            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `models::SalesInvoiceResponse`"))),
+            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `models::SalesInvoiceResponse`")))),
         }
     } else {
         let content = resp.text().await?;
@@ -108,13 +111,13 @@ pub async fn create_sales_invoice(configuration: &configuration::Configuration, 
 }
 
 /// > 🚧 Beta feature > > This feature is currently in beta testing, and the final specification may still change.  Sales invoices which are in status `draft` can be deleted. For all other statuses, please use the [Update sales invoice](update-sales-invoice) endpoint instead.
-pub async fn delete_sales_invoice(configuration: &configuration::Configuration, id: &str, idempotency_key: Option<&str>, delete_values_sales_invoice: Option<models::DeleteValuesSalesInvoice>) -> Result<serde_json::Value, Error<DeleteSalesInvoiceError>> {
+pub async fn delete_sales_invoice(configuration: &configuration::Configuration, sales_invoice_id: &str, idempotency_key: Option<&str>, delete_values_sales_invoice: Option<models::DeleteValuesSalesInvoice>) -> Result<(), Error<DeleteSalesInvoiceError>> {
     // add a prefix to parameters to efficiently prevent name collisions
-    let p_path_id = id;
+    let p_path_sales_invoice_id = sales_invoice_id;
     let p_header_idempotency_key = idempotency_key;
     let p_body_delete_values_sales_invoice = delete_values_sales_invoice;
 
-    let uri_str = format!("{}/sales-invoices/{id}", configuration.base_path, id=crate::apis::urlencode(p_path_id));
+    let uri_str = format!("{}/v2/sales-invoices/{salesInvoiceId}", configuration.base_path, salesInvoiceId=crate::apis::urlencode(p_path_sales_invoice_id));
     let mut req_builder = configuration.client.request(reqwest::Method::DELETE, &uri_str);
 
     if let Some(ref user_agent) = configuration.user_agent {
@@ -129,26 +132,18 @@ pub async fn delete_sales_invoice(configuration: &configuration::Configuration, 
     if let Some(ref token) = configuration.oauth_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
+    if let Some(ref token) = configuration.bearer_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
     req_builder = req_builder.json(&p_body_delete_values_sales_invoice);
 
     let req = req_builder.build()?;
     let resp = configuration.client.execute(req).await?;
 
     let status = resp.status();
-    let content_type = resp
-        .headers()
-        .get("content-type")
-        .and_then(|v| v.to_str().ok())
-        .unwrap_or("application/octet-stream");
-    let content_type = super::ContentType::from(content_type);
 
     if !status.is_client_error() && !status.is_server_error() {
-        let content = resp.text().await?;
-        match content_type {
-            ContentType::Json => serde_json::from_str(&content).map_err(Error::from),
-            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `serde_json::Value`"))),
-            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `serde_json::Value`")))),
-        }
+        Ok(())
     } else {
         let content = resp.text().await?;
         let entity: Option<DeleteSalesInvoiceError> = serde_json::from_str(&content).ok();
@@ -157,13 +152,13 @@ pub async fn delete_sales_invoice(configuration: &configuration::Configuration, 
 }
 
 /// > 🚧 Beta feature > > This feature is currently in beta testing, and the final specification may still change.  Retrieve a single sales invoice by its ID.
-pub async fn get_sales_invoice(configuration: &configuration::Configuration, id: &str, testmode: Option<bool>, idempotency_key: Option<&str>) -> Result<models::EntitySalesInvoiceResponse, Error<GetSalesInvoiceError>> {
+pub async fn get_sales_invoice(configuration: &configuration::Configuration, sales_invoice_id: &str, testmode: Option<bool>, idempotency_key: Option<&str>) -> Result<models::SalesInvoiceResponse, Error<GetSalesInvoiceError>> {
     // add a prefix to parameters to efficiently prevent name collisions
-    let p_path_id = id;
+    let p_path_sales_invoice_id = sales_invoice_id;
     let p_query_testmode = testmode;
     let p_header_idempotency_key = idempotency_key;
 
-    let uri_str = format!("{}/sales-invoices/{id}", configuration.base_path, id=crate::apis::urlencode(p_path_id));
+    let uri_str = format!("{}/v2/sales-invoices/{salesInvoiceId}", configuration.base_path, salesInvoiceId=crate::apis::urlencode(p_path_sales_invoice_id));
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
     if let Some(ref param_value) = p_query_testmode {
@@ -181,6 +176,9 @@ pub async fn get_sales_invoice(configuration: &configuration::Configuration, id:
     if let Some(ref token) = configuration.oauth_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
+    if let Some(ref token) = configuration.bearer_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
 
     let req = req_builder.build()?;
     let resp = configuration.client.execute(req).await?;
@@ -197,8 +195,8 @@ pub async fn get_sales_invoice(configuration: &configuration::Configuration, id:
         let content = resp.text().await?;
         match content_type {
             ContentType::Json => serde_json::from_str(&content).map_err(Error::from),
-            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `models::EntitySalesInvoiceResponse`"))),
-            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `models::EntitySalesInvoiceResponse`")))),
+            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `models::SalesInvoiceResponse`"))),
+            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `models::SalesInvoiceResponse`")))),
         }
     } else {
         let content = resp.text().await?;
@@ -215,7 +213,7 @@ pub async fn list_sales_invoices(configuration: &configuration::Configuration, f
     let p_query_testmode = testmode;
     let p_header_idempotency_key = idempotency_key;
 
-    let uri_str = format!("{}/sales-invoices", configuration.base_path);
+    let uri_str = format!("{}/v2/sales-invoices", configuration.base_path);
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
     if let Some(ref param_value) = p_query_from {
@@ -237,6 +235,9 @@ pub async fn list_sales_invoices(configuration: &configuration::Configuration, f
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
     if let Some(ref token) = configuration.oauth_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
 
@@ -266,13 +267,13 @@ pub async fn list_sales_invoices(configuration: &configuration::Configuration, f
 }
 
 /// > 🚧 Beta feature > > This feature is currently in beta testing, and the final specification may still change.  Certain details of an existing sales invoice can be updated. For `draft` it is all values listed below, but for statuses `paid` and `issued` there are certain additional requirements (`paymentDetails` and `emailDetails`, respectively).
-pub async fn update_sales_invoice(configuration: &configuration::Configuration, id: &str, idempotency_key: Option<&str>, update_values_sales_invoice: Option<models::UpdateValuesSalesInvoice>) -> Result<models::EntitySalesInvoiceResponse, Error<UpdateSalesInvoiceError>> {
+pub async fn update_sales_invoice(configuration: &configuration::Configuration, sales_invoice_id: &str, idempotency_key: Option<&str>, update_sales_invoice_request: Option<models::UpdateSalesInvoiceRequest>) -> Result<models::SalesInvoiceResponse, Error<UpdateSalesInvoiceError>> {
     // add a prefix to parameters to efficiently prevent name collisions
-    let p_path_id = id;
+    let p_path_sales_invoice_id = sales_invoice_id;
     let p_header_idempotency_key = idempotency_key;
-    let p_body_update_values_sales_invoice = update_values_sales_invoice;
+    let p_body_update_sales_invoice_request = update_sales_invoice_request;
 
-    let uri_str = format!("{}/sales-invoices/{id}", configuration.base_path, id=crate::apis::urlencode(p_path_id));
+    let uri_str = format!("{}/v2/sales-invoices/{salesInvoiceId}", configuration.base_path, salesInvoiceId=crate::apis::urlencode(p_path_sales_invoice_id));
     let mut req_builder = configuration.client.request(reqwest::Method::PATCH, &uri_str);
 
     if let Some(ref user_agent) = configuration.user_agent {
@@ -287,7 +288,10 @@ pub async fn update_sales_invoice(configuration: &configuration::Configuration, 
     if let Some(ref token) = configuration.oauth_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
-    req_builder = req_builder.json(&p_body_update_values_sales_invoice);
+    if let Some(ref token) = configuration.bearer_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    req_builder = req_builder.json(&p_body_update_sales_invoice_request);
 
     let req = req_builder.build()?;
     let resp = configuration.client.execute(req).await?;
@@ -304,8 +308,8 @@ pub async fn update_sales_invoice(configuration: &configuration::Configuration, 
         let content = resp.text().await?;
         match content_type {
             ContentType::Json => serde_json::from_str(&content).map_err(Error::from),
-            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `models::EntitySalesInvoiceResponse`"))),
-            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `models::EntitySalesInvoiceResponse`")))),
+            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `models::SalesInvoiceResponse`"))),
+            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `models::SalesInvoiceResponse`")))),
         }
     } else {
         let content = resp.text().await?;

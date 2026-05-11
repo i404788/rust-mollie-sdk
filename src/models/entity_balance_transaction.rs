@@ -14,40 +14,44 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
 pub struct EntityBalanceTransaction {
     /// Indicates the response contains a balance transaction object. Will always contain the string `balance-transaction` for this endpoint.
-    #[serde(rename = "resource", skip_serializing_if = "Option::is_none")]
-    pub resource: Option<String>,
-    #[serde(rename = "id", skip_serializing_if = "Option::is_none")]
-    pub id: Option<String>,
+    #[serde(rename = "resource")]
+    pub resource: String,
+    /// The identifier uniquely referring to this balance transaction.
+    #[serde(rename = "id")]
+    pub id: String,
     /// The type of transaction, for example `payment` or `refund`. Values include the below examples, although this list is not definitive.  * Regular payment processing: `payment` `capture` `unauthorized-direct-debit` `failed-payment` * Refunds and chargebacks: `refund` `returned-refund` `chargeback` `chargeback-reversal` * Settlements: `outgoing-transfer` `canceled-outgoing-transfer` `returned-transfer` * Invoicing: `invoice-compensation` `balance-correction` * Mollie Connect: `application-fee` `split-payment` `platform-payment-refund` `platform-payment-chargeback`
-    #[serde(rename = "type", skip_serializing_if = "Option::is_none")]
-    pub r#type: Option<models::BalanceTransactionType>,
+    #[serde(rename = "type")]
+    pub r#type: models::BalanceTransactionType,
     /// The final amount that was moved to or from the balance. If the transaction moves funds away from the balance, for example when it concerns a refund, the amount will be negative.
-    #[serde(rename = "resultAmount", skip_serializing_if = "Option::is_none")]
-    pub result_amount: Option<models::Amount>,
+    #[serde(rename = "resultAmount")]
+    pub result_amount: models::Amount,
     /// The amount that was to be moved to or from the balance, excluding deductions. If the transaction moves funds away from the balance, for example when it concerns a refund, the amount will be negative.
-    #[serde(rename = "initialAmount", skip_serializing_if = "Option::is_none")]
-    pub initial_amount: Option<models::Amount>,
+    #[serde(rename = "initialAmount")]
+    pub initial_amount: models::Amount,
     /// The total amount of deductions withheld from the movement. For example, if we charge a €0.29 fee on a €10 payment, the deductions amount will be `{\"currency\":\"EUR\", \"value\":\"-0.29\"}`.  When moving funds to a balance, we always round the deduction to a 'real' amount. Any differences between these real-time rounded amounts and the final invoice will be compensated when the invoice is generated.
     #[serde(rename = "deductions", skip_serializing_if = "Option::is_none")]
     pub deductions: Option<models::AmountNullable>,
+    #[serde(rename = "deductionDetails", skip_serializing_if = "Option::is_none")]
+    pub deduction_details: Option<models::EntityBalanceTransactionDeductionDetails>,
     #[serde(rename = "context", skip_serializing_if = "Option::is_none")]
     pub context: Option<models::EntityBalanceTransactionContext>,
     /// The entity's date and time of creation, in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format.
-    #[serde(rename = "createdAt", skip_serializing_if = "Option::is_none")]
-    pub created_at: Option<String>,
+    #[serde(rename = "createdAt")]
+    pub created_at: String,
 }
 
 impl EntityBalanceTransaction {
-    pub fn new() -> EntityBalanceTransaction {
+    pub fn new(resource: String, id: String, r#type: models::BalanceTransactionType, result_amount: models::Amount, initial_amount: models::Amount, created_at: String) -> EntityBalanceTransaction {
         EntityBalanceTransaction {
-            resource: None,
-            id: None,
-            r#type: None,
-            result_amount: None,
-            initial_amount: None,
+            resource,
+            id,
+            r#type,
+            result_amount,
+            initial_amount,
             deductions: None,
+            deduction_details: None,
             context: None,
-            created_at: None,
+            created_at,
         }
     }
 }

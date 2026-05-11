@@ -1,12 +1,12 @@
 # \CapturesApiApi
 
-All URIs are relative to *https://api.mollie.com/v2*
+All URIs are relative to *https://api.mollie.com*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**create_capture**](CapturesApiApi.md#create_capture) | **POST** /payments/{paymentId}/captures | Create capture
-[**get_capture**](CapturesApiApi.md#get_capture) | **GET** /payments/{paymentId}/captures/{captureId} | Get capture
-[**list_captures**](CapturesApiApi.md#list_captures) | **GET** /payments/{paymentId}/captures | List captures
+[**create_capture**](CapturesApiApi.md#create_capture) | **POST** /v2/payments/{paymentId}/captures | Create capture
+[**get_capture**](CapturesApiApi.md#get_capture) | **GET** /v2/payments/{paymentId}/captures/{captureId} | Get capture
+[**list_captures**](CapturesApiApi.md#list_captures) | **GET** /v2/payments/{paymentId}/captures | List captures
 
 
 
@@ -32,7 +32,7 @@ Name | Type | Description  | Required | Notes
 
 ### Authorization
 
-[apiKey](../README.md#apiKey), [oAuth](../README.md#oAuth)
+[apiKey](../README.md#apiKey), [oAuth](../README.md#oAuth), [organizationAccessToken](../README.md#organizationAccessToken)
 
 ### HTTP request headers
 
@@ -57,7 +57,7 @@ Name | Type | Description  | Required | Notes
 **payment_id** | **String** | Provide the ID of the related payment. | [required] |
 **capture_id** | **String** | Provide the ID of the related capture. | [required] |
 **embed** | Option<**String**> | This endpoint allows embedding related API items by appending the following values via the `embed` query string parameter. |  |
-**testmode** | Option<**bool**> | Most API credentials are specifically created for either live mode or test mode. In those cases the `testmode` query parameter can be omitted. For organization-level credentials such as OAuth access tokens, you can enable test mode by setting the `testmode` query parameter to `true`.  Test entities cannot be retrieved when the endpoint is set to live mode, and vice versa. |  |
+**testmode** | Option<**bool**> | Most API credentials are specifically created for either live mode or test mode. In those cases the `testmode` query parameter must not be sent. For organization-level credentials such as OAuth access tokens, you can enable test mode by setting the `testmode` query parameter to `true`.  Test entities cannot be retrieved when the endpoint is set to live mode, and vice versa. |  |
 **idempotency_key** | Option<**String**> | A unique key to ensure idempotent requests. This key should be a UUID v4 string. |  |
 
 ### Return type
@@ -66,7 +66,7 @@ Name | Type | Description  | Required | Notes
 
 ### Authorization
 
-[apiKey](../README.md#apiKey), [oAuth](../README.md#oAuth)
+[apiKey](../README.md#apiKey), [oAuth](../README.md#oAuth), [organizationAccessToken](../README.md#organizationAccessToken)
 
 ### HTTP request headers
 
@@ -78,7 +78,7 @@ Name | Type | Description  | Required | Notes
 
 ## list_captures
 
-> models::ListSettlementCaptures200Response list_captures(payment_id, from, limit, embed, testmode, idempotency_key)
+> models::ListCaptures200Response list_captures(payment_id, from, limit, embed, testmode, idempotency_key)
 List captures
 
 Retrieve a list of all captures created for a specific payment.  The results are paginated.
@@ -92,16 +92,16 @@ Name | Type | Description  | Required | Notes
 **from** | Option<**String**> | Provide an ID to start the result set from the item with the given ID and onwards. This allows you to paginate the result set. |  |
 **limit** | Option<**i32**> | The maximum number of items to return. Defaults to 50 items. |  |
 **embed** | Option<**String**> | This endpoint allows embedding related API items by appending the following values via the `embed` query string parameter. |  |
-**testmode** | Option<**bool**> | Most API credentials are specifically created for either live mode or test mode. In those cases the `testmode` query parameter can be omitted. For organization-level credentials such as OAuth access tokens, you can enable test mode by setting the `testmode` query parameter to `true`.  Test entities cannot be retrieved when the endpoint is set to live mode, and vice versa. |  |
+**testmode** | Option<**bool**> | Most API credentials are specifically created for either live mode or test mode. In those cases the `testmode` query parameter must not be sent. For organization-level credentials such as OAuth access tokens, you can enable test mode by setting the `testmode` query parameter to `true`.  Test entities cannot be retrieved when the endpoint is set to live mode, and vice versa. |  |
 **idempotency_key** | Option<**String**> | A unique key to ensure idempotent requests. This key should be a UUID v4 string. |  |
 
 ### Return type
 
-[**models::ListSettlementCaptures200Response**](list_settlement_captures_200_response.md)
+[**models::ListCaptures200Response**](list_captures_200_response.md)
 
 ### Authorization
 
-[apiKey](../README.md#apiKey), [oAuth](../README.md#oAuth)
+[apiKey](../README.md#apiKey), [oAuth](../README.md#oAuth), [organizationAccessToken](../README.md#organizationAccessToken)
 
 ### HTTP request headers
 

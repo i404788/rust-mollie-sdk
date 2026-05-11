@@ -74,7 +74,7 @@ pub async fn create_webhook(configuration: &configuration::Configuration, idempo
     let p_header_idempotency_key = idempotency_key;
     let p_body_create_webhook_request = create_webhook_request;
 
-    let uri_str = format!("{}/webhooks", configuration.base_path);
+    let uri_str = format!("{}/v2/webhooks", configuration.base_path);
     let mut req_builder = configuration.client.request(reqwest::Method::POST, &uri_str);
 
     if let Some(ref user_agent) = configuration.user_agent {
@@ -84,6 +84,9 @@ pub async fn create_webhook(configuration: &configuration::Configuration, idempo
         req_builder = req_builder.header("idempotency-key", param_value.to_string());
     }
     if let Some(ref token) = configuration.oauth_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
     req_builder = req_builder.json(&p_body_create_webhook_request);
@@ -114,13 +117,13 @@ pub async fn create_webhook(configuration: &configuration::Configuration, idempo
 }
 
 /// Delete a single webhook object by its webhook ID.
-pub async fn delete_webhook(configuration: &configuration::Configuration, id: &str, idempotency_key: Option<&str>, delete_webhook_request: Option<models::DeleteWebhookRequest>) -> Result<serde_json::Value, Error<DeleteWebhookError>> {
+pub async fn delete_webhook(configuration: &configuration::Configuration, webhook_id: &str, idempotency_key: Option<&str>, delete_webhook_request: Option<models::DeleteWebhookRequest>) -> Result<(), Error<DeleteWebhookError>> {
     // add a prefix to parameters to efficiently prevent name collisions
-    let p_path_id = id;
+    let p_path_webhook_id = webhook_id;
     let p_header_idempotency_key = idempotency_key;
     let p_body_delete_webhook_request = delete_webhook_request;
 
-    let uri_str = format!("{}/webhooks/{id}", configuration.base_path, id=crate::apis::urlencode(p_path_id));
+    let uri_str = format!("{}/v2/webhooks/{webhookId}", configuration.base_path, webhookId=crate::apis::urlencode(p_path_webhook_id));
     let mut req_builder = configuration.client.request(reqwest::Method::DELETE, &uri_str);
 
     if let Some(ref user_agent) = configuration.user_agent {
@@ -132,26 +135,18 @@ pub async fn delete_webhook(configuration: &configuration::Configuration, id: &s
     if let Some(ref token) = configuration.oauth_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
+    if let Some(ref token) = configuration.bearer_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
     req_builder = req_builder.json(&p_body_delete_webhook_request);
 
     let req = req_builder.build()?;
     let resp = configuration.client.execute(req).await?;
 
     let status = resp.status();
-    let content_type = resp
-        .headers()
-        .get("content-type")
-        .and_then(|v| v.to_str().ok())
-        .unwrap_or("application/octet-stream");
-    let content_type = super::ContentType::from(content_type);
 
     if !status.is_client_error() && !status.is_server_error() {
-        let content = resp.text().await?;
-        match content_type {
-            ContentType::Json => serde_json::from_str(&content).map_err(Error::from),
-            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `serde_json::Value`"))),
-            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `serde_json::Value`")))),
-        }
+        Ok(())
     } else {
         let content = resp.text().await?;
         let entity: Option<DeleteWebhookError> = serde_json::from_str(&content).ok();
@@ -160,13 +155,13 @@ pub async fn delete_webhook(configuration: &configuration::Configuration, id: &s
 }
 
 /// Retrieve a single webhook object by its ID.
-pub async fn get_webhook(configuration: &configuration::Configuration, id: &str, testmode: Option<bool>, idempotency_key: Option<&str>) -> Result<models::EntityWebhook, Error<GetWebhookError>> {
+pub async fn get_webhook(configuration: &configuration::Configuration, webhook_id: &str, testmode: Option<bool>, idempotency_key: Option<&str>) -> Result<models::EntityWebhook, Error<GetWebhookError>> {
     // add a prefix to parameters to efficiently prevent name collisions
-    let p_path_id = id;
+    let p_path_webhook_id = webhook_id;
     let p_query_testmode = testmode;
     let p_header_idempotency_key = idempotency_key;
 
-    let uri_str = format!("{}/webhooks/{id}", configuration.base_path, id=crate::apis::urlencode(p_path_id));
+    let uri_str = format!("{}/v2/webhooks/{webhookId}", configuration.base_path, webhookId=crate::apis::urlencode(p_path_webhook_id));
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
     if let Some(ref param_value) = p_query_testmode {
@@ -179,6 +174,9 @@ pub async fn get_webhook(configuration: &configuration::Configuration, id: &str,
         req_builder = req_builder.header("idempotency-key", param_value.to_string());
     }
     if let Some(ref token) = configuration.oauth_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
 
@@ -208,7 +206,7 @@ pub async fn get_webhook(configuration: &configuration::Configuration, id: &str,
 }
 
 /// Returns a paginated list of your webhooks. If no webhook endpoints are available, the resulting array will be empty. This request should never throw an error.
-pub async fn list_webhooks(configuration: &configuration::Configuration, from: Option<&str>, limit: Option<i32>, sort: Option<&str>, event_types: Option<models::WebhookEventTypes>, testmode: Option<bool>, idempotency_key: Option<&str>) -> Result<models::ListWebhooks200Response, Error<ListWebhooksError>> {
+pub async fn list_webhooks(configuration: &configuration::Configuration, from: Option<&str>, limit: Option<i32>, sort: Option<models::Sorting>, event_types: Option<models::WebhookEventTypes>, testmode: Option<bool>, idempotency_key: Option<&str>) -> Result<models::ListWebhooks200Response, Error<ListWebhooksError>> {
     // add a prefix to parameters to efficiently prevent name collisions
     let p_query_from = from;
     let p_query_limit = limit;
@@ -217,7 +215,7 @@ pub async fn list_webhooks(configuration: &configuration::Configuration, from: O
     let p_query_testmode = testmode;
     let p_header_idempotency_key = idempotency_key;
 
-    let uri_str = format!("{}/webhooks", configuration.base_path);
+    let uri_str = format!("{}/v2/webhooks", configuration.base_path);
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
     if let Some(ref param_value) = p_query_from {
@@ -242,6 +240,9 @@ pub async fn list_webhooks(configuration: &configuration::Configuration, from: O
         req_builder = req_builder.header("idempotency-key", param_value.to_string());
     }
     if let Some(ref token) = configuration.oauth_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
 
@@ -271,13 +272,13 @@ pub async fn list_webhooks(configuration: &configuration::Configuration, from: O
 }
 
 /// Sends a test event to the webhook to verify the endpoint is working as expected.
-pub async fn test_webhook(configuration: &configuration::Configuration, id: &str, idempotency_key: Option<&str>, delete_webhook_request: Option<models::DeleteWebhookRequest>) -> Result<serde_json::Value, Error<TestWebhookError>> {
+pub async fn test_webhook(configuration: &configuration::Configuration, webhook_id: &str, idempotency_key: Option<&str>, delete_webhook_request: Option<models::DeleteWebhookRequest>) -> Result<(), Error<TestWebhookError>> {
     // add a prefix to parameters to efficiently prevent name collisions
-    let p_path_id = id;
+    let p_path_webhook_id = webhook_id;
     let p_header_idempotency_key = idempotency_key;
     let p_body_delete_webhook_request = delete_webhook_request;
 
-    let uri_str = format!("{}/webhooks/{id}/ping", configuration.base_path, id=crate::apis::urlencode(p_path_id));
+    let uri_str = format!("{}/v2/webhooks/{webhookId}/ping", configuration.base_path, webhookId=crate::apis::urlencode(p_path_webhook_id));
     let mut req_builder = configuration.client.request(reqwest::Method::POST, &uri_str);
 
     if let Some(ref user_agent) = configuration.user_agent {
@@ -289,26 +290,18 @@ pub async fn test_webhook(configuration: &configuration::Configuration, id: &str
     if let Some(ref token) = configuration.oauth_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
+    if let Some(ref token) = configuration.bearer_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
     req_builder = req_builder.json(&p_body_delete_webhook_request);
 
     let req = req_builder.build()?;
     let resp = configuration.client.execute(req).await?;
 
     let status = resp.status();
-    let content_type = resp
-        .headers()
-        .get("content-type")
-        .and_then(|v| v.to_str().ok())
-        .unwrap_or("application/octet-stream");
-    let content_type = super::ContentType::from(content_type);
 
     if !status.is_client_error() && !status.is_server_error() {
-        let content = resp.text().await?;
-        match content_type {
-            ContentType::Json => serde_json::from_str(&content).map_err(Error::from),
-            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `serde_json::Value`"))),
-            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `serde_json::Value`")))),
-        }
+        Ok(())
     } else {
         let content = resp.text().await?;
         let entity: Option<TestWebhookError> = serde_json::from_str(&content).ok();
@@ -317,13 +310,13 @@ pub async fn test_webhook(configuration: &configuration::Configuration, id: &str
 }
 
 /// Updates the webhook. You may edit the name, url and the list of subscribed event types.
-pub async fn update_webhook(configuration: &configuration::Configuration, id: &str, idempotency_key: Option<&str>, update_webhook_request: Option<models::UpdateWebhookRequest>) -> Result<models::EntityWebhook, Error<UpdateWebhookError>> {
+pub async fn update_webhook(configuration: &configuration::Configuration, webhook_id: &str, idempotency_key: Option<&str>, update_webhook_request: Option<models::UpdateWebhookRequest>) -> Result<models::EntityWebhook, Error<UpdateWebhookError>> {
     // add a prefix to parameters to efficiently prevent name collisions
-    let p_path_id = id;
+    let p_path_webhook_id = webhook_id;
     let p_header_idempotency_key = idempotency_key;
     let p_body_update_webhook_request = update_webhook_request;
 
-    let uri_str = format!("{}/webhooks/{id}", configuration.base_path, id=crate::apis::urlencode(p_path_id));
+    let uri_str = format!("{}/v2/webhooks/{webhookId}", configuration.base_path, webhookId=crate::apis::urlencode(p_path_webhook_id));
     let mut req_builder = configuration.client.request(reqwest::Method::PATCH, &uri_str);
 
     if let Some(ref user_agent) = configuration.user_agent {
@@ -333,6 +326,9 @@ pub async fn update_webhook(configuration: &configuration::Configuration, id: &s
         req_builder = req_builder.header("idempotency-key", param_value.to_string());
     }
     if let Some(ref token) = configuration.oauth_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
     req_builder = req_builder.json(&p_body_update_webhook_request);

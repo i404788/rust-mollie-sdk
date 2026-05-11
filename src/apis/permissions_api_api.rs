@@ -39,7 +39,7 @@ pub async fn get_permission(configuration: &configuration::Configuration, permis
     let p_query_testmode = testmode;
     let p_header_idempotency_key = idempotency_key;
 
-    let uri_str = format!("{}/permissions/{permissionId}", configuration.base_path, permissionId=crate::apis::urlencode(p_path_permission_id));
+    let uri_str = format!("{}/v2/permissions/{permissionId}", configuration.base_path, permissionId=crate::apis::urlencode(p_path_permission_id));
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
     if let Some(ref param_value) = p_query_testmode {
@@ -52,6 +52,9 @@ pub async fn get_permission(configuration: &configuration::Configuration, permis
         req_builder = req_builder.header("idempotency-key", param_value.to_string());
     }
     if let Some(ref token) = configuration.oauth_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
 
@@ -85,7 +88,7 @@ pub async fn list_permissions(configuration: &configuration::Configuration, idem
     // add a prefix to parameters to efficiently prevent name collisions
     let p_header_idempotency_key = idempotency_key;
 
-    let uri_str = format!("{}/permissions", configuration.base_path);
+    let uri_str = format!("{}/v2/permissions", configuration.base_path);
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
     if let Some(ref user_agent) = configuration.user_agent {
@@ -95,6 +98,9 @@ pub async fn list_permissions(configuration: &configuration::Configuration, idem
         req_builder = req_builder.header("idempotency-key", param_value.to_string());
     }
     if let Some(ref token) = configuration.oauth_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
 

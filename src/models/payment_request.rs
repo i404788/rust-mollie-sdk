@@ -16,16 +16,17 @@ pub struct PaymentRequest {
     /// Indicates the response contains a payment object. Will always contain the string `payment` for this endpoint.
     #[serde(rename = "resource", skip_serializing_if = "Option::is_none")]
     pub resource: Option<String>,
+    /// The identifier uniquely referring to this payment. Mollie assigns this identifier at payment creation time. Mollie will always refer to the payment by this ID. Example: `tr_5B8cwPMGnU6qLbRvo7qEZo`.
     #[serde(rename = "id", skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
     #[serde(rename = "mode", skip_serializing_if = "Option::is_none")]
     pub mode: Option<models::Mode>,
-    /// The description of the payment. This will be shown to your customer on their card or bank statement when possible. We truncate the description automatically according to the limits of the used payment method. The description is also visible in any exports you generate.  We recommend you use a unique identifier so that you can always link the payment to the order in your back office. This is particularly useful for bookkeeping.  The maximum length of the description field differs per payment method, with the absolute maximum being 255 characters. The API will not reject strings longer than the maximum length but it will truncate them to fit.
-    #[serde(rename = "description", skip_serializing_if = "Option::is_none")]
-    pub description: Option<String>,
+    /// The description of the payment will be shown to your customer on their card or bank statement when possible. We truncate the description automatically according to the limits of the used payment method. The description is also visible in any exports you generate.  We recommend you use a unique identifier so that you can always link the payment to the order in your back office. This is particularly useful for bookkeeping.  The maximum length of the description field differs per payment method, with the absolute maximum being 255 characters. The API will not reject strings longer than the maximum length but it will truncate them to fit.
+    #[serde(rename = "description")]
+    pub description: String,
     /// The amount that you want to charge, e.g. `{currency:\"EUR\", value:\"1000.00\"}` if you would want to charge €1000.00.  You can find the minimum and maximum amounts per payment method in our help center. Additionally, they can be retrieved using the Get method endpoint.  If a tip was added for a Point-of-Sale payment, the amount will be updated to reflect the initial amount plus the tip amount.
-    #[serde(rename = "amount", skip_serializing_if = "Option::is_none")]
-    pub amount: Option<models::Amount>,
+    #[serde(rename = "amount")]
+    pub amount: models::Amount,
     /// The total amount that is already refunded. Only available when refunds are available for this payment. For some payment methods, this amount may be higher than the payment amount, for example to allow reimbursement of the costs for a return shipment to the customer.
     #[serde(rename = "amountRefunded", skip_serializing_if = "Option::is_none")]
     pub amount_refunded: Option<models::Amount>,
@@ -38,12 +39,12 @@ pub struct PaymentRequest {
     /// The total amount that was charged back for this payment. Only available when the total charged back amount is not zero.
     #[serde(rename = "amountChargedBack", skip_serializing_if = "Option::is_none")]
     pub amount_charged_back: Option<models::Amount>,
-    /// This optional field will contain the approximate amount that will be settled to your account, converted to the currency your account is settled in.  Any amounts not settled by Mollie will not be reflected in this amount, e.g. PayPal or gift cards. If no amount is settled by Mollie the `settlementAmount` is omitted from the response.  Please note that this amount might be recalculated and changed when the status of the payment changes. We suggest using the List balance transactions endpoint instead to get more accurate settlement amounts for your payments.
+    /// **Deprecated.** This field will be removed on January 1st, 2027. Use the [Settlements API](list-settlements) or the [List balance transactions endpoint](list-balance-transactions) for settlement data.  The amount that will be settled to your account, converted to the currency your account is settled in. Only available once the payment is finalized and the final settlement amount has been determined.  Amounts not settled by Mollie are not reflected here (e.g. PayPal or gift cards). If no amount is settled by Mollie, this field is omitted from the response.
     #[serde(rename = "settlementAmount", skip_serializing_if = "Option::is_none")]
     pub settlement_amount: Option<models::Amount>,
     /// The URL your customer will be redirected to after the payment process.  It could make sense for the redirectUrl to contain a unique identifier – like your order ID – so you can show the right page referencing the order when your customer returns.  The parameter is normally required, but can be omitted for recurring payments (`sequenceType: recurring`) and for Apple Pay payments with an `applePayPaymentToken`.
-    #[serde(rename = "redirectUrl", skip_serializing_if = "Option::is_none")]
-    pub redirect_url: Option<String>,
+    #[serde(rename = "redirectUrl")]
+    pub redirect_url: String,
     /// The URL your customer will be redirected to when the customer explicitly cancels the payment. If this URL is not provided, the customer will be redirected to the `redirectUrl` instead — see above.  Mollie will always give you status updates via webhooks, including for the canceled status. This parameter is therefore entirely optional, but can be useful when implementing a dedicated customer-facing flow to handle payment cancellations.
     #[serde(rename = "cancelUrl", skip_serializing_if = "Option::is_none")]
     pub cancel_url: Option<String>,
@@ -64,8 +65,8 @@ pub struct PaymentRequest {
     /// This optional field contains your customer's ISO 3166-1 alpha-2 country code, detected by us during checkout. This field is omitted if the country code was not detected.
     #[serde(rename = "countryCode", skip_serializing_if = "Option::is_none")]
     pub country_code: Option<String>,
-    #[serde(rename = "method", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
-    pub method: Option<Option<models::Method>>,
+    #[serde(rename = "method", skip_serializing_if = "Option::is_none")]
+    pub method: Option<models::PaymentRequestAllOfMethod>,
     /// **Only relevant for iDEAL, KBC/CBC, gift card, and voucher payments.**  **⚠️ With the introduction of iDEAL 2 in 2025, this field will be ignored for iDEAL payments. For more information on the migration, refer to our [help center](https://help.mollie.com/hc/articles/19100313768338-iDEAL-2-0).**  Some payment methods are a network of connected banks or card issuers. In these cases, after selecting the payment method, the customer may still need to select the appropriate issuer before the payment can proceed.  We provide hosted issuer selection screens, but these screens can be skipped by providing the `issuer` via the API up front.  The full list of issuers for a specific method can be retrieved via the Methods API by using the optional `issuers` include.  A valid issuer for iDEAL is for example `ideal_INGBNL2A` (for ING Bank).
     #[serde(rename = "issuer", skip_serializing_if = "Option::is_none")]
     pub issuer: Option<String>,
@@ -90,17 +91,22 @@ pub struct PaymentRequest {
     /// **Only relevant for recurring payments.**  Indicate which part of a recurring sequence this payment is for.  Recurring payments can only take place if a mandate is available. A common way to establish such a mandate is through a `first` payment. With a `first` payment, the customer agrees to automatic recurring charges taking place on their account in the future.  If set to `recurring`, the customer's card is charged automatically.  Defaults to `oneoff`, which is a regular non-recurring payment.  For PayPal payments, recurring is only possible if your connected PayPal account allows it. You can call our [Methods API](list-methods) with parameter `sequenceType: first` to discover which payment methods on your account are set up correctly for recurring payments.
     #[serde(rename = "sequenceType", skip_serializing_if = "Option::is_none")]
     pub sequence_type: Option<models::SequenceType>,
+    /// If the payment was automatically created via a subscription, the ID of the [subscription](get-subscription) will be added to the response.
     #[serde(rename = "subscriptionId", skip_serializing_if = "Option::is_none")]
     pub subscription_id: Option<String>,
+    /// **Only relevant for recurring payments and stored cards.**  When creating recurring or stored cards payments, the ID of a specific [mandate](get-mandate) can be supplied to indicate which of the customer's accounts should be debited.
     #[serde(rename = "mandateId", skip_serializing_if = "Option::is_none")]
     pub mandate_id: Option<String>,
+    /// The ID of the [customer](get-customer) the payment is being created for. This is used primarily for recurring payments, but can also be used on regular payments to enable single-click payments.  If `sequenceType` is set to `recurring`, this field is required.
     #[serde(rename = "customerId", skip_serializing_if = "Option::is_none")]
     pub customer_id: Option<String>,
-    /// The identifier referring to the [profile](get-profile) this entity belongs to.  Most API credentials are linked to a single profile. In these cases the `profileId` can be omitted in the creation request. For organization-level credentials such as OAuth access tokens however, the `profileId` parameter is required.
+    /// The identifier referring to the [profile](get-profile) this entity belongs to.  When using an API Key, the `profileId` must not be sent since it is linked to the key. However, for OAuth and Organization tokens, the `profileId` is required.  For more information, see [Authentication](authentication).
     #[serde(rename = "profileId", skip_serializing_if = "Option::is_none")]
     pub profile_id: Option<String>,
+    /// The identifier referring to the [settlement](get-settlement) this payment was settled with.
     #[serde(rename = "settlementId", skip_serializing_if = "Option::is_none")]
     pub settlement_id: Option<String>,
+    /// If the payment was created for an [order](get-order), the ID of that order will be part of the response.
     #[serde(rename = "orderId", skip_serializing_if = "Option::is_none")]
     pub order_id: Option<String>,
     #[serde(rename = "status", skip_serializing_if = "Option::is_none")]
@@ -136,7 +142,10 @@ pub struct PaymentRequest {
     /// The date by which the payment should be completed in `YYYY-MM-DD` format
     #[serde(rename = "dueDate", skip_serializing_if = "Option::is_none")]
     pub due_date: Option<String>,
-    /// Whether to create the entity in test mode or live mode.  Most API credentials are specifically created for either live mode or test mode, in which case this parameter can be omitted. For organization-level credentials such as OAuth access tokens, you can enable test mode by setting `testmode` to `true`.
+    /// Whether the card details should be stored for the customer after a successful payment. This will create a mandate for the customer,  allowing for future customer present saved-card CIT payments. Requires customerId, cardToken, and the creditcard method to be specified. 
+    #[serde(rename = "storeCredentials", skip_serializing_if = "Option::is_none")]
+    pub store_credentials: Option<bool>,
+    /// Whether to create the entity in test mode or live mode.  Most API credentials are specifically created for either live mode or test mode, in which case this parameter must not be sent. For organization-level credentials such as OAuth access tokens, you can enable test mode by setting `testmode` to `true`.
     #[serde(rename = "testmode", skip_serializing_if = "Option::is_none")]
     pub testmode: Option<bool>,
     #[serde(rename = "_links", skip_serializing_if = "Option::is_none")]
@@ -157,7 +166,7 @@ pub struct PaymentRequest {
     pub voucher_pin: Option<String>,
     /// The customer's date of birth. If not provided via the API, iDeal in3 will ask the customer to provide it during the payment process.
     #[serde(rename = "consumerDateOfBirth", skip_serializing_if = "Option::is_none")]
-    pub consumer_date_of_birth: Option<String>,
+    pub consumer_date_of_birth: Option<chrono::NaiveDate>,
     /// For some industries, additional purchase information can be sent to Klarna to increase the authorization rate. You can submit your extra data in this field if you have agreed upon this with Klarna. This field should be an object containing any of the allowed keys and sub-objects described at the Klarna Developer Documentation.
     #[serde(rename = "extraMerchantData", skip_serializing_if = "Option::is_none")]
     pub extra_merchant_data: Option<std::collections::HashMap<String, serde_json::Value>>,
@@ -176,19 +185,19 @@ pub struct PaymentRequest {
 }
 
 impl PaymentRequest {
-    pub fn new() -> PaymentRequest {
+    pub fn new(description: String, amount: models::Amount, redirect_url: String) -> PaymentRequest {
         PaymentRequest {
             resource: None,
             id: None,
             mode: None,
-            description: None,
-            amount: None,
+            description,
+            amount,
             amount_refunded: None,
             amount_remaining: None,
             amount_captured: None,
             amount_charged_back: None,
             settlement_amount: None,
-            redirect_url: None,
+            redirect_url,
             cancel_url: None,
             webhook_url: None,
             lines: None,
@@ -224,6 +233,7 @@ impl PaymentRequest {
             expired_at: None,
             failed_at: None,
             due_date: None,
+            store_credentials: None,
             testmode: None,
             _links: None,
             apple_pay_payment_token: None,

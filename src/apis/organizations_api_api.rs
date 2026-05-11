@@ -43,7 +43,7 @@ pub async fn get_current_organization(configuration: &configuration::Configurati
     // add a prefix to parameters to efficiently prevent name collisions
     let p_header_idempotency_key = idempotency_key;
 
-    let uri_str = format!("{}/organizations/me", configuration.base_path);
+    let uri_str = format!("{}/v2/organizations/me", configuration.base_path);
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
     if let Some(ref user_agent) = configuration.user_agent {
@@ -53,6 +53,9 @@ pub async fn get_current_organization(configuration: &configuration::Configurati
         req_builder = req_builder.header("idempotency-key", param_value.to_string());
     }
     if let Some(ref token) = configuration.oauth_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
 
@@ -82,13 +85,13 @@ pub async fn get_current_organization(configuration: &configuration::Configurati
 }
 
 /// Retrieve a single organization by its ID.  You can normally only retrieve the currently authenticated organization with this endpoint. This is primarily useful for OAuth apps. See also [Get current organization](get-current-organization).  If you have a *partner account*', you can retrieve organization details of connected organizations.
-pub async fn get_organization(configuration: &configuration::Configuration, id: &str, testmode: Option<bool>, idempotency_key: Option<&str>) -> Result<models::EntityOrganization, Error<GetOrganizationError>> {
+pub async fn get_organization(configuration: &configuration::Configuration, organization_id: &str, testmode: Option<bool>, idempotency_key: Option<&str>) -> Result<models::EntityOrganization, Error<GetOrganizationError>> {
     // add a prefix to parameters to efficiently prevent name collisions
-    let p_path_id = id;
+    let p_path_organization_id = organization_id;
     let p_query_testmode = testmode;
     let p_header_idempotency_key = idempotency_key;
 
-    let uri_str = format!("{}/organizations/{id}", configuration.base_path, id=crate::apis::urlencode(p_path_id));
+    let uri_str = format!("{}/v2/organizations/{organizationId}", configuration.base_path, organizationId=crate::apis::urlencode(p_path_organization_id));
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
     if let Some(ref param_value) = p_query_testmode {
@@ -101,6 +104,9 @@ pub async fn get_organization(configuration: &configuration::Configuration, id: 
         req_builder = req_builder.header("idempotency-key", param_value.to_string());
     }
     if let Some(ref token) = configuration.oauth_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
 
@@ -134,7 +140,7 @@ pub async fn get_partner_status(configuration: &configuration::Configuration, id
     // add a prefix to parameters to efficiently prevent name collisions
     let p_header_idempotency_key = idempotency_key;
 
-    let uri_str = format!("{}/organizations/me/partner", configuration.base_path);
+    let uri_str = format!("{}/v2/organizations/me/partner", configuration.base_path);
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
     if let Some(ref user_agent) = configuration.user_agent {
@@ -144,6 +150,9 @@ pub async fn get_partner_status(configuration: &configuration::Configuration, id
         req_builder = req_builder.header("idempotency-key", param_value.to_string());
     }
     if let Some(ref token) = configuration.oauth_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
 

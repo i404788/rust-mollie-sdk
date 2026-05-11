@@ -109,10 +109,10 @@ pub struct EntityPaymentDetails {
     pub creditor_identifier: Option<Option<String>>,
     /// Estimated date the payment is debited from the customer's bank account, in YYYY-MM-DD format.
     #[serde(rename = "dueDate", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
-    pub due_date: Option<Option<String>>,
+    pub due_date: Option<Option<chrono::NaiveDate>>,
     /// Date the payment has been signed by the customer, in YYYY-MM-DD format. Only available if the payment has been signed.
     #[serde(rename = "signatureDate", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
-    pub signature_date: Option<Option<String>>,
+    pub signature_date: Option<Option<chrono::NaiveDate>>,
     /// The official reason why this payment has failed. A detailed description of each reason is available on the website of the European Payments Council.
     #[serde(rename = "bankReasonCode", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
     pub bank_reason_code: Option<Option<String>>,
@@ -154,6 +154,12 @@ pub struct EntityPaymentDetails {
     /// Optional include. The full payment method details of the remainder payment.
     #[serde(rename = "remainderDetails", skip_serializing_if = "Option::is_none")]
     pub remainder_details: Option<std::collections::HashMap<String, serde_json::Value>>,
+    /// Multibanco payment reference of the transaction
+    #[serde(rename = "multibancoReference", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
+    pub multibanco_reference: Option<Option<String>>,
+    /// Multibanco entity reference of the transaction
+    #[serde(rename = "multibancoEntity", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
+    pub multibanco_entity: Option<Option<String>>,
 }
 
 impl EntityPaymentDetails {
@@ -210,6 +216,8 @@ impl EntityPaymentDetails {
             remainder_amount: None,
             remainder_method: None,
             remainder_details: None,
+            multibanco_reference: None,
+            multibanco_entity: None,
         }
     }
 }

@@ -87,7 +87,7 @@ pub async fn get_next_settlement(configuration: &configuration::Configuration, i
     // add a prefix to parameters to efficiently prevent name collisions
     let p_header_idempotency_key = idempotency_key;
 
-    let uri_str = format!("{}/settlements/next", configuration.base_path);
+    let uri_str = format!("{}/v2/settlements/next", configuration.base_path);
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
     if let Some(ref user_agent) = configuration.user_agent {
@@ -97,6 +97,9 @@ pub async fn get_next_settlement(configuration: &configuration::Configuration, i
         req_builder = req_builder.header("idempotency-key", param_value.to_string());
     }
     if let Some(ref token) = configuration.oauth_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
 
@@ -130,7 +133,7 @@ pub async fn get_open_settlement(configuration: &configuration::Configuration, i
     // add a prefix to parameters to efficiently prevent name collisions
     let p_header_idempotency_key = idempotency_key;
 
-    let uri_str = format!("{}/settlements/open", configuration.base_path);
+    let uri_str = format!("{}/v2/settlements/open", configuration.base_path);
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
     if let Some(ref user_agent) = configuration.user_agent {
@@ -140,6 +143,9 @@ pub async fn get_open_settlement(configuration: &configuration::Configuration, i
         req_builder = req_builder.header("idempotency-key", param_value.to_string());
     }
     if let Some(ref token) = configuration.oauth_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
 
@@ -169,12 +175,12 @@ pub async fn get_open_settlement(configuration: &configuration::Configuration, i
 }
 
 /// Retrieve a single settlement by its ID.  To lookup settlements by their bank reference, replace the ID in the URL by a reference. For example: `1234567.2404.03`.  A settlement represents a transfer of your balance funds to your external bank account.  Settlements will typically include a report that details what balance transactions have taken place between this settlement and the previous one.  For more accurate bookkeeping, refer to the [balance report](get-balance-report) endpoint or the [balance transactions](list-balance-transactions) endpoint.
-pub async fn get_settlement(configuration: &configuration::Configuration, id: &str, idempotency_key: Option<&str>) -> Result<models::EntitySettlement, Error<GetSettlementError>> {
+pub async fn get_settlement(configuration: &configuration::Configuration, settlement_id: &str, idempotency_key: Option<&str>) -> Result<models::EntitySettlement, Error<GetSettlementError>> {
     // add a prefix to parameters to efficiently prevent name collisions
-    let p_path_id = id;
+    let p_path_settlement_id = settlement_id;
     let p_header_idempotency_key = idempotency_key;
 
-    let uri_str = format!("{}/settlements/{id}", configuration.base_path, id=crate::apis::urlencode(p_path_id));
+    let uri_str = format!("{}/v2/settlements/{settlementId}", configuration.base_path, settlementId=crate::apis::urlencode(p_path_settlement_id));
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
     if let Some(ref user_agent) = configuration.user_agent {
@@ -184,6 +190,9 @@ pub async fn get_settlement(configuration: &configuration::Configuration, id: &s
         req_builder = req_builder.header("idempotency-key", param_value.to_string());
     }
     if let Some(ref token) = configuration.oauth_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
 
@@ -213,16 +222,15 @@ pub async fn get_settlement(configuration: &configuration::Configuration, id: &s
 }
 
 /// Retrieve all captures included in the given settlement.  The response is in the same format as the response of the [List captures endpoint](list-captures).
-pub async fn list_settlement_captures(configuration: &configuration::Configuration, settlement_id: &str, from: Option<&str>, limit: Option<i32>, embed: Option<&str>, testmode: Option<bool>, idempotency_key: Option<&str>) -> Result<models::ListSettlementCaptures200Response, Error<ListSettlementCapturesError>> {
+pub async fn list_settlement_captures(configuration: &configuration::Configuration, settlement_id: &str, from: Option<&str>, limit: Option<i32>, embed: Option<&str>, idempotency_key: Option<&str>) -> Result<models::ListSettlementCaptures200Response, Error<ListSettlementCapturesError>> {
     // add a prefix to parameters to efficiently prevent name collisions
     let p_path_settlement_id = settlement_id;
     let p_query_from = from;
     let p_query_limit = limit;
     let p_query_embed = embed;
-    let p_query_testmode = testmode;
     let p_header_idempotency_key = idempotency_key;
 
-    let uri_str = format!("{}/settlements/{settlementId}/captures", configuration.base_path, settlementId=crate::apis::urlencode(p_path_settlement_id));
+    let uri_str = format!("{}/v2/settlements/{settlementId}/captures", configuration.base_path, settlementId=crate::apis::urlencode(p_path_settlement_id));
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
     if let Some(ref param_value) = p_query_from {
@@ -234,9 +242,6 @@ pub async fn list_settlement_captures(configuration: &configuration::Configurati
     if let Some(ref param_value) = p_query_embed {
         req_builder = req_builder.query(&[("embed", &param_value.to_string())]);
     }
-    if let Some(ref param_value) = p_query_testmode {
-        req_builder = req_builder.query(&[("testmode", &param_value.to_string())]);
-    }
     if let Some(ref user_agent) = configuration.user_agent {
         req_builder = req_builder.header(reqwest::header::USER_AGENT, user_agent.clone());
     }
@@ -244,6 +249,9 @@ pub async fn list_settlement_captures(configuration: &configuration::Configurati
         req_builder = req_builder.header("idempotency-key", param_value.to_string());
     }
     if let Some(ref token) = configuration.oauth_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
 
@@ -282,7 +290,7 @@ pub async fn list_settlement_chargebacks(configuration: &configuration::Configur
     let p_query_testmode = testmode;
     let p_header_idempotency_key = idempotency_key;
 
-    let uri_str = format!("{}/settlements/{settlementId}/chargebacks", configuration.base_path, settlementId=crate::apis::urlencode(p_path_settlement_id));
+    let uri_str = format!("{}/v2/settlements/{settlementId}/chargebacks", configuration.base_path, settlementId=crate::apis::urlencode(p_path_settlement_id));
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
     if let Some(ref param_value) = p_query_from {
@@ -304,6 +312,9 @@ pub async fn list_settlement_chargebacks(configuration: &configuration::Configur
         req_builder = req_builder.header("idempotency-key", param_value.to_string());
     }
     if let Some(ref token) = configuration.oauth_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
 
@@ -333,17 +344,16 @@ pub async fn list_settlement_chargebacks(configuration: &configuration::Configur
 }
 
 /// Retrieve all payments included in the given settlement.  The response is in the same format as the response of the [List payments endpoint](list-payments).  For capture-based payment methods such as Klarna, the payments are not listed here. Refer to the [List captures endpoint](list-captures) endpoint instead.
-pub async fn list_settlement_payments(configuration: &configuration::Configuration, settlement_id: &str, from: Option<&str>, limit: Option<i32>, sort: Option<&str>, profile_id: Option<&str>, testmode: Option<bool>, idempotency_key: Option<&str>) -> Result<models::ListSettlementPayments200Response, Error<ListSettlementPaymentsError>> {
+pub async fn list_settlement_payments(configuration: &configuration::Configuration, settlement_id: &str, from: Option<&str>, limit: Option<i32>, sort: Option<models::Sorting>, profile_id: Option<&str>, idempotency_key: Option<&str>) -> Result<models::ListSettlementPayments200Response, Error<ListSettlementPaymentsError>> {
     // add a prefix to parameters to efficiently prevent name collisions
     let p_path_settlement_id = settlement_id;
     let p_query_from = from;
     let p_query_limit = limit;
     let p_query_sort = sort;
     let p_query_profile_id = profile_id;
-    let p_query_testmode = testmode;
     let p_header_idempotency_key = idempotency_key;
 
-    let uri_str = format!("{}/settlements/{settlementId}/payments", configuration.base_path, settlementId=crate::apis::urlencode(p_path_settlement_id));
+    let uri_str = format!("{}/v2/settlements/{settlementId}/payments", configuration.base_path, settlementId=crate::apis::urlencode(p_path_settlement_id));
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
     if let Some(ref param_value) = p_query_from {
@@ -358,9 +368,6 @@ pub async fn list_settlement_payments(configuration: &configuration::Configurati
     if let Some(ref param_value) = p_query_profile_id {
         req_builder = req_builder.query(&[("profileId", &param_value.to_string())]);
     }
-    if let Some(ref param_value) = p_query_testmode {
-        req_builder = req_builder.query(&[("testmode", &param_value.to_string())]);
-    }
     if let Some(ref user_agent) = configuration.user_agent {
         req_builder = req_builder.header(reqwest::header::USER_AGENT, user_agent.clone());
     }
@@ -368,6 +375,9 @@ pub async fn list_settlement_payments(configuration: &configuration::Configurati
         req_builder = req_builder.header("idempotency-key", param_value.to_string());
     }
     if let Some(ref token) = configuration.oauth_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
 
@@ -397,16 +407,15 @@ pub async fn list_settlement_payments(configuration: &configuration::Configurati
 }
 
 /// Retrieve all refunds 'deducted' from the given settlement.  The response is in the same format as the response of the [List refunds endpoint](list-refunds).
-pub async fn list_settlement_refunds(configuration: &configuration::Configuration, settlement_id: &str, from: Option<&str>, limit: Option<i32>, embed: Option<&str>, testmode: Option<bool>, idempotency_key: Option<&str>) -> Result<models::ListSettlementRefunds200Response, Error<ListSettlementRefundsError>> {
+pub async fn list_settlement_refunds(configuration: &configuration::Configuration, settlement_id: &str, from: Option<&str>, limit: Option<i32>, embed: Option<&str>, idempotency_key: Option<&str>) -> Result<models::ListSettlementRefunds200Response, Error<ListSettlementRefundsError>> {
     // add a prefix to parameters to efficiently prevent name collisions
     let p_path_settlement_id = settlement_id;
     let p_query_from = from;
     let p_query_limit = limit;
     let p_query_embed = embed;
-    let p_query_testmode = testmode;
     let p_header_idempotency_key = idempotency_key;
 
-    let uri_str = format!("{}/settlements/{settlementId}/refunds", configuration.base_path, settlementId=crate::apis::urlencode(p_path_settlement_id));
+    let uri_str = format!("{}/v2/settlements/{settlementId}/refunds", configuration.base_path, settlementId=crate::apis::urlencode(p_path_settlement_id));
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
     if let Some(ref param_value) = p_query_from {
@@ -418,9 +427,6 @@ pub async fn list_settlement_refunds(configuration: &configuration::Configuratio
     if let Some(ref param_value) = p_query_embed {
         req_builder = req_builder.query(&[("embed", &param_value.to_string())]);
     }
-    if let Some(ref param_value) = p_query_testmode {
-        req_builder = req_builder.query(&[("testmode", &param_value.to_string())]);
-    }
     if let Some(ref user_agent) = configuration.user_agent {
         req_builder = req_builder.header(reqwest::header::USER_AGENT, user_agent.clone());
     }
@@ -428,6 +434,9 @@ pub async fn list_settlement_refunds(configuration: &configuration::Configuratio
         req_builder = req_builder.header("idempotency-key", param_value.to_string());
     }
     if let Some(ref token) = configuration.oauth_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
 
@@ -457,7 +466,7 @@ pub async fn list_settlement_refunds(configuration: &configuration::Configuratio
 }
 
 /// Retrieve a list of all your settlements.  The results are paginated.
-pub async fn list_settlements(configuration: &configuration::Configuration, from: Option<&str>, limit: Option<i32>, balance_id: Option<&str>, year: Option<&str>, month: Option<&str>, currencies: Option<&str>, idempotency_key: Option<&str>) -> Result<models::ListSettlements200Response, Error<ListSettlementsError>> {
+pub async fn list_settlements(configuration: &configuration::Configuration, from: Option<&str>, limit: Option<i32>, balance_id: Option<&str>, year: Option<&str>, month: Option<&str>, currencies: Option<models::models::Currencies>, idempotency_key: Option<&str>) -> Result<models::ListSettlements200Response, Error<ListSettlementsError>> {
     // add a prefix to parameters to efficiently prevent name collisions
     let p_query_from = from;
     let p_query_limit = limit;
@@ -467,7 +476,7 @@ pub async fn list_settlements(configuration: &configuration::Configuration, from
     let p_query_currencies = currencies;
     let p_header_idempotency_key = idempotency_key;
 
-    let uri_str = format!("{}/settlements", configuration.base_path);
+    let uri_str = format!("{}/v2/settlements", configuration.base_path);
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
     if let Some(ref param_value) = p_query_from {
@@ -495,6 +504,9 @@ pub async fn list_settlements(configuration: &configuration::Configuration, from
         req_builder = req_builder.header("idempotency-key", param_value.to_string());
     }
     if let Some(ref token) = configuration.oauth_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
 

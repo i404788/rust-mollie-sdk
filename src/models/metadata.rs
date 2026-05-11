@@ -17,6 +17,7 @@ use serde::{Deserialize, Serialize};
 #[serde(untagged)]
 pub enum Metadata {
     String(String),
+    Number(f64),
     Object(std::collections::HashMap<String, serde_json::Value>),
     ArrayVecString(Vec<String>),
 }

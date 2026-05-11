@@ -1,17 +1,17 @@
 # \ClientsApiApi
 
-All URIs are relative to *https://api.mollie.com/v2*
+All URIs are relative to *https://api.mollie.com*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**get_client**](ClientsApiApi.md#get_client) | **GET** /clients/{id} | Get client
-[**list_clients**](ClientsApiApi.md#list_clients) | **GET** /clients | List clients
+[**get_client**](ClientsApiApi.md#get_client) | **GET** /v2/clients/{organizationId} | Get client
+[**list_clients**](ClientsApiApi.md#list_clients) | **GET** /v2/clients | List clients
 
 
 
 ## get_client
 
-> models::ListClients200ResponseEmbeddedClientsInner get_client(id, embed, idempotency_key)
+> models::GetClient200Response get_client(organization_id, embed, idempotency_key)
 Get client
 
 Retrieve a single client by its ID.
@@ -21,17 +21,17 @@ Retrieve a single client by its ID.
 
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
-**id** | **String** | Provide the ID of the item you want to perform this operation on. | [required] |
+**organization_id** | **String** | Provide the ID of the related organization. | [required] |
 **embed** | Option<**String**> | This endpoint allows embedding related API items by appending the following values via the `embed` query string parameter. |  |
 **idempotency_key** | Option<**String**> | A unique key to ensure idempotent requests. This key should be a UUID v4 string. |  |
 
 ### Return type
 
-[**models::ListClients200ResponseEmbeddedClientsInner**](list_clients_200_response__embedded_clients_inner.md)
+[**models::GetClient200Response**](get_client_200_response.md)
 
 ### Authorization
 
-[oAuth](../README.md#oAuth)
+[organizationAccessToken](../README.md#organizationAccessToken)
 
 ### HTTP request headers
 
@@ -64,7 +64,7 @@ Name | Type | Description  | Required | Notes
 
 ### Authorization
 
-[oAuth](../README.md#oAuth)
+[organizationAccessToken](../README.md#organizationAccessToken)
 
 ### HTTP request headers
 

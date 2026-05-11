@@ -1,11 +1,11 @@
 # \PermissionsApiApi
 
-All URIs are relative to *https://api.mollie.com/v2*
+All URIs are relative to *https://api.mollie.com*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**get_permission**](PermissionsApiApi.md#get_permission) | **GET** /permissions/{permissionId} | Get permission
-[**list_permissions**](PermissionsApiApi.md#list_permissions) | **GET** /permissions | List permissions
+[**get_permission**](PermissionsApiApi.md#get_permission) | **GET** /v2/permissions/{permissionId} | Get permission
+[**list_permissions**](PermissionsApiApi.md#list_permissions) | **GET** /v2/permissions | List permissions
 
 
 
@@ -22,7 +22,7 @@ Retrieve a single permission by its ID, and see if the permission is granted to 
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
 **permission_id** | **String** | Provide the ID of the related permission. | [required] |
-**testmode** | Option<**bool**> | Most API credentials are specifically created for either live mode or test mode. In those cases the `testmode` query parameter can be omitted. For organization-level credentials such as OAuth access tokens, you can enable test mode by setting the `testmode` query parameter to `true`.  Test entities cannot be retrieved when the endpoint is set to live mode, and vice versa. |  |
+**testmode** | Option<**bool**> | You can enable test mode by setting the `testmode` query parameter to `true`.  Test entities cannot be retrieved when the endpoint is set to live mode, and vice versa. |  |
 **idempotency_key** | Option<**String**> | A unique key to ensure idempotent requests. This key should be a UUID v4 string. |  |
 
 ### Return type
@@ -31,7 +31,7 @@ Name | Type | Description  | Required | Notes
 
 ### Authorization
 
-[oAuth](../README.md#oAuth)
+[oAuth](../README.md#oAuth), [organizationAccessToken](../README.md#organizationAccessToken)
 
 ### HTTP request headers
 
@@ -61,7 +61,7 @@ Name | Type | Description  | Required | Notes
 
 ### Authorization
 
-[oAuth](../README.md#oAuth)
+[oAuth](../README.md#oAuth), [organizationAccessToken](../README.md#organizationAccessToken)
 
 ### HTTP request headers
 

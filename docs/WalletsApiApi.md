@@ -1,10 +1,10 @@
 # \WalletsApiApi
 
-All URIs are relative to *https://api.mollie.com/v2*
+All URIs are relative to *https://api.mollie.com*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**request_apple_pay_payment_session**](WalletsApiApi.md#request_apple_pay_payment_session) | **POST** /wallets/applepay/sessions | Request Apple Pay payment session
+[**request_apple_pay_payment_session**](WalletsApiApi.md#request_apple_pay_payment_session) | **POST** /v2/wallets/applepay/sessions | Request Apple Pay payment session
 
 
 
@@ -29,7 +29,7 @@ Name | Type | Description  | Required | Notes
 
 ### Authorization
 
-[apiKey](../README.md#apiKey), [oAuth](../README.md#oAuth)
+[apiKey](../README.md#apiKey), [oAuth](../README.md#oAuth), [organizationAccessToken](../README.md#organizationAccessToken)
 
 ### HTTP request headers
 

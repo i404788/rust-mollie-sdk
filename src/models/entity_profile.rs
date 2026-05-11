@@ -27,7 +27,7 @@ pub struct EntityProfile {
     /// The URL to the profile's website or application. Only `https` or `http` URLs are allowed. No `@` signs are allowed.
     #[serde(rename = "website", skip_serializing_if = "Option::is_none")]
     pub website: Option<String>,
-    /// The email address associated with the profile's trade name or brand.
+    /// The email address associated with the profile's trade name or brand.  If the domain contains non-ASCII characters, encode it as Punycode per [RFC 3492](https://www.rfc-editor.org/rfc/rfc3492).
     #[serde(rename = "email", skip_serializing_if = "Option::is_none")]
     pub email: Option<String>,
     /// The phone number associated with the profile's trade name or brand.

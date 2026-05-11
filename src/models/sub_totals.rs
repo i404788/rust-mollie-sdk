@@ -20,23 +20,23 @@ pub struct SubTotals {
     #[serde(rename = "method", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
     pub method: Option<Option<models::PaymentMethod>>,
     /// In case of payments transactions with card, the card issuer will be available
-    #[serde(rename = "cardIssuer", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
-    pub card_issuer: Option<Option<CardIssuer>>,
+    #[serde(rename = "cardIssuer", skip_serializing_if = "Option::is_none")]
+    pub card_issuer: Option<models::BalanceCardIssuer>,
     /// In case of payments trnsactions with card, the card audience will be available.
-    #[serde(rename = "cardAudience", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
-    pub card_audience: Option<Option<CardAudience>>,
+    #[serde(rename = "cardAudience", skip_serializing_if = "Option::is_none")]
+    pub card_audience: Option<models::BalanceCardAudience>,
     /// In case of payments transactions with card, the card region will be available.
-    #[serde(rename = "cardRegion", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
-    pub card_region: Option<Option<CardRegion>>,
+    #[serde(rename = "cardRegion", skip_serializing_if = "Option::is_none")]
+    pub card_region: Option<models::BalanceCardRegion>,
     /// Present when the transaction represents a fee.
-    #[serde(rename = "feeType", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
-    pub fee_type: Option<Option<FeeType>>,
+    #[serde(rename = "feeType", skip_serializing_if = "Option::is_none")]
+    pub fee_type: Option<models::BalanceFeeType>,
     /// Prepayment part: fee itself, reimbursement, discount, VAT or rounding compensation.
-    #[serde(rename = "prepaymentPartType", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
-    pub prepayment_part_type: Option<Option<PrepaymentPartType>>,
+    #[serde(rename = "prepaymentPartType", skip_serializing_if = "Option::is_none")]
+    pub prepayment_part_type: Option<models::BalancePrepaymentPartType>,
     /// Represents the transaction type
-    #[serde(rename = "transactionType", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
-    pub transaction_type: Option<Option<TransactionType>>,
+    #[serde(rename = "transactionType", skip_serializing_if = "Option::is_none")]
+    pub transaction_type: Option<models::BalanceTransactionType>,
 }
 
 impl SubTotals {
@@ -51,228 +51,6 @@ impl SubTotals {
             prepayment_part_type: None,
             transaction_type: None,
         }
-    }
-}
-/// In case of payments transactions with card, the card issuer will be available
-#[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize)]
-pub enum CardIssuer {
-    #[serde(rename = "amex")]
-    Amex,
-    #[serde(rename = "maestro")]
-    Maestro,
-    #[serde(rename = "carte-bancaire")]
-    CarteBancaire,
-    #[serde(rename = "other")]
-    Other,
-}
-
-impl Default for CardIssuer {
-    fn default() -> CardIssuer {
-        Self::Amex
-    }
-}
-/// In case of payments trnsactions with card, the card audience will be available.
-#[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize)]
-pub enum CardAudience {
-    #[serde(rename = "corporate")]
-    Corporate,
-    #[serde(rename = "other")]
-    Other,
-}
-
-impl Default for CardAudience {
-    fn default() -> CardAudience {
-        Self::Corporate
-    }
-}
-/// In case of payments transactions with card, the card region will be available.
-#[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize)]
-pub enum CardRegion {
-    #[serde(rename = "intra-eea")]
-    IntraEea,
-    #[serde(rename = "intra-eu")]
-    IntraEu,
-    #[serde(rename = "domestic")]
-    Domestic,
-    #[serde(rename = "other")]
-    Other,
-}
-
-impl Default for CardRegion {
-    fn default() -> CardRegion {
-        Self::IntraEea
-    }
-}
-/// Present when the transaction represents a fee.
-#[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize)]
-pub enum FeeType {
-    #[serde(rename = "payment-fee")]
-    PaymentFee,
-    #[serde(rename = "direct-debit-failure-fee")]
-    DirectDebitFailureFee,
-    #[serde(rename = "unauthorized-direct-debit-fee")]
-    UnauthorizedDirectDebitFee,
-    #[serde(rename = "bank-charged-direct-debit-failure-fee")]
-    BankChargedDirectDebitFailureFee,
-    #[serde(rename = "partner-commission")]
-    PartnerCommission,
-    #[serde(rename = "application-fee")]
-    ApplicationFee,
-    #[serde(rename = "capture-fee")]
-    CaptureFee,
-    #[serde(rename = "refund-fee")]
-    RefundFee,
-    #[serde(rename = "chargeback-fee")]
-    ChargebackFee,
-    #[serde(rename = "payment-notification-fee")]
-    PaymentNotificationFee,
-    #[serde(rename = "transfer-notification-fee")]
-    TransferNotificationFee,
-    #[serde(rename = "payout-fee")]
-    PayoutFee,
-    #[serde(rename = "fee-discount")]
-    FeeDiscount,
-    #[serde(rename = "fee-reimbursement")]
-    FeeReimbursement,
-    #[serde(rename = "platform-volume-fee")]
-    PlatformVolumeFee,
-    #[serde(rename = "platform-connected-organizations-fee")]
-    PlatformConnectedOrganizationsFee,
-    #[serde(rename = "balance-charge-fee")]
-    BalanceChargeFee,
-    #[serde(rename = "3ds-authentication-attempt-fee")]
-    Variant3dsAuthenticationAttemptFee,
-    #[serde(rename = "terminal-monthly-fee")]
-    TerminalMonthlyFee,
-    #[serde(rename = "acceptance-risk-fee")]
-    AcceptanceRiskFee,
-    #[serde(rename = "top-up-fee")]
-    TopUpFee,
-    #[serde(rename = "payment-gateway-fee")]
-    PaymentGatewayFee,
-    #[serde(rename = "mastercard-specialty-merchant-program-processing-fee")]
-    MastercardSpecialtyMerchantProgramProcessingFee,
-    #[serde(rename = "mastercard-specialty-merchant-program-registration-fee")]
-    MastercardSpecialtyMerchantProgramRegistrationFee,
-    #[serde(rename = "visa-integrity-risk-program-processing-fee")]
-    VisaIntegrityRiskProgramProcessingFee,
-    #[serde(rename = "visa-integrity-risk-program-registration-fee")]
-    VisaIntegrityRiskProgramRegistrationFee,
-    #[serde(rename = "minimum-invoice-amount-fee")]
-    MinimumInvoiceAmountFee,
-}
-
-impl Default for FeeType {
-    fn default() -> FeeType {
-        Self::PaymentFee
-    }
-}
-/// Prepayment part: fee itself, reimbursement, discount, VAT or rounding compensation.
-#[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize)]
-pub enum PrepaymentPartType {
-    #[serde(rename = "fee")]
-    Fee,
-    #[serde(rename = "fee-reimbursement")]
-    FeeReimbursement,
-    #[serde(rename = "fee-discount")]
-    FeeDiscount,
-    #[serde(rename = "fee-vat")]
-    FeeVat,
-    #[serde(rename = "fee-rounding-compensation")]
-    FeeRoundingCompensation,
-}
-
-impl Default for PrepaymentPartType {
-    fn default() -> PrepaymentPartType {
-        Self::Fee
-    }
-}
-/// Represents the transaction type
-#[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize)]
-pub enum TransactionType {
-    #[serde(rename = "payment")]
-    Payment,
-    #[serde(rename = "split-payment")]
-    SplitPayment,
-    #[serde(rename = "failed-payment")]
-    FailedPayment,
-    #[serde(rename = "failed-platform-split-payment")]
-    FailedPlatformSplitPayment,
-    #[serde(rename = "failed-split-payment-compensation")]
-    FailedSplitPaymentCompensation,
-    #[serde(rename = "capture")]
-    Capture,
-    #[serde(rename = "split-transaction")]
-    SplitTransaction,
-    #[serde(rename = "refund")]
-    Refund,
-    #[serde(rename = "platform-payment-refund")]
-    PlatformPaymentRefund,
-    #[serde(rename = "returned-platform-payment-refund")]
-    ReturnedPlatformPaymentRefund,
-    #[serde(rename = "refund-compensation")]
-    RefundCompensation,
-    #[serde(rename = "returned-refund-compensation")]
-    ReturnedRefundCompensation,
-    #[serde(rename = "returned-refund")]
-    ReturnedRefund,
-    #[serde(rename = "chargeback")]
-    Chargeback,
-    #[serde(rename = "chargeback-reversal")]
-    ChargebackReversal,
-    #[serde(rename = "chargeback-compensation")]
-    ChargebackCompensation,
-    #[serde(rename = "reversed-chargeback-compensation")]
-    ReversedChargebackCompensation,
-    #[serde(rename = "platform-payment-chargeback")]
-    PlatformPaymentChargeback,
-    #[serde(rename = "reversed-platform-payment-chargeback")]
-    ReversedPlatformPaymentChargeback,
-    #[serde(rename = "fee-prepayment")]
-    FeePrepayment,
-    #[serde(rename = "outgoing-transfer")]
-    OutgoingTransfer,
-    #[serde(rename = "incoming-transfer")]
-    IncomingTransfer,
-    #[serde(rename = "canceled-transfer")]
-    CanceledTransfer,
-    #[serde(rename = "returned-transfer")]
-    ReturnedTransfer,
-    #[serde(rename = "balance-reserve")]
-    BalanceReserve,
-    #[serde(rename = "balance-reserve-return")]
-    BalanceReserveReturn,
-    #[serde(rename = "invoice-rounding-compensation")]
-    InvoiceRoundingCompensation,
-    #[serde(rename = "rolling-reserve-hold")]
-    RollingReserveHold,
-    #[serde(rename = "rolling-reserve-release")]
-    RollingReserveRelease,
-    #[serde(rename = "balance-correction")]
-    BalanceCorrection,
-    #[serde(rename = "repayment")]
-    Repayment,
-    #[serde(rename = "loan")]
-    Loan,
-    #[serde(rename = "balance-topup")]
-    BalanceTopup,
-    #[serde(rename = "cash-collateral-issuance';")]
-    CashCollateralIssuanceQuoteSemicolon,
-    #[serde(rename = "cash-collateral-release")]
-    CashCollateralRelease,
-    #[serde(rename = "pending-rolling-reserve")]
-    PendingRollingReserve,
-    #[serde(rename = "to-be-released-rolling-reserve")]
-    ToBeReleasedRollingReserve,
-    #[serde(rename = "held-rolling-reserve")]
-    HeldRollingReserve,
-    #[serde(rename = "released-rolling-reserve")]
-    ReleasedRollingReserve,
-}
-
-impl Default for TransactionType {
-    fn default() -> TransactionType {
-        Self::Payment
     }
 }
 

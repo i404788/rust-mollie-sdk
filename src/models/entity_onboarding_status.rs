@@ -14,36 +14,36 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
 pub struct EntityOnboardingStatus {
     /// Indicates the response contains an onboarding status object. Will always contain the string `onboarding` for this resource type.
-    #[serde(rename = "resource", skip_serializing_if = "Option::is_none")]
-    pub resource: Option<String>,
+    #[serde(rename = "resource")]
+    pub resource: String,
     /// The name of the organization.
-    #[serde(rename = "name", skip_serializing_if = "Option::is_none")]
-    pub name: Option<String>,
-    #[serde(rename = "status", skip_serializing_if = "Option::is_none")]
-    pub status: Option<models::OnboardingStatus>,
+    #[serde(rename = "name")]
+    pub name: String,
+    #[serde(rename = "status")]
+    pub status: models::OnboardingStatus,
     /// Whether the organization can receive payments.
-    #[serde(rename = "canReceivePayments", skip_serializing_if = "Option::is_none")]
-    pub can_receive_payments: Option<bool>,
+    #[serde(rename = "canReceivePayments")]
+    pub can_receive_payments: bool,
     /// Whether the organization can receive settlements to their external bank account.
-    #[serde(rename = "canReceiveSettlements", skip_serializing_if = "Option::is_none")]
-    pub can_receive_settlements: Option<bool>,
+    #[serde(rename = "canReceiveSettlements")]
+    pub can_receive_settlements: bool,
     /// The sign up date time of the organization in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format.
-    #[serde(rename = "signedUpAt", skip_serializing_if = "Option::is_none")]
-    pub signed_up_at: Option<String>,
-    #[serde(rename = "_links", skip_serializing_if = "Option::is_none")]
-    pub _links: Option<models::EntityOnboardingStatusLinks>,
+    #[serde(rename = "signedUpAt")]
+    pub signed_up_at: String,
+    #[serde(rename = "_links")]
+    pub _links: models::EntityOnboardingStatusLinks,
 }
 
 impl EntityOnboardingStatus {
-    pub fn new() -> EntityOnboardingStatus {
+    pub fn new(resource: String, name: String, status: models::OnboardingStatus, can_receive_payments: bool, can_receive_settlements: bool, signed_up_at: String, _links: models::EntityOnboardingStatusLinks) -> EntityOnboardingStatus {
         EntityOnboardingStatus {
-            resource: None,
-            name: None,
-            status: None,
-            can_receive_payments: None,
-            can_receive_settlements: None,
-            signed_up_at: None,
-            _links: None,
+            resource,
+            name,
+            status,
+            can_receive_payments,
+            can_receive_settlements,
+            signed_up_at,
+            _links,
         }
     }
 }

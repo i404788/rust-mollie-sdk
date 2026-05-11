@@ -1,16 +1,16 @@
 # \WebhookEventsApiApi
 
-All URIs are relative to *https://api.mollie.com/v2*
+All URIs are relative to *https://api.mollie.com*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**get_webhook_event**](WebhookEventsApiApi.md#get_webhook_event) | **GET** /events/{id} | Get a Webhook Event
+[**get_webhook_event**](WebhookEventsApiApi.md#get_webhook_event) | **GET** /v2/events/{webhookEventId} | Get a Webhook Event
 
 
 
 ## get_webhook_event
 
-> models::EntityWebhookEvent get_webhook_event(id, testmode, idempotency_key)
+> models::EntityWebhookEvent get_webhook_event(webhook_event_id, testmode, idempotency_key)
 Get a Webhook Event
 
 Retrieve a single webhook event object by its event ID.
@@ -20,8 +20,8 @@ Retrieve a single webhook event object by its event ID.
 
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
-**id** | **String** | Provide the ID of the item you want to perform this operation on. | [required] |
-**testmode** | Option<**bool**> | Most API credentials are specifically created for either live mode or test mode. In those cases the `testmode` query parameter can be omitted. For organization-level credentials such as OAuth access tokens, you can enable test mode by setting the `testmode` query parameter to `true`.  Test entities cannot be retrieved when the endpoint is set to live mode, and vice versa. |  |
+**webhook_event_id** | **String** | Provide the ID of the related webhook event. | [required] |
+**testmode** | Option<**bool**> | You can enable test mode by setting the `testmode` query parameter to `true`.  Test entities cannot be retrieved when the endpoint is set to live mode, and vice versa. |  |
 **idempotency_key** | Option<**String**> | A unique key to ensure idempotent requests. This key should be a UUID v4 string. |  |
 
 ### Return type
@@ -30,7 +30,7 @@ Name | Type | Description  | Required | Notes
 
 ### Authorization
 
-[oAuth](../README.md#oAuth)
+[oAuth](../README.md#oAuth), [organizationAccessToken](../README.md#organizationAccessToken)
 
 ### HTTP request headers
 

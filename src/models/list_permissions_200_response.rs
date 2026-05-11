@@ -14,20 +14,20 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
 pub struct ListPermissions200Response {
     /// The number of items in this result set. If more items are available, a `_links.next` URL will be present in the result as well.  The maximum number of items per result set is controlled by the `limit` property provided in the request. The default limit is 50 items.
-    #[serde(rename = "count", skip_serializing_if = "Option::is_none")]
-    pub count: Option<i32>,
-    #[serde(rename = "_embedded", skip_serializing_if = "Option::is_none")]
-    pub _embedded: Option<models::ListPermissions200ResponseEmbedded>,
-    #[serde(rename = "_links", skip_serializing_if = "Option::is_none")]
-    pub _links: Option<models::ListPermissions200ResponseLinks>,
+    #[serde(rename = "count")]
+    pub count: i32,
+    #[serde(rename = "_embedded")]
+    pub _embedded: models::ListPermissions200ResponseEmbedded,
+    #[serde(rename = "_links")]
+    pub _links: models::ListPermissions200ResponseLinks,
 }
 
 impl ListPermissions200Response {
-    pub fn new() -> ListPermissions200Response {
+    pub fn new(count: i32, _embedded: models::ListPermissions200ResponseEmbedded, _links: models::ListPermissions200ResponseLinks) -> ListPermissions200Response {
         ListPermissions200Response {
-            count: None,
-            _embedded: None,
-            _links: None,
+            count,
+            _embedded,
+            _links,
         }
     }
 }

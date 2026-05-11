@@ -13,14 +13,14 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
 pub struct ListCapabilities200ResponseEmbedded {
-    #[serde(rename = "capabilities", skip_serializing_if = "Option::is_none")]
-    pub capabilities: Option<Vec<models::EntityCapability>>,
+    #[serde(rename = "capabilities")]
+    pub capabilities: Vec<models::EntityCapability>,
 }
 
 impl ListCapabilities200ResponseEmbedded {
-    pub fn new() -> ListCapabilities200ResponseEmbedded {
+    pub fn new(capabilities: Vec<models::EntityCapability>) -> ListCapabilities200ResponseEmbedded {
         ListCapabilities200ResponseEmbedded {
-            capabilities: None,
+            capabilities,
         }
     }
 }

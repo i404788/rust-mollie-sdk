@@ -15,7 +15,7 @@ use serde::{Deserialize, Serialize};
 pub struct ListSettlementPayments200ResponseEmbedded {
     /// An array of payment objects.
     #[serde(rename = "payments", skip_serializing_if = "Option::is_none")]
-    pub payments: Option<Vec<models::PaymentResponse>>,
+    pub payments: Option<Vec<models::ListSettlementPaymentResponse>>,
 }
 
 impl ListSettlementPayments200ResponseEmbedded {

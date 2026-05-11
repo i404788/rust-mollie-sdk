@@ -14,30 +14,31 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
 pub struct PaymentLinkResponse {
     /// Indicates the response contains a payment link object. Will always contain the string `payment-link` for this endpoint.
-    #[serde(rename = "resource", skip_serializing_if = "Option::is_none")]
-    pub resource: Option<String>,
-    #[serde(rename = "id", skip_serializing_if = "Option::is_none")]
-    pub id: Option<String>,
-    #[serde(rename = "mode", skip_serializing_if = "Option::is_none")]
-    pub mode: Option<models::Mode>,
+    #[serde(rename = "resource")]
+    pub resource: String,
+    /// The identifier uniquely referring to this payment link. Example: `pl_4Y0eZitmBnQ6IDoMqZQKh`.
+    #[serde(rename = "id")]
+    pub id: String,
+    #[serde(rename = "mode")]
+    pub mode: models::Mode,
     /// A short description of the payment link. The description is visible in the Dashboard and will be shown on the customer's bank or card statement when possible.
-    #[serde(rename = "description", skip_serializing_if = "Option::is_none")]
-    pub description: Option<String>,
+    #[serde(rename = "description")]
+    pub description: String,
     /// The amount of the payment link. If no amount is provided initially, the customer will be prompted to enter an amount.
-    #[serde(rename = "amount", skip_serializing_if = "Option::is_none")]
-    pub amount: Option<models::AmountNullable>,
+    #[serde(rename = "amount")]
+    pub amount: models::AmountNullable,
     /// The minimum amount of the payment link. This property is only allowed when there is no amount provided. The customer will be prompted to enter a value greater than or equal to the minimum amount.
     #[serde(rename = "minimumAmount", skip_serializing_if = "Option::is_none")]
     pub minimum_amount: Option<models::AmountNullable>,
     /// Whether the payment link is archived. Customers will not be able to complete payments on archived payment links.
-    #[serde(rename = "archived", skip_serializing_if = "Option::is_none")]
-    pub archived: Option<bool>,
+    #[serde(rename = "archived")]
+    pub archived: bool,
     /// The URL your customer will be redirected to after completing the payment process. If no redirect URL is provided, the customer will be shown a generic message after completing the payment.
-    #[serde(rename = "redirectUrl", skip_serializing_if = "Option::is_none")]
-    pub redirect_url: Option<String>,
+    #[serde(rename = "redirectUrl")]
+    pub redirect_url: String,
     /// The webhook URL where we will send payment status updates to.  The webhookUrl is optional, but without a webhook you will miss out on important status changes to any payments resulting from the payment link.  The webhookUrl must be reachable from Mollie's point of view, so you cannot use `localhost`. If you want to use webhook during development on `localhost`, you must use a tool like ngrok to have the webhooks delivered to your local machine.
-    #[serde(rename = "webhookUrl", skip_serializing_if = "Option::is_none")]
-    pub webhook_url: Option<String>,
+    #[serde(rename = "webhookUrl")]
+    pub webhook_url: String,
     /// Optionally provide the order lines for the payment. Each line contains details such as a description of the item ordered and its price.  All lines must have the same currency as the payment.  Required for payment methods `billie`, `in3`, `klarna`, `riverty` and `voucher`.
     #[serde(rename = "lines", skip_serializing_if = "Option::is_none")]
     pub lines: Option<Vec<models::PaymentLineItemResponse>>,
@@ -47,24 +48,24 @@ pub struct PaymentLinkResponse {
     /// The customer's shipping address details. We advise to provide these details to improve fraud protection and conversion.  Should include `email` or a valid postal address consisting of `streetAndNumber`, `postalCode`, `city` and `country`.
     #[serde(rename = "shippingAddress", skip_serializing_if = "Option::is_none")]
     pub shipping_address: Option<models::PaymentAddress>,
-    /// The identifier referring to the [profile](get-profile) this entity belongs to.  Most API credentials are linked to a single profile. In these cases the `profileId` can be omitted in the creation request. For organization-level credentials such as OAuth access tokens however, the `profileId` parameter is required.
-    #[serde(rename = "profileId", skip_serializing_if = "Option::is_none")]
-    pub profile_id: Option<String>,
+    /// The identifier referring to the [profile](get-profile) this entity belongs to.  Most API credentials are linked to a single profile. In these cases the `profileId` must not be sent in the creation request. For organization-level credentials such as OAuth access tokens however, the `profileId` parameter is required.
+    #[serde(rename = "profileId")]
+    pub profile_id: String,
     /// Indicates whether the payment link is reusable. If this field is set to `true`, customers can make multiple payments using the same link.  If no value is specified, the field defaults to `false`, allowing only a single payment per link.
-    #[serde(rename = "reusable", skip_serializing_if = "Option::is_none")]
-    pub reusable: Option<bool>,
+    #[serde(rename = "reusable")]
+    pub reusable: bool,
     /// The entity's date and time of creation, in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format.
-    #[serde(rename = "createdAt", skip_serializing_if = "Option::is_none")]
-    pub created_at: Option<String>,
+    #[serde(rename = "createdAt")]
+    pub created_at: String,
     /// The date and time the payment link became paid, in ISO 8601 format.
-    #[serde(rename = "paidAt", skip_serializing_if = "Option::is_none")]
-    pub paid_at: Option<String>,
+    #[serde(rename = "paidAt")]
+    pub paid_at: String,
     /// The date and time the payment link is set to expire, in ISO 8601 format. If no expiry date was provided up front, the payment link will not expire automatically.
-    #[serde(rename = "expiresAt", skip_serializing_if = "Option::is_none")]
-    pub expires_at: Option<String>,
-    /// An array of payment methods that are allowed to be used for this payment link. When this parameter is not provided or is an empty array, all enabled payment methods will be available.  Enum: 'applepay', 'bancomatpay', 'bancontact', 'banktransfer', 'belfius', 'blik', 'creditcard', 'eps', 'giftcard', 'ideal', 'kbc', 'mybank', 'paybybank', 'paypal', 'paysafecard', 'pointofsale', 'przelewy24', 'satispay', 'trustly', 'twint', 'in3', 'riverty', 'klarna', 'billie'.
-    #[serde(rename = "allowedMethods", skip_serializing_if = "Option::is_none")]
-    pub allowed_methods: Option<Vec<String>>,
+    #[serde(rename = "expiresAt")]
+    pub expires_at: String,
+    /// An array of payment methods that are allowed to be used for this payment link. When this parameter is not provided or is an empty array, all enabled payment methods will be available.
+    #[serde(rename = "allowedMethods")]
+    pub allowed_methods: Vec<models::PaymentLinkMethodResponse>,
     #[serde(rename = "applicationFee", skip_serializing_if = "Option::is_none")]
     pub application_fee: Option<models::CreatePaymentLinkRequestApplicationFee>,
     /// If set to `first`, a payment mandate is established right after a payment is made by the customer.  Defaults to `oneoff`, which is a regular payment link and will not establish a mandate after payment.  The mandate ID can be retrieved by making a call to the [Payment Link Payments Endpoint](get-payment-link-payments).
@@ -73,39 +74,39 @@ pub struct PaymentLinkResponse {
     /// **Only relevant when `sequenceType` is set to `first`**  The ID of the [customer](get-customer) the payment link is being created for. If a value is not provided, the customer will be required to input relevant information which will be used to establish a mandate after the payment is made.
     #[serde(rename = "customerId", skip_serializing_if = "Option::is_none")]
     pub customer_id: Option<String>,
-    /// Whether to create the entity in test mode or live mode.  Most API credentials are specifically created for either live mode or test mode, in which case this parameter can be omitted. For organization-level credentials such as OAuth access tokens, you can enable test mode by setting `testmode` to `true`.
+    /// Whether to create the entity in test mode or live mode.  Most API credentials are specifically created for either live mode or test mode, in which case this parameter must not be sent. For organization-level credentials such as OAuth access tokens, you can enable test mode by setting `testmode` to `true`.
     #[serde(rename = "testmode", skip_serializing_if = "Option::is_none")]
     pub testmode: Option<bool>,
-    #[serde(rename = "_links", skip_serializing_if = "Option::is_none")]
-    pub _links: Option<models::CreatePaymentLinkRequestLinks>,
+    #[serde(rename = "_links")]
+    pub _links: models::CreatePaymentLinkRequestLinks,
 }
 
 impl PaymentLinkResponse {
-    pub fn new() -> PaymentLinkResponse {
+    pub fn new(resource: String, id: String, mode: models::Mode, description: String, amount: models::AmountNullable, archived: bool, redirect_url: String, webhook_url: String, profile_id: String, reusable: bool, created_at: String, paid_at: String, expires_at: String, allowed_methods: Vec<models::PaymentLinkMethodResponse>, _links: models::CreatePaymentLinkRequestLinks) -> PaymentLinkResponse {
         PaymentLinkResponse {
-            resource: None,
-            id: None,
-            mode: None,
-            description: None,
-            amount: None,
+            resource,
+            id,
+            mode,
+            description,
+            amount,
             minimum_amount: None,
-            archived: None,
-            redirect_url: None,
-            webhook_url: None,
+            archived,
+            redirect_url,
+            webhook_url,
             lines: None,
             billing_address: None,
             shipping_address: None,
-            profile_id: None,
-            reusable: None,
-            created_at: None,
-            paid_at: None,
-            expires_at: None,
-            allowed_methods: None,
+            profile_id,
+            reusable,
+            created_at,
+            paid_at,
+            expires_at,
+            allowed_methods,
             application_fee: None,
             sequence_type: None,
             customer_id: None,
             testmode: None,
-            _links: None,
+            _links,
         }
     }
 }

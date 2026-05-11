@@ -14,14 +14,14 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
 pub struct ListProfiles200ResponseEmbedded {
     /// An array of profile objects.
-    #[serde(rename = "profiles", skip_serializing_if = "Option::is_none")]
-    pub profiles: Option<Vec<models::EntityProfileResponse>>,
+    #[serde(rename = "profiles")]
+    pub profiles: Vec<models::ListProfileResponse>,
 }
 
 impl ListProfiles200ResponseEmbedded {
-    pub fn new() -> ListProfiles200ResponseEmbedded {
+    pub fn new(profiles: Vec<models::ListProfileResponse>) -> ListProfiles200ResponseEmbedded {
         ListProfiles200ResponseEmbedded {
-            profiles: None,
+            profiles,
         }
     }
 }

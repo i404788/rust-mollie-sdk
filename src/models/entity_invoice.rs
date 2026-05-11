@@ -14,60 +14,59 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
 pub struct EntityInvoice {
     /// Indicates that the response contains an invoice object. Will always contain the string `invoice` for this endpoint.
-    #[serde(rename = "resource", skip_serializing_if = "Option::is_none")]
-    pub resource: Option<String>,
-    /// The identifier uniquely referring to this invoice. Example: `inv_FrvewDA3Pr`.
-    #[serde(rename = "id", skip_serializing_if = "Option::is_none")]
-    pub id: Option<String>,
+    #[serde(rename = "resource")]
+    pub resource: String,
+    #[serde(rename = "id")]
+    pub id: String,
     /// The reference number of the invoice. An example value would be: `2024.10000`.
-    #[serde(rename = "reference", skip_serializing_if = "Option::is_none")]
-    pub reference: Option<String>,
+    #[serde(rename = "reference")]
+    pub reference: String,
     /// The VAT number to which the invoice was issued to, if applicable.
-    #[serde(rename = "vatNumber", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
-    pub vat_number: Option<Option<String>>,
-    #[serde(rename = "status", skip_serializing_if = "Option::is_none")]
-    pub status: Option<models::InvoiceStatus>,
+    #[serde(rename = "vatNumber", deserialize_with = "Option::deserialize")]
+    pub vat_number: Option<String>,
+    #[serde(rename = "status")]
+    pub status: models::InvoiceStatus,
     /// Total amount of the invoice, excluding VAT.
-    #[serde(rename = "netAmount", skip_serializing_if = "Option::is_none")]
-    pub net_amount: Option<models::Amount>,
+    #[serde(rename = "netAmount")]
+    pub net_amount: models::Amount,
     /// VAT amount of the invoice. Only applicable to merchants registered in the Netherlands. For EU merchants, VAT will be shifted to the recipient (as per article 44 and 196 in the EU VAT Directive 2006/112). For merchants outside the EU, no VAT will be charged.
-    #[serde(rename = "vatAmount", skip_serializing_if = "Option::is_none")]
-    pub vat_amount: Option<models::Amount>,
+    #[serde(rename = "vatAmount")]
+    pub vat_amount: models::Amount,
     /// Total amount of the invoice, including VAT.
-    #[serde(rename = "grossAmount", skip_serializing_if = "Option::is_none")]
-    pub gross_amount: Option<models::Amount>,
+    #[serde(rename = "grossAmount")]
+    pub gross_amount: models::Amount,
     /// The collection of products which make up the invoice.
-    #[serde(rename = "lines", skip_serializing_if = "Option::is_none")]
-    pub lines: Option<Vec<models::EntityInvoiceLinesInner>>,
+    #[serde(rename = "lines")]
+    pub lines: Vec<models::EntityInvoiceLinesInner>,
     /// The invoice date in `YYYY-MM-DD` format.
-    #[serde(rename = "issuedAt", skip_serializing_if = "Option::is_none")]
-    pub issued_at: Option<String>,
+    #[serde(rename = "issuedAt")]
+    pub issued_at: String,
     /// The date on which the invoice was paid, if applicable, in `YYYY-MM-DD` format.
     #[serde(rename = "paidAt", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
     pub paid_at: Option<Option<String>>,
     /// The date on which the invoice is due, if applicable, in `YYYY-MM-DD` format.
     #[serde(rename = "dueAt", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
     pub due_at: Option<Option<String>>,
-    #[serde(rename = "_links", skip_serializing_if = "Option::is_none")]
-    pub _links: Option<models::EntityInvoiceLinks>,
+    #[serde(rename = "_links")]
+    pub _links: models::EntityInvoiceLinks,
 }
 
 impl EntityInvoice {
-    pub fn new() -> EntityInvoice {
+    pub fn new(resource: String, id: String, reference: String, vat_number: Option<String>, status: models::InvoiceStatus, net_amount: models::Amount, vat_amount: models::Amount, gross_amount: models::Amount, lines: Vec<models::EntityInvoiceLinesInner>, issued_at: String, _links: models::EntityInvoiceLinks) -> EntityInvoice {
         EntityInvoice {
-            resource: None,
-            id: None,
-            reference: None,
-            vat_number: None,
-            status: None,
-            net_amount: None,
-            vat_amount: None,
-            gross_amount: None,
-            lines: None,
-            issued_at: None,
+            resource,
+            id,
+            reference,
+            vat_number,
+            status,
+            net_amount,
+            vat_amount,
+            gross_amount,
+            lines,
+            issued_at,
             paid_at: None,
             due_at: None,
-            _links: None,
+            _links,
         }
     }
 }

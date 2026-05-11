@@ -16,6 +16,7 @@ pub struct EntityCustomer {
     /// Indicates the response contains a customer object. Will always contain the string `customer` for this endpoint.
     #[serde(rename = "resource", skip_serializing_if = "Option::is_none")]
     pub resource: Option<String>,
+    /// The identifier uniquely referring to this customer. Example: `cst_vsKJpSsabw`.
     #[serde(rename = "id", skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
     #[serde(rename = "mode", skip_serializing_if = "Option::is_none")]
@@ -23,7 +24,7 @@ pub struct EntityCustomer {
     /// The full name of the customer.
     #[serde(rename = "name", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
     pub name: Option<Option<String>>,
-    /// The email address of the customer.
+    /// The email address of the customer.  If the domain contains non-ASCII characters, encode it as Punycode per [RFC 3492](https://www.rfc-editor.org/rfc/rfc3492).
     #[serde(rename = "email", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
     pub email: Option<Option<String>>,
     /// Preconfigure the language to be used in the hosted payment pages shown to the customer. Should only be provided if absolutely necessary. If not provided, the browser language will be used which is typically highly accurate.
@@ -34,7 +35,7 @@ pub struct EntityCustomer {
     /// The entity's date and time of creation, in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format.
     #[serde(rename = "createdAt", skip_serializing_if = "Option::is_none")]
     pub created_at: Option<String>,
-    /// Whether to create the entity in test mode or live mode.  Most API credentials are specifically created for either live mode or test mode, in which case this parameter can be omitted. For organization-level credentials such as OAuth access tokens, you can enable test mode by setting `testmode` to `true`.
+    /// Whether to create the entity in test mode or live mode.  Most API credentials are specifically created for either live mode or test mode, in which case this parameter must not be sent. For organization-level credentials such as OAuth access tokens, you can enable test mode by setting `testmode` to `true`.
     #[serde(rename = "testmode", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
     pub testmode: Option<Option<bool>>,
     #[serde(rename = "_links", skip_serializing_if = "Option::is_none")]

@@ -14,14 +14,14 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
 pub struct ListBalanceTransactions200ResponseEmbedded {
     /// An array of balance transaction objects.
-    #[serde(rename = "balance_transactions", skip_serializing_if = "Option::is_none")]
-    pub balance_transactions: Option<Vec<models::EntityBalanceTransaction>>,
+    #[serde(rename = "balance_transactions")]
+    pub balance_transactions: Vec<models::EntityBalanceTransaction>,
 }
 
 impl ListBalanceTransactions200ResponseEmbedded {
-    pub fn new() -> ListBalanceTransactions200ResponseEmbedded {
+    pub fn new(balance_transactions: Vec<models::EntityBalanceTransaction>) -> ListBalanceTransactions200ResponseEmbedded {
         ListBalanceTransactions200ResponseEmbedded {
-            balance_transactions: None,
+            balance_transactions,
         }
     }
 }

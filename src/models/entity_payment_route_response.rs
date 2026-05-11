@@ -16,6 +16,7 @@ pub struct EntityPaymentRouteResponse {
     /// Indicates the response contains a route object. Will always contain the string `route` for this endpoint.
     #[serde(rename = "resource")]
     pub resource: String,
+    /// The identifier uniquely referring to this route. Mollie will always refer to the route by this ID. Example: `rt_5B8cwPMGnU6qLbRvo7qEZo`.
     #[serde(rename = "id")]
     pub id: String,
     #[serde(rename = "mode")]

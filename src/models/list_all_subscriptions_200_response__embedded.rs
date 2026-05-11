@@ -15,7 +15,7 @@ use serde::{Deserialize, Serialize};
 pub struct ListAllSubscriptions200ResponseEmbedded {
     /// A list of subscription objects.
     #[serde(rename = "subscriptions", skip_serializing_if = "Option::is_none")]
-    pub subscriptions: Option<Vec<models::SubscriptionResponse>>,
+    pub subscriptions: Option<Vec<models::ListSubscriptionResponse>>,
 }
 
 impl ListAllSubscriptions200ResponseEmbedded {

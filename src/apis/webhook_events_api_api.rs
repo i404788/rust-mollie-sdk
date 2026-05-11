@@ -25,13 +25,13 @@ pub enum GetWebhookEventError {
 
 
 /// Retrieve a single webhook event object by its event ID.
-pub async fn get_webhook_event(configuration: &configuration::Configuration, id: &str, testmode: Option<bool>, idempotency_key: Option<&str>) -> Result<models::EntityWebhookEvent, Error<GetWebhookEventError>> {
+pub async fn get_webhook_event(configuration: &configuration::Configuration, webhook_event_id: &str, testmode: Option<bool>, idempotency_key: Option<&str>) -> Result<models::EntityWebhookEvent, Error<GetWebhookEventError>> {
     // add a prefix to parameters to efficiently prevent name collisions
-    let p_path_id = id;
+    let p_path_webhook_event_id = webhook_event_id;
     let p_query_testmode = testmode;
     let p_header_idempotency_key = idempotency_key;
 
-    let uri_str = format!("{}/events/{id}", configuration.base_path, id=crate::apis::urlencode(p_path_id));
+    let uri_str = format!("{}/v2/events/{webhookEventId}", configuration.base_path, webhookEventId=crate::apis::urlencode(p_path_webhook_event_id));
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
     if let Some(ref param_value) = p_query_testmode {
@@ -44,6 +44,9 @@ pub async fn get_webhook_event(configuration: &configuration::Configuration, id:
         req_builder = req_builder.header("idempotency-key", param_value.to_string());
     }
     if let Some(ref token) = configuration.oauth_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
 

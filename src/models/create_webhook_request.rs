@@ -19,16 +19,15 @@ pub struct CreateWebhookRequest {
     /// The URL Mollie will send the events to. This URL must be publicly accessible.
     #[serde(rename = "url")]
     pub url: String,
-    /// The list of events to enable for this webhook. You may specify `'*'` to add all events, except those that require explicit selection. Separate multiple event types with a comma.
     #[serde(rename = "eventTypes")]
-    pub event_types: models::WebhookEventTypes,
-    /// Whether to create the entity in test mode or live mode.  Most API credentials are specifically created for either live mode or test mode, in which case this parameter can be omitted. For organization-level credentials such as OAuth access tokens, you can enable test mode by setting `testmode` to `true`.
-    #[serde(rename = "testmode", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
-    pub testmode: Option<Option<bool>>,
+    pub event_types: models::CreateWebhookRequestEventTypes,
+    /// Whether to create the entity in test mode or live mode.  You can enable test mode by setting `testmode` to `true`.
+    #[serde(rename = "testmode", skip_serializing_if = "Option::is_none")]
+    pub testmode: Option<bool>,
 }
 
 impl CreateWebhookRequest {
-    pub fn new(name: String, url: String, event_types: models::WebhookEventTypes) -> CreateWebhookRequest {
+    pub fn new(name: String, url: String, event_types: models::CreateWebhookRequestEventTypes) -> CreateWebhookRequest {
         CreateWebhookRequest {
             name,
             url,

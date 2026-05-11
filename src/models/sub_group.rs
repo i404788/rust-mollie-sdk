@@ -16,7 +16,7 @@ pub struct SubGroup {
     #[serde(rename = "amount", skip_serializing_if = "Option::is_none")]
     pub amount: Option<models::Amount>,
     #[serde(rename = "subtotals", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
-    pub subtotals: Option<Option<Vec<models::ComponentsSubTotals>>>,
+    pub subtotals: Option<Option<Vec<models::SubTotals2>>>,
 }
 
 impl SubGroup {

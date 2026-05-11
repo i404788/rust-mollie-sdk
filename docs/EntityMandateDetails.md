@@ -10,7 +10,7 @@ Name | Type | Description | Notes
 **card_holder** | Option<**String**> | The card holder's name. Available for card mandates. | [optional]
 **card_number** | Option<**String**> | The last four digits of the card number. Available for card mandates. | [optional]
 **card_expiry_date** | Option<**String**> | The card's expiry date in `YYYY-MM-DD` format. Available for card mandates. | [optional]
-**card_label** | Option<[**models::MandateDetailsCardLabel**](mandate-details-card-label.md)> |  | [optional]
+**card_label** | Option<[**models::MandateDetailsCardLabel**](MandateDetailsCardLabel.md)> |  | [optional]
 **card_fingerprint** | Option<**String**> | Unique alphanumeric representation of this specific card. Available for card mandates. Can be used to identify returning customers. | [optional]
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

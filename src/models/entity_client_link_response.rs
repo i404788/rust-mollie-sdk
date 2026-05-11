@@ -32,6 +32,15 @@ pub struct EntityClientLinkResponse {
     /// The VAT number of the organization, if based in the European Union. VAT numbers are verified against the international registry *VIES*.
     #[serde(rename = "vatNumber", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
     pub vat_number: Option<Option<String>>,
+    /// The legal entity type of the organization, based on its country of origin. Please refer to the [legal entity list](common-data-types#legal-entity) for all possible options.
+    #[serde(rename = "legalEntity", skip_serializing_if = "Option::is_none")]
+    pub legal_entity: Option<String>,
+    /// The registration office that the organization was registered at. Please refer to the [registration office list](common-data-types#registration-office) for all possible options.
+    #[serde(rename = "registrationOffice", skip_serializing_if = "Option::is_none")]
+    pub registration_office: Option<String>,
+    /// The incorporation date of the organization (format `YYYY-MM-DD`)
+    #[serde(rename = "incorporationDate", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
+    pub incorporation_date: Option<Option<String>>,
     #[serde(rename = "_links", skip_serializing_if = "Option::is_none")]
     pub _links: Option<models::EntityClientLinkLinks>,
 }
@@ -46,6 +55,9 @@ impl EntityClientLinkResponse {
             address: None,
             registration_number: None,
             vat_number: None,
+            legal_entity: None,
+            registration_office: None,
+            incorporation_date: None,
             _links: None,
         }
     }

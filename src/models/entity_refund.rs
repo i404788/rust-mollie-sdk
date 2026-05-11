@@ -16,6 +16,7 @@ pub struct EntityRefund {
     /// Indicates the response contains a refund object. Will always contain the string `refund` for this endpoint.
     #[serde(rename = "resource")]
     pub resource: String,
+    /// The identifier uniquely referring to this refund. Mollie assigns this identifier at refund creation time. Mollie will always refer to the refund by this ID. Example: `re_4qqhO89gsT`.
     #[serde(rename = "id")]
     pub id: String,
     #[serde(rename = "mode")]
@@ -26,13 +27,15 @@ pub struct EntityRefund {
     /// The amount refunded to your customer with this refund. The amount is allowed to be lower than the original payment amount.
     #[serde(rename = "amount")]
     pub amount: models::Amount,
-    /// This optional field will contain the approximate amount that will be deducted from your account balance, converted to the currency your account is settled in.  The amount is a **negative** amount.  If the refund is not directly processed by Mollie, for example for PayPal refunds, the settlement amount will be zero.  Since the field contains an estimated amount during refund processing, it may change over time. For example, while the refund is queued the settlement amount is likely not yet available.  To retrieve accurate settlement amounts we recommend using the [List balance transactions endpoint](list-balance-transactions) instead.
+    /// **Deprecated.** This field will be removed on January 1st, 2027. Use the [Settlements API](list-settlements) or the [List balance transactions endpoint](list-balance-transactions) for settlement data.  The amount deducted from your account balance for this refund, converted to the currency your account is settled in. Always a **negative** amount. Only available once the refund is finalized and the final settlement amount has been determined.  For refunds not directly processed by Mollie (e.g. PayPal), the settlement amount is zero.
     #[serde(rename = "settlementAmount", skip_serializing_if = "Option::is_none")]
     pub settlement_amount: Option<models::AmountNullable>,
     #[serde(rename = "metadata", deserialize_with = "Option::deserialize")]
     pub metadata: Option<models::Metadata>,
+    /// The unique identifier of the payment this refund was created for. The full payment object can be retrieved via the payment URL in the `_links` object.
     #[serde(rename = "paymentId", skip_serializing_if = "Option::is_none")]
     pub payment_id: Option<String>,
+    /// The identifier referring to the settlement this refund was settled with. This field is omitted if the refund is not settled (yet).
     #[serde(rename = "settlementId", skip_serializing_if = "Option::is_none")]
     pub settlement_id: Option<String>,
     #[serde(rename = "status")]
@@ -48,7 +51,7 @@ pub struct EntityRefund {
     /// *This feature is only available to marketplace operators.*  When creating refunds for *routed* payments, by default the full amount is deducted from your balance.  If you want to pull back funds from the connected merchant(s), you can use this parameter to specify what amount needs to be reversed from which merchant(s).  If you simply want to fully reverse the routed funds, you can also use the `reverseRouting` parameter instead.
     #[serde(rename = "routingReversals", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
     pub routing_reversals: Option<Option<Vec<models::EntityRefundRoutingReversalsInner>>>,
-    /// Whether to create the entity in test mode or live mode.  Most API credentials are specifically created for either live mode or test mode, in which case this parameter can be omitted. For organization-level credentials such as OAuth access tokens, you can enable test mode by setting `testmode` to `true`.
+    /// Whether to create the entity in test mode or live mode.  Most API credentials are specifically created for either live mode or test mode, in which case this parameter must not be sent. For organization-level credentials such as OAuth access tokens, you can enable test mode by setting `testmode` to `true`.
     #[serde(rename = "testmode", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
     pub testmode: Option<Option<bool>>,
     #[serde(rename = "_links")]

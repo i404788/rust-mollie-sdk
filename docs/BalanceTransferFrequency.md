@@ -4,6 +4,7 @@
 
 | Name | Value |
 |---- | -----|
+| EveryDay | every-day |
 | Daily | daily |
 | EveryMonday | every-monday |
 | EveryTuesday | every-tuesday |
@@ -11,6 +12,7 @@
 | EveryThursday | every-thursday |
 | EveryFriday | every-friday |
 | Monthly | monthly |
+| RevenueDay | revenue-day |
 | Never | never |
 
 

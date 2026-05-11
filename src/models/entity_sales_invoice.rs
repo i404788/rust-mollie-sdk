@@ -16,15 +16,18 @@ pub struct EntitySalesInvoice {
     /// Indicates the response contains a sales invoice object. Will always contain the string `sales-invoice` for this endpoint.
     #[serde(rename = "resource", skip_serializing_if = "Option::is_none")]
     pub resource: Option<String>,
+    /// The identifier uniquely referring to this invoice. Example: `invoice_4Y0eZitmBnQ6IDoMqZQKh`.
     #[serde(rename = "id", skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
-    /// Whether to create the entity in test mode or live mode.  Most API credentials are specifically created for either live mode or test mode, in which case this parameter can be omitted. For organization-level credentials such as OAuth access tokens, you can enable test mode by setting `testmode` to `true`.
+    #[serde(rename = "mode", skip_serializing_if = "Option::is_none")]
+    pub mode: Option<models::Mode>,
+    /// Whether to create the entity in test mode or live mode.  Most API credentials are specifically created for either live mode or test mode, in which case this parameter must not be sent. For organization-level credentials such as OAuth access tokens, you can enable test mode by setting `testmode` to `true`.
     #[serde(rename = "testmode", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
     pub testmode: Option<Option<bool>>,
     /// When issued, an invoice number will be set for the sales invoice.
     #[serde(rename = "invoiceNumber", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
     pub invoice_number: Option<Option<String>>,
-    /// The identifier referring to the [profile](get-profile) this entity belongs to.  Most API credentials are linked to a single profile. In these cases the `profileId` can be omitted in the creation request. For organization-level credentials such as OAuth access tokens however, the `profileId` parameter is required.
+    /// The identifier referring to the [profile](get-profile) this entity belongs to.  Most API credentials are linked to a single profile. In these cases the `profileId` must not be sent in the creation request. For organization-level credentials such as OAuth access tokens however, the `profileId` parameter is required.
     #[serde(rename = "profileId", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
     pub profile_id: Option<Option<String>>,
     #[serde(rename = "status", skip_serializing_if = "Option::is_none")]
@@ -38,12 +41,11 @@ pub struct EntitySalesInvoice {
     pub memo: Option<Option<String>>,
     /// Provide any data you like as a JSON object. We will save the data alongside the entity. Whenever you fetch the entity with our API, we will also include the metadata. You can use up to approximately 1kB.
     #[serde(rename = "metadata", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
-    pub metadata: Option<Option<serde_json::Value>>,
+    pub metadata: Option<Option<std::collections::HashMap<String, serde_json::Value>>>,
     #[serde(rename = "paymentTerm", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
     pub payment_term: Option<Option<models::SalesInvoicePaymentTerm>>,
-    /// Used when setting an invoice to status of `paid`, and will store a payment that fully pays the invoice with the provided details. Required for `paid` status.
-    #[serde(rename = "paymentDetails", skip_serializing_if = "Option::is_none")]
-    pub payment_details: Option<models::SalesInvoicePaymentDetails>,
+    #[serde(rename = "paymentDetails", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
+    pub payment_details: Option<Option<serde_json::Value>>,
     /// Used when setting an invoice to status of either `issued` or `paid`. Will be used to issue the invoice to the recipient with the provided `subject` and `body`. Required for `issued` status.
     #[serde(rename = "emailDetails", skip_serializing_if = "Option::is_none")]
     pub email_details: Option<models::SalesInvoiceEmailDetails>,
@@ -64,6 +66,9 @@ pub struct EntitySalesInvoice {
     /// The discount to be applied to the entire invoice, applied on top of any line item discounts.
     #[serde(rename = "discount", skip_serializing_if = "Option::is_none")]
     pub discount: Option<models::SalesInvoiceDiscount>,
+    /// This indicates whether the invoice is an e-invoice. The default value is `false` and can't be changed after the invoice has been issued. When `emailDetails` is provided, an additional email is sent to the recipient.  E-invoicing is only available for merchants based in Belgium, Germany, and the Netherlands, and only when the recipient is also located in one of these countries.
+    #[serde(rename = "isEInvoice", skip_serializing_if = "Option::is_none")]
+    pub is_e_invoice: Option<bool>,
     /// The amount that is left to be paid.
     #[serde(rename = "amountDue", skip_serializing_if = "Option::is_none")]
     pub amount_due: Option<models::Amount>,
@@ -100,6 +105,7 @@ impl EntitySalesInvoice {
         EntitySalesInvoice {
             resource: None,
             id: None,
+            mode: None,
             testmode: None,
             invoice_number: None,
             profile_id: None,
@@ -117,6 +123,7 @@ impl EntitySalesInvoice {
             recipient: None,
             lines: None,
             discount: None,
+            is_e_invoice: None,
             amount_due: None,
             subtotal_amount: None,
             total_amount: None,

@@ -16,15 +16,16 @@ pub struct MandateRequest {
     /// Indicates the response contains a mandate object. Will always contain the string `mandate` for this endpoint.
     #[serde(rename = "resource", skip_serializing_if = "Option::is_none")]
     pub resource: Option<String>,
+    /// The identifier uniquely referring to this mandate. Example: `mdt_pWUnw6pkBN`.
     #[serde(rename = "id", skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
     #[serde(rename = "mode", skip_serializing_if = "Option::is_none")]
     pub mode: Option<models::Mode>,
-    #[serde(rename = "method", skip_serializing_if = "Option::is_none")]
-    pub method: Option<models::MandateMethod>,
+    #[serde(rename = "method")]
+    pub method: models::MandateMethod,
     /// The customer's name.
-    #[serde(rename = "consumerName", skip_serializing_if = "Option::is_none")]
-    pub consumer_name: Option<String>,
+    #[serde(rename = "consumerName")]
+    pub consumer_name: String,
     /// The customer's IBAN. Required for SEPA Direct Debit mandates.
     #[serde(rename = "consumerAccount", skip_serializing_if = "Option::is_none")]
     pub consumer_account: Option<String>,
@@ -48,14 +49,18 @@ pub struct MandateRequest {
     /// The Vault ID given by PayPal. For example: `8kk8451t`. Required for PayPal mandates. Must provide either this field or `paypalBillingAgreementId`, but not both.
     #[serde(rename = "payPalVaultId", skip_serializing_if = "Option::is_none")]
     pub pay_pal_vault_id: Option<String>,
+    /// An array defining the eligible use cases for the mandate. This field will always be  present and can contain one or both of the following values:
+    #[serde(rename = "scopes", skip_serializing_if = "Option::is_none")]
+    pub scopes: Option<Vec<models::MandateScopes>>,
     #[serde(rename = "status", skip_serializing_if = "Option::is_none")]
     pub status: Option<models::MandateStatus>,
+    /// The identifier referring to the [customer](get-customer) this mandate was linked to.
     #[serde(rename = "customerId", skip_serializing_if = "Option::is_none")]
     pub customer_id: Option<String>,
     /// The entity's date and time of creation, in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format.
     #[serde(rename = "createdAt", skip_serializing_if = "Option::is_none")]
     pub created_at: Option<String>,
-    /// Whether to create the entity in test mode or live mode.  Most API credentials are specifically created for either live mode or test mode, in which case this parameter can be omitted. For organization-level credentials such as OAuth access tokens, you can enable test mode by setting `testmode` to `true`.
+    /// Whether to create the entity in test mode or live mode.  Most API credentials are specifically created for either live mode or test mode, in which case this parameter must not be sent. For organization-level credentials such as OAuth access tokens, you can enable test mode by setting `testmode` to `true`.
     #[serde(rename = "testmode", skip_serializing_if = "Option::is_none")]
     pub testmode: Option<bool>,
     #[serde(rename = "_links", skip_serializing_if = "Option::is_none")]
@@ -63,13 +68,13 @@ pub struct MandateRequest {
 }
 
 impl MandateRequest {
-    pub fn new() -> MandateRequest {
+    pub fn new(method: models::MandateMethod, consumer_name: String) -> MandateRequest {
         MandateRequest {
             resource: None,
             id: None,
             mode: None,
-            method: None,
-            consumer_name: None,
+            method,
+            consumer_name,
             consumer_account: None,
             consumer_bic: None,
             consumer_email: None,
@@ -78,6 +83,7 @@ impl MandateRequest {
             mandate_reference: None,
             paypal_billing_agreement_id: None,
             pay_pal_vault_id: None,
+            scopes: None,
             status: None,
             customer_id: None,
             created_at: None,

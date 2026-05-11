@@ -16,6 +16,7 @@ pub struct CreatePaymentLinkRequest {
     /// Indicates the response contains a payment link object. Will always contain the string `payment-link` for this endpoint.
     #[serde(rename = "resource", skip_serializing_if = "Option::is_none")]
     pub resource: Option<String>,
+    /// The identifier uniquely referring to this payment link. Example: `pl_4Y0eZitmBnQ6IDoMqZQKh`.
     #[serde(rename = "id", skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
     #[serde(rename = "mode", skip_serializing_if = "Option::is_none")]
@@ -47,7 +48,7 @@ pub struct CreatePaymentLinkRequest {
     /// The customer's shipping address details. We advise to provide these details to improve fraud protection and conversion.  Should include `email` or a valid postal address consisting of `streetAndNumber`, `postalCode`, `city` and `country`.
     #[serde(rename = "shippingAddress", skip_serializing_if = "Option::is_none")]
     pub shipping_address: Option<models::PaymentAddress>,
-    /// The identifier referring to the [profile](get-profile) this entity belongs to.  Most API credentials are linked to a single profile. In these cases the `profileId` can be omitted in the creation request. For organization-level credentials such as OAuth access tokens however, the `profileId` parameter is required.
+    /// The identifier referring to the [profile](get-profile) this entity belongs to.  Most API credentials are linked to a single profile. In these cases the `profileId` must not be sent in the creation request. For organization-level credentials such as OAuth access tokens however, the `profileId` parameter is required.
     #[serde(rename = "profileId", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
     pub profile_id: Option<Option<String>>,
     /// Indicates whether the payment link is reusable. If this field is set to `true`, customers can make multiple payments using the same link.  If no value is specified, the field defaults to `false`, allowing only a single payment per link.
@@ -62,9 +63,9 @@ pub struct CreatePaymentLinkRequest {
     /// The date and time the payment link is set to expire, in ISO 8601 format. If no expiry date was provided up front, the payment link will not expire automatically.
     #[serde(rename = "expiresAt", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
     pub expires_at: Option<Option<String>>,
-    /// An array of payment methods that are allowed to be used for this payment link. When this parameter is not provided or is an empty array, all enabled payment methods will be available.  Enum: 'applepay', 'bancomatpay', 'bancontact', 'banktransfer', 'belfius', 'blik', 'creditcard', 'eps', 'giftcard', 'ideal', 'kbc', 'mybank', 'paybybank', 'paypal', 'paysafecard', 'pointofsale', 'przelewy24', 'satispay', 'trustly', 'twint', 'in3', 'riverty', 'klarna', 'billie'.
+    /// An array of payment methods that are allowed to be used for this payment link. When this parameter is not provided or is an empty array, all enabled payment methods will be available.
     #[serde(rename = "allowedMethods", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
-    pub allowed_methods: Option<Option<Vec<String>>>,
+    pub allowed_methods: Option<Option<Vec<models::PaymentLinkMethod>>>,
     #[serde(rename = "applicationFee", skip_serializing_if = "Option::is_none")]
     pub application_fee: Option<models::CreatePaymentLinkRequestApplicationFee>,
     /// If set to `first`, a payment mandate is established right after a payment is made by the customer.  Defaults to `oneoff`, which is a regular payment link and will not establish a mandate after payment.  The mandate ID can be retrieved by making a call to the [Payment Link Payments Endpoint](get-payment-link-payments).
@@ -73,7 +74,7 @@ pub struct CreatePaymentLinkRequest {
     /// **Only relevant when `sequenceType` is set to `first`**  The ID of the [customer](get-customer) the payment link is being created for. If a value is not provided, the customer will be required to input relevant information which will be used to establish a mandate after the payment is made.
     #[serde(rename = "customerId", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
     pub customer_id: Option<Option<String>>,
-    /// Whether to create the entity in test mode or live mode.  Most API credentials are specifically created for either live mode or test mode, in which case this parameter can be omitted. For organization-level credentials such as OAuth access tokens, you can enable test mode by setting `testmode` to `true`.
+    /// Whether to create the entity in test mode or live mode.  Most API credentials are specifically created for either live mode or test mode, in which case this parameter must not be sent. For organization-level credentials such as OAuth access tokens, you can enable test mode by setting `testmode` to `true`.
     #[serde(rename = "testmode", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
     pub testmode: Option<Option<bool>>,
     #[serde(rename = "_links", skip_serializing_if = "Option::is_none")]

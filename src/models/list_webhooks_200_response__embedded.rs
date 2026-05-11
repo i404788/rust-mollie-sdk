@@ -15,11 +15,11 @@ use serde::{Deserialize, Serialize};
 pub struct ListWebhooks200ResponseEmbedded {
     /// A list of webhooks.
     #[serde(rename = "webhooks")]
-    pub webhooks: Vec<models::EntityWebhook>,
+    pub webhooks: Vec<models::ListEntityWebhook>,
 }
 
 impl ListWebhooks200ResponseEmbedded {
-    pub fn new(webhooks: Vec<models::EntityWebhook>) -> ListWebhooks200ResponseEmbedded {
+    pub fn new(webhooks: Vec<models::ListEntityWebhook>) -> ListWebhooks200ResponseEmbedded {
         ListWebhooks200ResponseEmbedded {
             webhooks,
         }

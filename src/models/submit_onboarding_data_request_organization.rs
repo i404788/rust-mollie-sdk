@@ -25,9 +25,8 @@ pub struct SubmitOnboardingDataRequestOrganization {
     /// The VAT number of the organization, if based in the European Union or in The United Kingdom. VAT numbers are verified against the international registry *VIES*.  The field can be omitted for merchants residing in other countries.
     #[serde(rename = "vatNumber", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
     pub vat_number: Option<Option<String>>,
-    /// Mollie applies Dutch VAT for merchants based in The Netherlands, British VAT for merchants based in The United Kingdom, and shifted VAT for merchants in the European Union.  The field can be omitted for merchants residing in other countries.
     #[serde(rename = "vatRegulation", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
-    pub vat_regulation: Option<Option<VatRegulation>>,
+    pub vat_regulation: Option<Option<models::OnboardingVatRegulation>>,
 }
 
 impl SubmitOnboardingDataRequestOrganization {
@@ -39,22 +38,6 @@ impl SubmitOnboardingDataRequestOrganization {
             vat_number: None,
             vat_regulation: None,
         }
-    }
-}
-/// Mollie applies Dutch VAT for merchants based in The Netherlands, British VAT for merchants based in The United Kingdom, and shifted VAT for merchants in the European Union.  The field can be omitted for merchants residing in other countries.
-#[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize)]
-pub enum VatRegulation {
-    #[serde(rename = "dutch")]
-    Dutch,
-    #[serde(rename = "british")]
-    British,
-    #[serde(rename = "shifted")]
-    Shifted,
-}
-
-impl Default for VatRegulation {
-    fn default() -> VatRegulation {
-        Self::Dutch
     }
 }
 

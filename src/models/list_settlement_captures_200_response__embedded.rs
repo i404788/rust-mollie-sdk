@@ -15,11 +15,11 @@ use serde::{Deserialize, Serialize};
 pub struct ListSettlementCaptures200ResponseEmbedded {
     /// An array of capture objects.
     #[serde(rename = "captures")]
-    pub captures: Vec<models::CaptureResponse>,
+    pub captures: Vec<models::ListSettlementCaptureResponse>,
 }
 
 impl ListSettlementCaptures200ResponseEmbedded {
-    pub fn new(captures: Vec<models::CaptureResponse>) -> ListSettlementCaptures200ResponseEmbedded {
+    pub fn new(captures: Vec<models::ListSettlementCaptureResponse>) -> ListSettlementCaptures200ResponseEmbedded {
         ListSettlementCaptures200ResponseEmbedded {
             captures,
         }

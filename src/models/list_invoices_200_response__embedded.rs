@@ -14,14 +14,14 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
 pub struct ListInvoices200ResponseEmbedded {
     /// An array of invoice objects. For a complete reference of the invoice object, refer to the [Get invoice endpoint](get-invoice) documentation.
-    #[serde(rename = "invoices", skip_serializing_if = "Option::is_none")]
-    pub invoices: Option<Vec<serde_json::Value>>,
+    #[serde(rename = "invoices")]
+    pub invoices: Vec<models::ListEntityInvoice>,
 }
 
 impl ListInvoices200ResponseEmbedded {
-    pub fn new() -> ListInvoices200ResponseEmbedded {
+    pub fn new(invoices: Vec<models::ListEntityInvoice>) -> ListInvoices200ResponseEmbedded {
         ListInvoices200ResponseEmbedded {
-            invoices: None,
+            invoices,
         }
     }
 }

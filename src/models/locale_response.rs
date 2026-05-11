@@ -11,8 +11,8 @@
 use crate::models;
 use serde::{Deserialize, Serialize};
 
-/// LocaleResponse : Allows you to preset the language to be used.
-/// Allows you to preset the language to be used.
+/// LocaleResponse : Sets the language for customer-facing content and communications.
+/// Sets the language for customer-facing content and communications.
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize)]
 pub enum LocaleResponse {
     #[serde(rename = "en_US")]
@@ -29,10 +29,14 @@ pub enum LocaleResponse {
     DeAt,
     #[serde(rename = "de_CH")]
     DeCh,
+    #[serde(rename = "de_LU")]
+    DeLu,
     #[serde(rename = "fr_FR")]
     FrFr,
     #[serde(rename = "fr_BE")]
     FrBe,
+    #[serde(rename = "fr_LU")]
+    FrLu,
     #[serde(rename = "es_ES")]
     EsEs,
     #[serde(rename = "ca_ES")]
@@ -59,6 +63,8 @@ pub enum LocaleResponse {
     LvLv,
     #[serde(rename = "lt_LT")]
     LtLt,
+    #[serde(rename = "null")]
+    Null,
 
 }
 
@@ -72,8 +78,10 @@ impl std::fmt::Display for LocaleResponse {
             Self::DeDe => write!(f, "de_DE"),
             Self::DeAt => write!(f, "de_AT"),
             Self::DeCh => write!(f, "de_CH"),
+            Self::DeLu => write!(f, "de_LU"),
             Self::FrFr => write!(f, "fr_FR"),
             Self::FrBe => write!(f, "fr_BE"),
+            Self::FrLu => write!(f, "fr_LU"),
             Self::EsEs => write!(f, "es_ES"),
             Self::CaEs => write!(f, "ca_ES"),
             Self::PtPt => write!(f, "pt_PT"),
@@ -87,6 +95,7 @@ impl std::fmt::Display for LocaleResponse {
             Self::PlPl => write!(f, "pl_PL"),
             Self::LvLv => write!(f, "lv_LV"),
             Self::LtLt => write!(f, "lt_LT"),
+            Self::Null => write!(f, "null"),
         }
     }
 }

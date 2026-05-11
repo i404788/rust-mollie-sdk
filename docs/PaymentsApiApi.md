@@ -1,15 +1,15 @@
 # \PaymentsApiApi
 
-All URIs are relative to *https://api.mollie.com/v2*
+All URIs are relative to *https://api.mollie.com*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**cancel_payment**](PaymentsApiApi.md#cancel_payment) | **DELETE** /payments/{paymentId} | Cancel payment
-[**create_payment**](PaymentsApiApi.md#create_payment) | **POST** /payments | Create payment
-[**get_payment**](PaymentsApiApi.md#get_payment) | **GET** /payments/{paymentId} | Get payment
-[**list_payments**](PaymentsApiApi.md#list_payments) | **GET** /payments | List payments
-[**release_authorization**](PaymentsApiApi.md#release_authorization) | **POST** /payments/{paymentId}/release-authorization | Release payment authorization
-[**update_payment**](PaymentsApiApi.md#update_payment) | **PATCH** /payments/{paymentId} | Update payment
+[**cancel_payment**](PaymentsApiApi.md#cancel_payment) | **DELETE** /v2/payments/{paymentId} | Cancel payment
+[**create_payment**](PaymentsApiApi.md#create_payment) | **POST** /v2/payments | Create payment
+[**get_payment**](PaymentsApiApi.md#get_payment) | **GET** /v2/payments/{paymentId} | Get payment
+[**list_payments**](PaymentsApiApi.md#list_payments) | **GET** /v2/payments | List payments
+[**release_authorization**](PaymentsApiApi.md#release_authorization) | **POST** /v2/payments/{paymentId}/release-authorization | Release payment authorization
+[**update_payment**](PaymentsApiApi.md#update_payment) | **PATCH** /v2/payments/{paymentId} | Update payment
 
 
 
@@ -35,7 +35,7 @@ Name | Type | Description  | Required | Notes
 
 ### Authorization
 
-[apiKey](../README.md#apiKey), [oAuth](../README.md#oAuth)
+[apiKey](../README.md#apiKey), [oAuth](../README.md#oAuth), [organizationAccessToken](../README.md#organizationAccessToken)
 
 ### HTTP request headers
 
@@ -67,7 +67,7 @@ Name | Type | Description  | Required | Notes
 
 ### Authorization
 
-[apiKey](../README.md#apiKey), [oAuth](../README.md#oAuth)
+[apiKey](../README.md#apiKey), [oAuth](../README.md#oAuth), [organizationAccessToken](../README.md#organizationAccessToken)
 
 ### HTTP request headers
 
@@ -92,7 +92,7 @@ Name | Type | Description  | Required | Notes
 **payment_id** | **String** | Provide the ID of the related payment. | [required] |
 **include** | Option<**String**> | This endpoint allows you to include additional information via the `include` query string parameter. |  |
 **embed** | Option<**String**> | This endpoint allows embedding related API items by appending the following values via the `embed` query string parameter. |  |
-**testmode** | Option<**bool**> | Most API credentials are specifically created for either live mode or test mode. In those cases the `testmode` query parameter can be omitted. For organization-level credentials such as OAuth access tokens, you can enable test mode by setting the `testmode` query parameter to `true`.  Test entities cannot be retrieved when the endpoint is set to live mode, and vice versa. |  |
+**testmode** | Option<**bool**> | Most API credentials are specifically created for either live mode or test mode. In those cases the `testmode` query parameter must not be sent. For organization-level credentials such as OAuth access tokens, you can enable test mode by setting the `testmode` query parameter to `true`.  Test entities cannot be retrieved when the endpoint is set to live mode, and vice versa. |  |
 **idempotency_key** | Option<**String**> | A unique key to ensure idempotent requests. This key should be a UUID v4 string. |  |
 
 ### Return type
@@ -101,7 +101,7 @@ Name | Type | Description  | Required | Notes
 
 ### Authorization
 
-[apiKey](../README.md#apiKey), [oAuth](../README.md#oAuth)
+[apiKey](../README.md#apiKey), [oAuth](../README.md#oAuth), [organizationAccessToken](../README.md#organizationAccessToken)
 
 ### HTTP request headers
 
@@ -113,7 +113,7 @@ Name | Type | Description  | Required | Notes
 
 ## list_payments
 
-> models::ListSettlementPayments200Response list_payments(from, limit, sort, profile_id, testmode, idempotency_key)
+> models::ListPayments200Response list_payments(from, limit, sort, profile_id, testmode, idempotency_key)
 List payments
 
 Retrieve all payments created with the current website profile.  The results are paginated.
@@ -125,18 +125,18 @@ Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
 **from** | Option<**String**> | Provide an ID to start the result set from the item with the given ID and onwards. This allows you to paginate the result set. |  |
 **limit** | Option<**i32**> | The maximum number of items to return. Defaults to 50 items. |  |
-**sort** | Option<**String**> | Used for setting the direction of the result set. Defaults to descending order, meaning the results are ordered from newest to oldest. |  |
-**profile_id** | Option<**String**> | The identifier referring to the [profile](get-profile) you wish to retrieve the resources for.  Most API credentials are linked to a single profile. In these cases the `profileId` can be omitted. For organization-level credentials such as OAuth access tokens however, the `profileId` parameter is required. |  |
-**testmode** | Option<**bool**> | Most API credentials are specifically created for either live mode or test mode. In those cases the `testmode` query parameter can be omitted. For organization-level credentials such as OAuth access tokens, you can enable test mode by setting the `testmode` query parameter to `true`.  Test entities cannot be retrieved when the endpoint is set to live mode, and vice versa. |  |
+**sort** | Option<[**Sorting**](Sorting.md)> | Used for setting the direction of the result set. Defaults to descending order, meaning the results are ordered from newest to oldest. |  |
+**profile_id** | Option<**String**> | The identifier referring to the [profile](get-profile) you wish to retrieve the resources for.  Most API credentials are linked to a single profile. In these cases the `profileId` must not be sent. For organization-level credentials such as OAuth access tokens however, the `profileId` parameter is required. |  |
+**testmode** | Option<**bool**> | Most API credentials are specifically created for either live mode or test mode. In those cases the `testmode` query parameter must not be sent. For organization-level credentials such as OAuth access tokens, you can enable test mode by setting the `testmode` query parameter to `true`.  Test entities cannot be retrieved when the endpoint is set to live mode, and vice versa. |  |
 **idempotency_key** | Option<**String**> | A unique key to ensure idempotent requests. This key should be a UUID v4 string. |  |
 
 ### Return type
 
-[**models::ListSettlementPayments200Response**](list_settlement_payments_200_response.md)
+[**models::ListPayments200Response**](list_payments_200_response.md)
 
 ### Authorization
 
-[apiKey](../README.md#apiKey), [oAuth](../README.md#oAuth)
+[apiKey](../README.md#apiKey), [oAuth](../README.md#oAuth), [organizationAccessToken](../README.md#organizationAccessToken)
 
 ### HTTP request headers
 
@@ -148,7 +148,7 @@ Name | Type | Description  | Required | Notes
 
 ## release_authorization
 
-> serde_json::Value release_authorization(payment_id, idempotency_key, release_authorization_request)
+> release_authorization(payment_id, idempotency_key, release_authorization_request)
 Release payment authorization
 
 Releases the full remaining authorized amount. Call this endpoint when you will not be making any additional captures. Payment authorizations may also be released manually from the Mollie Dashboard.  Mollie will do its best to process release requests, but it is not guaranteed that it will succeed. It is up to the issuing bank if and when the hold will be released.  If the request does succeed, the payment status will change to `canceled` for payments without captures. If there is a successful capture, the payment will transition to `paid`.
@@ -164,11 +164,11 @@ Name | Type | Description  | Required | Notes
 
 ### Return type
 
-[**serde_json::Value**](serde_json::Value.md)
+ (empty response body)
 
 ### Authorization
 
-[apiKey](../README.md#apiKey), [oAuth](../README.md#oAuth)
+[apiKey](../README.md#apiKey), [oAuth](../README.md#oAuth), [organizationAccessToken](../README.md#organizationAccessToken)
 
 ### HTTP request headers
 
@@ -200,7 +200,7 @@ Name | Type | Description  | Required | Notes
 
 ### Authorization
 
-[apiKey](../README.md#apiKey), [oAuth](../README.md#oAuth)
+[apiKey](../README.md#apiKey), [oAuth](../README.md#oAuth), [organizationAccessToken](../README.md#organizationAccessToken)
 
 ### HTTP request headers
 

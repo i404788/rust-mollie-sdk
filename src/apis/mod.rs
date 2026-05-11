@@ -111,6 +111,7 @@ impl From<&str> for ContentType {
     }
 }
 
+pub mod accounts_api_api;
 pub mod balance_transfers_api_api;
 pub mod balances_api_api;
 pub mod capabilities_api_api;
@@ -123,6 +124,7 @@ pub mod delayed_routing_api_api;
 pub mod invoices_api_api;
 pub mod mandates_api_api;
 pub mod methods_api_api;
+pub mod o_auth_api_api;
 pub mod onboarding_api_api;
 pub mod organizations_api_api;
 pub mod payment_links_api_api;
@@ -131,9 +133,13 @@ pub mod permissions_api_api;
 pub mod profiles_api_api;
 pub mod refunds_api_api;
 pub mod sales_invoices_api_api;
+pub mod sessions_api_api;
 pub mod settlements_api_api;
 pub mod subscriptions_api_api;
 pub mod terminals_api_api;
+pub mod transfers_api_api;
+pub mod unmatched_credit_transfers_api_api;
+pub mod verify_payee_api_api;
 pub mod wallets_api_api;
 pub mod webhook_events_api_api;
 pub mod webhooks_api_api;

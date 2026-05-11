@@ -49,7 +49,7 @@ pub async fn create_capture(configuration: &configuration::Configuration, paymen
     let p_header_idempotency_key = idempotency_key;
     let p_body_entity_capture = entity_capture;
 
-    let uri_str = format!("{}/payments/{paymentId}/captures", configuration.base_path, paymentId=crate::apis::urlencode(p_path_payment_id));
+    let uri_str = format!("{}/v2/payments/{paymentId}/captures", configuration.base_path, paymentId=crate::apis::urlencode(p_path_payment_id));
     let mut req_builder = configuration.client.request(reqwest::Method::POST, &uri_str);
 
     if let Some(ref user_agent) = configuration.user_agent {
@@ -62,6 +62,9 @@ pub async fn create_capture(configuration: &configuration::Configuration, paymen
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
     if let Some(ref token) = configuration.oauth_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
     req_builder = req_builder.json(&p_body_entity_capture);
@@ -100,7 +103,7 @@ pub async fn get_capture(configuration: &configuration::Configuration, payment_i
     let p_query_testmode = testmode;
     let p_header_idempotency_key = idempotency_key;
 
-    let uri_str = format!("{}/payments/{paymentId}/captures/{captureId}", configuration.base_path, paymentId=crate::apis::urlencode(p_path_payment_id), captureId=crate::apis::urlencode(p_path_capture_id));
+    let uri_str = format!("{}/v2/payments/{paymentId}/captures/{captureId}", configuration.base_path, paymentId=crate::apis::urlencode(p_path_payment_id), captureId=crate::apis::urlencode(p_path_capture_id));
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
     if let Some(ref param_value) = p_query_embed {
@@ -119,6 +122,9 @@ pub async fn get_capture(configuration: &configuration::Configuration, payment_i
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
     if let Some(ref token) = configuration.oauth_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
 
@@ -148,7 +154,7 @@ pub async fn get_capture(configuration: &configuration::Configuration, payment_i
 }
 
 /// Retrieve a list of all captures created for a specific payment.  The results are paginated.
-pub async fn list_captures(configuration: &configuration::Configuration, payment_id: &str, from: Option<&str>, limit: Option<i32>, embed: Option<&str>, testmode: Option<bool>, idempotency_key: Option<&str>) -> Result<models::ListSettlementCaptures200Response, Error<ListCapturesError>> {
+pub async fn list_captures(configuration: &configuration::Configuration, payment_id: &str, from: Option<&str>, limit: Option<i32>, embed: Option<&str>, testmode: Option<bool>, idempotency_key: Option<&str>) -> Result<models::ListCaptures200Response, Error<ListCapturesError>> {
     // add a prefix to parameters to efficiently prevent name collisions
     let p_path_payment_id = payment_id;
     let p_query_from = from;
@@ -157,7 +163,7 @@ pub async fn list_captures(configuration: &configuration::Configuration, payment
     let p_query_testmode = testmode;
     let p_header_idempotency_key = idempotency_key;
 
-    let uri_str = format!("{}/payments/{paymentId}/captures", configuration.base_path, paymentId=crate::apis::urlencode(p_path_payment_id));
+    let uri_str = format!("{}/v2/payments/{paymentId}/captures", configuration.base_path, paymentId=crate::apis::urlencode(p_path_payment_id));
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
     if let Some(ref param_value) = p_query_from {
@@ -184,6 +190,9 @@ pub async fn list_captures(configuration: &configuration::Configuration, payment
     if let Some(ref token) = configuration.oauth_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
+    if let Some(ref token) = configuration.bearer_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
 
     let req = req_builder.build()?;
     let resp = configuration.client.execute(req).await?;
@@ -200,8 +209,8 @@ pub async fn list_captures(configuration: &configuration::Configuration, payment
         let content = resp.text().await?;
         match content_type {
             ContentType::Json => serde_json::from_str(&content).map_err(Error::from),
-            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `models::ListSettlementCaptures200Response`"))),
-            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `models::ListSettlementCaptures200Response`")))),
+            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `models::ListCaptures200Response`"))),
+            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `models::ListCaptures200Response`")))),
         }
     } else {
         let content = resp.text().await?;

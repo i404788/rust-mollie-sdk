@@ -46,7 +46,7 @@ pub async fn create_connect_balance_transfer(configuration: &configuration::Conf
     let p_header_idempotency_key = idempotency_key;
     let p_body_entity_balance_transfer = entity_balance_transfer;
 
-    let uri_str = format!("{}/connect/balance-transfers", configuration.base_path);
+    let uri_str = format!("{}/v2/connect/balance-transfers", configuration.base_path);
     let mut req_builder = configuration.client.request(reqwest::Method::POST, &uri_str);
 
     if let Some(ref user_agent) = configuration.user_agent {
@@ -56,6 +56,9 @@ pub async fn create_connect_balance_transfer(configuration: &configuration::Conf
         req_builder = req_builder.header("idempotency-key", param_value.to_string());
     }
     if let Some(ref token) = configuration.oauth_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
     req_builder = req_builder.json(&p_body_entity_balance_transfer);
@@ -86,13 +89,13 @@ pub async fn create_connect_balance_transfer(configuration: &configuration::Conf
 }
 
 /// Retrieve a single Connect balance transfer object by its ID.
-pub async fn get_connect_balance_transfer(configuration: &configuration::Configuration, id: &str, testmode: Option<bool>, idempotency_key: Option<&str>) -> Result<models::EntityBalanceTransferResponse, Error<GetConnectBalanceTransferError>> {
+pub async fn get_connect_balance_transfer(configuration: &configuration::Configuration, balance_transfer_id: &str, testmode: Option<bool>, idempotency_key: Option<&str>) -> Result<models::EntityBalanceTransferResponse, Error<GetConnectBalanceTransferError>> {
     // add a prefix to parameters to efficiently prevent name collisions
-    let p_path_id = id;
+    let p_path_balance_transfer_id = balance_transfer_id;
     let p_query_testmode = testmode;
     let p_header_idempotency_key = idempotency_key;
 
-    let uri_str = format!("{}/connect/balance-transfers/{id}", configuration.base_path, id=crate::apis::urlencode(p_path_id));
+    let uri_str = format!("{}/v2/connect/balance-transfers/{balanceTransferId}", configuration.base_path, balanceTransferId=crate::apis::urlencode(p_path_balance_transfer_id));
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
     if let Some(ref param_value) = p_query_testmode {
@@ -105,6 +108,9 @@ pub async fn get_connect_balance_transfer(configuration: &configuration::Configu
         req_builder = req_builder.header("idempotency-key", param_value.to_string());
     }
     if let Some(ref token) = configuration.oauth_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
 
@@ -134,7 +140,7 @@ pub async fn get_connect_balance_transfer(configuration: &configuration::Configu
 }
 
 /// Returns a paginated list of balance transfers associated with your organization. These may be a balance transfer that was received or sent from your balance, or a balance transfer that you initiated on behalf of your clients. If no balance transfers are available, the resulting array will be empty. This request should never throw an error.
-pub async fn list_connect_balance_transfers(configuration: &configuration::Configuration, from: Option<&str>, limit: Option<i32>, sort: Option<&str>, testmode: Option<bool>, idempotency_key: Option<&str>) -> Result<models::ListConnectBalanceTransfers200Response, Error<ListConnectBalanceTransfersError>> {
+pub async fn list_connect_balance_transfers(configuration: &configuration::Configuration, from: Option<&str>, limit: Option<i32>, sort: Option<models::Sorting>, testmode: Option<bool>, idempotency_key: Option<&str>) -> Result<models::ListConnectBalanceTransfers200Response, Error<ListConnectBalanceTransfersError>> {
     // add a prefix to parameters to efficiently prevent name collisions
     let p_query_from = from;
     let p_query_limit = limit;
@@ -142,7 +148,7 @@ pub async fn list_connect_balance_transfers(configuration: &configuration::Confi
     let p_query_testmode = testmode;
     let p_header_idempotency_key = idempotency_key;
 
-    let uri_str = format!("{}/connect/balance-transfers", configuration.base_path);
+    let uri_str = format!("{}/v2/connect/balance-transfers", configuration.base_path);
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
     if let Some(ref param_value) = p_query_from {
@@ -164,6 +170,9 @@ pub async fn list_connect_balance_transfers(configuration: &configuration::Confi
         req_builder = req_builder.header("idempotency-key", param_value.to_string());
     }
     if let Some(ref token) = configuration.oauth_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
 

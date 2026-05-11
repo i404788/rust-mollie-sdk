@@ -75,7 +75,7 @@ pub async fn cancel_payment(configuration: &configuration::Configuration, paymen
     let p_header_idempotency_key = idempotency_key;
     let p_body_cancel_payment_request = cancel_payment_request;
 
-    let uri_str = format!("{}/payments/{paymentId}", configuration.base_path, paymentId=crate::apis::urlencode(p_path_payment_id));
+    let uri_str = format!("{}/v2/payments/{paymentId}", configuration.base_path, paymentId=crate::apis::urlencode(p_path_payment_id));
     let mut req_builder = configuration.client.request(reqwest::Method::DELETE, &uri_str);
 
     if let Some(ref user_agent) = configuration.user_agent {
@@ -88,6 +88,9 @@ pub async fn cancel_payment(configuration: &configuration::Configuration, paymen
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
     if let Some(ref token) = configuration.oauth_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
     req_builder = req_builder.json(&p_body_cancel_payment_request);
@@ -124,7 +127,7 @@ pub async fn create_payment(configuration: &configuration::Configuration, includ
     let p_header_idempotency_key = idempotency_key;
     let p_body_payment_request = payment_request;
 
-    let uri_str = format!("{}/payments", configuration.base_path);
+    let uri_str = format!("{}/v2/payments", configuration.base_path);
     let mut req_builder = configuration.client.request(reqwest::Method::POST, &uri_str);
 
     if let Some(ref param_value) = p_query_include {
@@ -140,6 +143,9 @@ pub async fn create_payment(configuration: &configuration::Configuration, includ
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
     if let Some(ref token) = configuration.oauth_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
     req_builder = req_builder.json(&p_body_payment_request);
@@ -178,7 +184,7 @@ pub async fn get_payment(configuration: &configuration::Configuration, payment_i
     let p_query_testmode = testmode;
     let p_header_idempotency_key = idempotency_key;
 
-    let uri_str = format!("{}/payments/{paymentId}", configuration.base_path, paymentId=crate::apis::urlencode(p_path_payment_id));
+    let uri_str = format!("{}/v2/payments/{paymentId}", configuration.base_path, paymentId=crate::apis::urlencode(p_path_payment_id));
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
     if let Some(ref param_value) = p_query_include {
@@ -200,6 +206,9 @@ pub async fn get_payment(configuration: &configuration::Configuration, payment_i
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
     if let Some(ref token) = configuration.oauth_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
 
@@ -229,7 +238,7 @@ pub async fn get_payment(configuration: &configuration::Configuration, payment_i
 }
 
 /// Retrieve all payments created with the current website profile.  The results are paginated.
-pub async fn list_payments(configuration: &configuration::Configuration, from: Option<&str>, limit: Option<i32>, sort: Option<&str>, profile_id: Option<&str>, testmode: Option<bool>, idempotency_key: Option<&str>) -> Result<models::ListSettlementPayments200Response, Error<ListPaymentsError>> {
+pub async fn list_payments(configuration: &configuration::Configuration, from: Option<&str>, limit: Option<i32>, sort: Option<models::Sorting>, profile_id: Option<&str>, testmode: Option<bool>, idempotency_key: Option<&str>) -> Result<models::ListPayments200Response, Error<ListPaymentsError>> {
     // add a prefix to parameters to efficiently prevent name collisions
     let p_query_from = from;
     let p_query_limit = limit;
@@ -238,7 +247,7 @@ pub async fn list_payments(configuration: &configuration::Configuration, from: O
     let p_query_testmode = testmode;
     let p_header_idempotency_key = idempotency_key;
 
-    let uri_str = format!("{}/payments", configuration.base_path);
+    let uri_str = format!("{}/v2/payments", configuration.base_path);
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
     if let Some(ref param_value) = p_query_from {
@@ -268,6 +277,9 @@ pub async fn list_payments(configuration: &configuration::Configuration, from: O
     if let Some(ref token) = configuration.oauth_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
+    if let Some(ref token) = configuration.bearer_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
 
     let req = req_builder.build()?;
     let resp = configuration.client.execute(req).await?;
@@ -284,8 +296,8 @@ pub async fn list_payments(configuration: &configuration::Configuration, from: O
         let content = resp.text().await?;
         match content_type {
             ContentType::Json => serde_json::from_str(&content).map_err(Error::from),
-            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `models::ListSettlementPayments200Response`"))),
-            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `models::ListSettlementPayments200Response`")))),
+            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `models::ListPayments200Response`"))),
+            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `models::ListPayments200Response`")))),
         }
     } else {
         let content = resp.text().await?;
@@ -295,13 +307,13 @@ pub async fn list_payments(configuration: &configuration::Configuration, from: O
 }
 
 /// Releases the full remaining authorized amount. Call this endpoint when you will not be making any additional captures. Payment authorizations may also be released manually from the Mollie Dashboard.  Mollie will do its best to process release requests, but it is not guaranteed that it will succeed. It is up to the issuing bank if and when the hold will be released.  If the request does succeed, the payment status will change to `canceled` for payments without captures. If there is a successful capture, the payment will transition to `paid`.
-pub async fn release_authorization(configuration: &configuration::Configuration, payment_id: &str, idempotency_key: Option<&str>, release_authorization_request: Option<models::ReleaseAuthorizationRequest>) -> Result<serde_json::Value, Error<ReleaseAuthorizationError>> {
+pub async fn release_authorization(configuration: &configuration::Configuration, payment_id: &str, idempotency_key: Option<&str>, release_authorization_request: Option<models::ReleaseAuthorizationRequest>) -> Result<(), Error<ReleaseAuthorizationError>> {
     // add a prefix to parameters to efficiently prevent name collisions
     let p_path_payment_id = payment_id;
     let p_header_idempotency_key = idempotency_key;
     let p_body_release_authorization_request = release_authorization_request;
 
-    let uri_str = format!("{}/payments/{paymentId}/release-authorization", configuration.base_path, paymentId=crate::apis::urlencode(p_path_payment_id));
+    let uri_str = format!("{}/v2/payments/{paymentId}/release-authorization", configuration.base_path, paymentId=crate::apis::urlencode(p_path_payment_id));
     let mut req_builder = configuration.client.request(reqwest::Method::POST, &uri_str);
 
     if let Some(ref user_agent) = configuration.user_agent {
@@ -316,26 +328,18 @@ pub async fn release_authorization(configuration: &configuration::Configuration,
     if let Some(ref token) = configuration.oauth_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
+    if let Some(ref token) = configuration.bearer_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
     req_builder = req_builder.json(&p_body_release_authorization_request);
 
     let req = req_builder.build()?;
     let resp = configuration.client.execute(req).await?;
 
     let status = resp.status();
-    let content_type = resp
-        .headers()
-        .get("content-type")
-        .and_then(|v| v.to_str().ok())
-        .unwrap_or("application/octet-stream");
-    let content_type = super::ContentType::from(content_type);
 
     if !status.is_client_error() && !status.is_server_error() {
-        let content = resp.text().await?;
-        match content_type {
-            ContentType::Json => serde_json::from_str(&content).map_err(Error::from),
-            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `serde_json::Value`"))),
-            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `serde_json::Value`")))),
-        }
+        Ok(())
     } else {
         let content = resp.text().await?;
         let entity: Option<ReleaseAuthorizationError> = serde_json::from_str(&content).ok();
@@ -350,7 +354,7 @@ pub async fn update_payment(configuration: &configuration::Configuration, paymen
     let p_header_idempotency_key = idempotency_key;
     let p_body_update_payment_request = update_payment_request;
 
-    let uri_str = format!("{}/payments/{paymentId}", configuration.base_path, paymentId=crate::apis::urlencode(p_path_payment_id));
+    let uri_str = format!("{}/v2/payments/{paymentId}", configuration.base_path, paymentId=crate::apis::urlencode(p_path_payment_id));
     let mut req_builder = configuration.client.request(reqwest::Method::PATCH, &uri_str);
 
     if let Some(ref user_agent) = configuration.user_agent {
@@ -363,6 +367,9 @@ pub async fn update_payment(configuration: &configuration::Configuration, paymen
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
     if let Some(ref token) = configuration.oauth_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
     req_builder = req_builder.json(&p_body_update_payment_request);

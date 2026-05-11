@@ -22,15 +22,11 @@
 | In3 | in3 |
 | Kbc | kbc |
 | Klarna | klarna |
-| Klarnapaylater | klarnapaylater |
-| Klarnapaynow | klarnapaynow |
-| Klarnasliceit | klarnasliceit |
 | Mbway | mbway |
 | Mobilepay | mobilepay |
 | Multibanco | multibanco |
 | Mybank | mybank |
 | Paybybank | paybybank |
-| Payconiq | payconiq |
 | Paypal | paypal |
 | Paysafecard | paysafecard |
 | Pointofsale | pointofsale |
@@ -42,6 +38,10 @@
 | Twint | twint |
 | Vipps | vipps |
 | Voucher | voucher |
+| Klarnapaylater | klarnapaylater |
+| Klarnapaynow | klarnapaynow |
+| Klarnasliceit | klarnasliceit |
+| Payconiq | payconiq |
 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

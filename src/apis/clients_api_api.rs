@@ -34,13 +34,13 @@ pub enum ListClientsError {
 
 
 /// Retrieve a single client by its ID.
-pub async fn get_client(configuration: &configuration::Configuration, id: &str, embed: Option<&str>, idempotency_key: Option<&str>) -> Result<models::ListClients200ResponseEmbeddedClientsInner, Error<GetClientError>> {
+pub async fn get_client(configuration: &configuration::Configuration, organization_id: &str, embed: Option<&str>, idempotency_key: Option<&str>) -> Result<models::GetClient200Response, Error<GetClientError>> {
     // add a prefix to parameters to efficiently prevent name collisions
-    let p_path_id = id;
+    let p_path_organization_id = organization_id;
     let p_query_embed = embed;
     let p_header_idempotency_key = idempotency_key;
 
-    let uri_str = format!("{}/clients/{id}", configuration.base_path, id=crate::apis::urlencode(p_path_id));
+    let uri_str = format!("{}/v2/clients/{organizationId}", configuration.base_path, organizationId=crate::apis::urlencode(p_path_organization_id));
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
     if let Some(ref param_value) = p_query_embed {
@@ -52,7 +52,7 @@ pub async fn get_client(configuration: &configuration::Configuration, id: &str, 
     if let Some(param_value) = p_header_idempotency_key {
         req_builder = req_builder.header("idempotency-key", param_value.to_string());
     }
-    if let Some(ref token) = configuration.oauth_access_token {
+    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
 
@@ -71,8 +71,8 @@ pub async fn get_client(configuration: &configuration::Configuration, id: &str, 
         let content = resp.text().await?;
         match content_type {
             ContentType::Json => serde_json::from_str(&content).map_err(Error::from),
-            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `models::ListClients200ResponseEmbeddedClientsInner`"))),
-            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `models::ListClients200ResponseEmbeddedClientsInner`")))),
+            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `models::GetClient200Response`"))),
+            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `models::GetClient200Response`")))),
         }
     } else {
         let content = resp.text().await?;
@@ -89,7 +89,7 @@ pub async fn list_clients(configuration: &configuration::Configuration, embed: O
     let p_query_limit = limit;
     let p_header_idempotency_key = idempotency_key;
 
-    let uri_str = format!("{}/clients", configuration.base_path);
+    let uri_str = format!("{}/v2/clients", configuration.base_path);
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
     if let Some(ref param_value) = p_query_embed {
@@ -107,7 +107,7 @@ pub async fn list_clients(configuration: &configuration::Configuration, embed: O
     if let Some(param_value) = p_header_idempotency_key {
         req_builder = req_builder.header("idempotency-key", param_value.to_string());
     }
-    if let Some(ref token) = configuration.oauth_access_token {
+    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
 

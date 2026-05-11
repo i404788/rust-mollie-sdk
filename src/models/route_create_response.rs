@@ -16,35 +16,41 @@ pub struct RouteCreateResponse {
     /// Indicates the response contains a route object. Will always contain the string `route` for this endpoint.
     #[serde(rename = "resource")]
     pub resource: String,
+    /// The identifier uniquely referring to this route. Mollie assigns this identifier at route creation time. Mollie will always refer to the route by this ID. Example: `crt_dyARQ3JzCgtPDhU2Pbq3J`.
     #[serde(rename = "id")]
     pub id: String,
+    /// The unique identifier of the payment. For example: `tr_5B8cwPMGnU6qLbRvo7qEZo`. The full payment object can be retrieved via the payment URL in the `_links` object.
     #[serde(rename = "paymentId")]
     pub payment_id: String,
     /// The amount of the route. That amount that will be routed to the specified destination.
     #[serde(rename = "amount")]
     pub amount: models::Amount,
     /// The description of the route. This description is shown in the reports.
-    #[serde(rename = "description")]
-    pub description: String,
+    #[serde(rename = "description", skip_serializing_if = "Option::is_none")]
+    pub description: Option<String>,
     #[serde(rename = "destination")]
     pub destination: models::EntityRouteDestination,
-    /// Whether to create the entity in test mode or live mode.  Most API credentials are specifically created for either live mode or test mode, in which case this parameter can be omitted. For organization-level credentials such as OAuth access tokens, you can enable test mode by setting `testmode` to `true`.
-    #[serde(rename = "testmode", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
-    pub testmode: Option<Option<bool>>,
+    /// Whether to create the entity in test mode or live mode.  Most API credentials are specifically created for either live mode or test mode, in which case this parameter must not be sent. For organization-level credentials such as OAuth access tokens, you can enable test mode by setting `testmode` to `true`.
+    #[serde(rename = "testmode", skip_serializing_if = "Option::is_none")]
+    pub testmode: Option<bool>,
+    /// The entity's date and time of creation, in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format.
+    #[serde(rename = "createdAt")]
+    pub created_at: String,
     #[serde(rename = "_links")]
-    pub _links: models::EntityWebhookLinks,
+    pub _links: models::EntityRouteLinks,
 }
 
 impl RouteCreateResponse {
-    pub fn new(resource: String, id: String, payment_id: String, amount: models::Amount, description: String, destination: models::EntityRouteDestination, _links: models::EntityWebhookLinks) -> RouteCreateResponse {
+    pub fn new(resource: String, id: String, payment_id: String, amount: models::Amount, destination: models::EntityRouteDestination, created_at: String, _links: models::EntityRouteLinks) -> RouteCreateResponse {
         RouteCreateResponse {
             resource,
             id,
             payment_id,
             amount,
-            description,
+            description: None,
             destination,
             testmode: None,
+            created_at,
             _links,
         }
     }

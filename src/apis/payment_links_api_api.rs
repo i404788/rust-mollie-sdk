@@ -73,7 +73,7 @@ pub async fn create_payment_link(configuration: &configuration::Configuration, i
     let p_header_idempotency_key = idempotency_key;
     let p_body_create_payment_link_request = create_payment_link_request;
 
-    let uri_str = format!("{}/payment-links", configuration.base_path);
+    let uri_str = format!("{}/v2/payment-links", configuration.base_path);
     let mut req_builder = configuration.client.request(reqwest::Method::POST, &uri_str);
 
     if let Some(ref user_agent) = configuration.user_agent {
@@ -86,6 +86,9 @@ pub async fn create_payment_link(configuration: &configuration::Configuration, i
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
     if let Some(ref token) = configuration.oauth_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
     req_builder = req_builder.json(&p_body_create_payment_link_request);
@@ -116,13 +119,13 @@ pub async fn create_payment_link(configuration: &configuration::Configuration, i
 }
 
 /// Payment links which have not been opened and no payments have been made yet can be deleted entirely. This can be useful for removing payment links that have been incorrectly configured or that are no longer relevant.  Once deleted, the payment link will no longer show up in the API or Mollie dashboard.  To simply disable a payment link without fully deleting it, you can use the `archived` parameter on the [Update payment link](update-payment-link) endpoint instead.
-pub async fn delete_payment_link(configuration: &configuration::Configuration, payment_link_id: &str, idempotency_key: Option<&str>, delete_webhook_request: Option<models::DeleteWebhookRequest>) -> Result<serde_json::Value, Error<DeletePaymentLinkError>> {
+pub async fn delete_payment_link(configuration: &configuration::Configuration, payment_link_id: &str, idempotency_key: Option<&str>, delete_payment_link_request: Option<models::DeletePaymentLinkRequest>) -> Result<(), Error<DeletePaymentLinkError>> {
     // add a prefix to parameters to efficiently prevent name collisions
     let p_path_payment_link_id = payment_link_id;
     let p_header_idempotency_key = idempotency_key;
-    let p_body_delete_webhook_request = delete_webhook_request;
+    let p_body_delete_payment_link_request = delete_payment_link_request;
 
-    let uri_str = format!("{}/payment-links/{paymentLinkId}", configuration.base_path, paymentLinkId=crate::apis::urlencode(p_path_payment_link_id));
+    let uri_str = format!("{}/v2/payment-links/{paymentLinkId}", configuration.base_path, paymentLinkId=crate::apis::urlencode(p_path_payment_link_id));
     let mut req_builder = configuration.client.request(reqwest::Method::DELETE, &uri_str);
 
     if let Some(ref user_agent) = configuration.user_agent {
@@ -137,26 +140,18 @@ pub async fn delete_payment_link(configuration: &configuration::Configuration, p
     if let Some(ref token) = configuration.oauth_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
-    req_builder = req_builder.json(&p_body_delete_webhook_request);
+    if let Some(ref token) = configuration.bearer_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    req_builder = req_builder.json(&p_body_delete_payment_link_request);
 
     let req = req_builder.build()?;
     let resp = configuration.client.execute(req).await?;
 
     let status = resp.status();
-    let content_type = resp
-        .headers()
-        .get("content-type")
-        .and_then(|v| v.to_str().ok())
-        .unwrap_or("application/octet-stream");
-    let content_type = super::ContentType::from(content_type);
 
     if !status.is_client_error() && !status.is_server_error() {
-        let content = resp.text().await?;
-        match content_type {
-            ContentType::Json => serde_json::from_str(&content).map_err(Error::from),
-            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `serde_json::Value`"))),
-            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `serde_json::Value`")))),
-        }
+        Ok(())
     } else {
         let content = resp.text().await?;
         let entity: Option<DeletePaymentLinkError> = serde_json::from_str(&content).ok();
@@ -171,7 +166,7 @@ pub async fn get_payment_link(configuration: &configuration::Configuration, paym
     let p_query_testmode = testmode;
     let p_header_idempotency_key = idempotency_key;
 
-    let uri_str = format!("{}/payment-links/{paymentLinkId}", configuration.base_path, paymentLinkId=crate::apis::urlencode(p_path_payment_link_id));
+    let uri_str = format!("{}/v2/payment-links/{paymentLinkId}", configuration.base_path, paymentLinkId=crate::apis::urlencode(p_path_payment_link_id));
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
     if let Some(ref param_value) = p_query_testmode {
@@ -187,6 +182,9 @@ pub async fn get_payment_link(configuration: &configuration::Configuration, paym
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
     if let Some(ref token) = configuration.oauth_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
 
@@ -216,7 +214,7 @@ pub async fn get_payment_link(configuration: &configuration::Configuration, paym
 }
 
 /// Retrieve the list of payments for a specific payment link.  The results are paginated.
-pub async fn get_payment_link_payments(configuration: &configuration::Configuration, payment_link_id: &str, from: Option<&str>, limit: Option<i32>, sort: Option<&str>, testmode: Option<bool>, idempotency_key: Option<&str>) -> Result<models::ListSettlementPayments200Response, Error<GetPaymentLinkPaymentsError>> {
+pub async fn get_payment_link_payments(configuration: &configuration::Configuration, payment_link_id: &str, from: Option<&str>, limit: Option<i32>, sort: Option<models::Sorting>, testmode: Option<bool>, idempotency_key: Option<&str>) -> Result<models::ListPayments200Response, Error<GetPaymentLinkPaymentsError>> {
     // add a prefix to parameters to efficiently prevent name collisions
     let p_path_payment_link_id = payment_link_id;
     let p_query_from = from;
@@ -225,7 +223,7 @@ pub async fn get_payment_link_payments(configuration: &configuration::Configurat
     let p_query_testmode = testmode;
     let p_header_idempotency_key = idempotency_key;
 
-    let uri_str = format!("{}/payment-links/{paymentLinkId}/payments", configuration.base_path, paymentLinkId=crate::apis::urlencode(p_path_payment_link_id));
+    let uri_str = format!("{}/v2/payment-links/{paymentLinkId}/payments", configuration.base_path, paymentLinkId=crate::apis::urlencode(p_path_payment_link_id));
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
     if let Some(ref param_value) = p_query_from {
@@ -252,6 +250,9 @@ pub async fn get_payment_link_payments(configuration: &configuration::Configurat
     if let Some(ref token) = configuration.oauth_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
+    if let Some(ref token) = configuration.bearer_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
 
     let req = req_builder.build()?;
     let resp = configuration.client.execute(req).await?;
@@ -268,8 +269,8 @@ pub async fn get_payment_link_payments(configuration: &configuration::Configurat
         let content = resp.text().await?;
         match content_type {
             ContentType::Json => serde_json::from_str(&content).map_err(Error::from),
-            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `models::ListSettlementPayments200Response`"))),
-            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `models::ListSettlementPayments200Response`")))),
+            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `models::ListPayments200Response`"))),
+            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `models::ListPayments200Response`")))),
         }
     } else {
         let content = resp.text().await?;
@@ -286,7 +287,7 @@ pub async fn list_payment_links(configuration: &configuration::Configuration, fr
     let p_query_testmode = testmode;
     let p_header_idempotency_key = idempotency_key;
 
-    let uri_str = format!("{}/payment-links", configuration.base_path);
+    let uri_str = format!("{}/v2/payment-links", configuration.base_path);
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
     if let Some(ref param_value) = p_query_from {
@@ -308,6 +309,9 @@ pub async fn list_payment_links(configuration: &configuration::Configuration, fr
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
     if let Some(ref token) = configuration.oauth_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
 
@@ -343,7 +347,7 @@ pub async fn update_payment_link(configuration: &configuration::Configuration, p
     let p_header_idempotency_key = idempotency_key;
     let p_body_update_payment_link_request = update_payment_link_request;
 
-    let uri_str = format!("{}/payment-links/{paymentLinkId}", configuration.base_path, paymentLinkId=crate::apis::urlencode(p_path_payment_link_id));
+    let uri_str = format!("{}/v2/payment-links/{paymentLinkId}", configuration.base_path, paymentLinkId=crate::apis::urlencode(p_path_payment_link_id));
     let mut req_builder = configuration.client.request(reqwest::Method::PATCH, &uri_str);
 
     if let Some(ref user_agent) = configuration.user_agent {
@@ -356,6 +360,9 @@ pub async fn update_payment_link(configuration: &configuration::Configuration, p
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
     if let Some(ref token) = configuration.oauth_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
     req_builder = req_builder.json(&p_body_update_payment_link_request);

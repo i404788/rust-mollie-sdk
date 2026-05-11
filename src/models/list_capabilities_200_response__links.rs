@@ -14,7 +14,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
 pub struct ListCapabilities200ResponseLinks {
     #[serde(rename = "documentation", skip_serializing_if = "Option::is_none")]
-    pub documentation: Option<models::ListCapabilities200ResponseLinksDocumentation>,
+    pub documentation: Option<models::Url>,
 }
 
 impl ListCapabilities200ResponseLinks {

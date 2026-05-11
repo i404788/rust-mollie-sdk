@@ -14,25 +14,25 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Address {
     /// A street and street number.
-    #[serde(rename = "streetAndNumber", skip_serializing_if = "Option::is_none")]
-    pub street_and_number: Option<String>,
+    #[serde(rename = "streetAndNumber")]
+    pub street_and_number: String,
     /// A postal code. This field may be required if the provided country has a postal code system.
-    #[serde(rename = "postalCode", skip_serializing_if = "Option::is_none")]
-    pub postal_code: Option<String>,
-    #[serde(rename = "city", skip_serializing_if = "Option::is_none")]
-    pub city: Option<String>,
+    #[serde(rename = "postalCode")]
+    pub postal_code: String,
+    #[serde(rename = "city")]
+    pub city: String,
     /// A country code in [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) format.
-    #[serde(rename = "country", skip_serializing_if = "Option::is_none")]
-    pub country: Option<String>,
+    #[serde(rename = "country")]
+    pub country: String,
 }
 
 impl Address {
-    pub fn new() -> Address {
+    pub fn new(street_and_number: String, postal_code: String, city: String, country: String) -> Address {
         Address {
-            street_and_number: None,
-            postal_code: None,
-            city: None,
-            country: None,
+            street_and_number,
+            postal_code,
+            city,
+            country,
         }
     }
 }

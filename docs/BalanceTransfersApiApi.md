@@ -1,12 +1,12 @@
 # \BalanceTransfersApiApi
 
-All URIs are relative to *https://api.mollie.com/v2*
+All URIs are relative to *https://api.mollie.com*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**create_connect_balance_transfer**](BalanceTransfersApiApi.md#create_connect_balance_transfer) | **POST** /connect/balance-transfers | Create a Connect balance transfer
-[**get_connect_balance_transfer**](BalanceTransfersApiApi.md#get_connect_balance_transfer) | **GET** /connect/balance-transfers/{id} | Get a Connect balance transfer
-[**list_connect_balance_transfers**](BalanceTransfersApiApi.md#list_connect_balance_transfers) | **GET** /connect/balance-transfers | List all Connect balance transfers
+[**create_connect_balance_transfer**](BalanceTransfersApiApi.md#create_connect_balance_transfer) | **POST** /v2/connect/balance-transfers | Create a Connect balance transfer
+[**get_connect_balance_transfer**](BalanceTransfersApiApi.md#get_connect_balance_transfer) | **GET** /v2/connect/balance-transfers/{balanceTransferId} | Get a Connect balance transfer
+[**list_connect_balance_transfers**](BalanceTransfersApiApi.md#list_connect_balance_transfers) | **GET** /v2/connect/balance-transfers | List all Connect balance transfers
 
 
 
@@ -31,7 +31,7 @@ Name | Type | Description  | Required | Notes
 
 ### Authorization
 
-[oAuth](../README.md#oAuth)
+[oAuth](../README.md#oAuth), [organizationAccessToken](../README.md#organizationAccessToken)
 
 ### HTTP request headers
 
@@ -43,7 +43,7 @@ Name | Type | Description  | Required | Notes
 
 ## get_connect_balance_transfer
 
-> models::EntityBalanceTransferResponse get_connect_balance_transfer(id, testmode, idempotency_key)
+> models::EntityBalanceTransferResponse get_connect_balance_transfer(balance_transfer_id, testmode, idempotency_key)
 Get a Connect balance transfer
 
 Retrieve a single Connect balance transfer object by its ID.
@@ -53,8 +53,8 @@ Retrieve a single Connect balance transfer object by its ID.
 
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
-**id** | **String** | Provide the ID of the item you want to perform this operation on. | [required] |
-**testmode** | Option<**bool**> | Most API credentials are specifically created for either live mode or test mode. In those cases the `testmode` query parameter can be omitted. For organization-level credentials such as OAuth access tokens, you can enable test mode by setting the `testmode` query parameter to `true`.  Test entities cannot be retrieved when the endpoint is set to live mode, and vice versa. |  |
+**balance_transfer_id** | **String** | Provide the ID of the related balance transfer. | [required] |
+**testmode** | Option<**bool**> | You can enable test mode by setting the `testmode` query parameter to `true`.  Test entities cannot be retrieved when the endpoint is set to live mode, and vice versa. |  |
 **idempotency_key** | Option<**String**> | A unique key to ensure idempotent requests. This key should be a UUID v4 string. |  |
 
 ### Return type
@@ -63,7 +63,7 @@ Name | Type | Description  | Required | Notes
 
 ### Authorization
 
-[oAuth](../README.md#oAuth)
+[oAuth](../README.md#oAuth), [organizationAccessToken](../README.md#organizationAccessToken)
 
 ### HTTP request headers
 
@@ -87,8 +87,8 @@ Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
 **from** | Option<**String**> | Provide an ID to start the result set from the item with the given ID and onwards. This allows you to paginate the result set. |  |
 **limit** | Option<**i32**> | The maximum number of items to return. Defaults to 50 items. |  |
-**sort** | Option<**String**> | Used for setting the direction of the result set. Defaults to descending order, meaning the results are ordered from newest to oldest. |  |
-**testmode** | Option<**bool**> | Most API credentials are specifically created for either live mode or test mode. In those cases the `testmode` query parameter can be omitted. For organization-level credentials such as OAuth access tokens, you can enable test mode by setting the `testmode` query parameter to `true`.  Test entities cannot be retrieved when the endpoint is set to live mode, and vice versa. |  |
+**sort** | Option<[**Sorting**](Sorting.md)> | Used for setting the direction of the result set. Defaults to descending order, meaning the results are ordered from newest to oldest. |  |
+**testmode** | Option<**bool**> | You can enable test mode by setting the `testmode` query parameter to `true`.  Test entities cannot be retrieved when the endpoint is set to live mode, and vice versa. |  |
 **idempotency_key** | Option<**String**> | A unique key to ensure idempotent requests. This key should be a UUID v4 string. |  |
 
 ### Return type
@@ -97,7 +97,7 @@ Name | Type | Description  | Required | Notes
 
 ### Authorization
 
-[oAuth](../README.md#oAuth)
+[oAuth](../README.md#oAuth), [organizationAccessToken](../README.md#organizationAccessToken)
 
 ### HTTP request headers
 

@@ -19,12 +19,11 @@ pub struct UpdateWebhookRequest {
     /// The URL Mollie will send the events to. This URL must be publicly accessible.
     #[serde(rename = "url", skip_serializing_if = "Option::is_none")]
     pub url: Option<String>,
-    /// The list of events to enable for this webhook. You may specify `'*'` to add all events, except those that require explicit selection. Separate multiple event types with a comma.
     #[serde(rename = "eventTypes", skip_serializing_if = "Option::is_none")]
-    pub event_types: Option<models::WebhookEventTypes>,
-    /// Most API credentials are specifically created for either live mode or test mode. For organization-level credentials such as OAuth access tokens, you can enable test mode by setting `testmode` to `true`.  Test entities cannot be retrieved when the endpoint is set to live mode, and vice versa.
-    #[serde(rename = "testmode", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
-    pub testmode: Option<Option<bool>>,
+    pub event_types: Option<models::CreateWebhookRequestEventTypes>,
+    /// Whether the entity was created in test mode or live mode. This field does not update the mode of the entity.  Most API credentials are specifically created for either live mode or test mode, in which case this parameter must not be sent. For organization-level credentials such as OAuth access tokens, you can enable test mode by setting `testmode` to `true`.
+    #[serde(rename = "testmode", skip_serializing_if = "Option::is_none")]
+    pub testmode: Option<bool>,
 }
 
 impl UpdateWebhookRequest {

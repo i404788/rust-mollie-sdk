@@ -14,14 +14,14 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
 pub struct ListSettlementChargebacks200ResponseEmbedded {
     /// A list of chargeback objects.
-    #[serde(rename = "chargebacks", skip_serializing_if = "Option::is_none")]
-    pub chargebacks: Option<Vec<models::EntityChargeback>>,
+    #[serde(rename = "chargebacks")]
+    pub chargebacks: Vec<models::ListSettlementChargebackResponse>,
 }
 
 impl ListSettlementChargebacks200ResponseEmbedded {
-    pub fn new() -> ListSettlementChargebacks200ResponseEmbedded {
+    pub fn new(chargebacks: Vec<models::ListSettlementChargebackResponse>) -> ListSettlementChargebacks200ResponseEmbedded {
         ListSettlementChargebacks200ResponseEmbedded {
-            chargebacks: None,
+            chargebacks,
         }
     }
 }

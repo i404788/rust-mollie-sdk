@@ -34,7 +34,6 @@
 | Multibanco | multibanco |
 | Mybank | mybank |
 | Paybybank | paybybank |
-| Payconiq | payconiq |
 | Paypal | paypal |
 | Paysafecard | paysafecard |
 | Przelewy24 | przelewy24 |

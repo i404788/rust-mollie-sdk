@@ -60,14 +60,14 @@ pub enum ListRefundsError {
 
 
 /// Refunds will be executed with a delay of two hours. Until that time, refunds may be canceled manually via the Mollie Dashboard, or by using this endpoint.  A refund can only be canceled while its `status` field is either `queued` or `pending`. See the [Get refund endpoint](get-refund) for more information.
-pub async fn cancel_refund(configuration: &configuration::Configuration, payment_id: &str, refund_id: &str, testmode: Option<bool>, idempotency_key: Option<&str>) -> Result<serde_json::Value, Error<CancelRefundError>> {
+pub async fn cancel_refund(configuration: &configuration::Configuration, payment_id: &str, refund_id: &str, testmode: Option<bool>, idempotency_key: Option<&str>) -> Result<(), Error<CancelRefundError>> {
     // add a prefix to parameters to efficiently prevent name collisions
     let p_path_payment_id = payment_id;
     let p_path_refund_id = refund_id;
     let p_query_testmode = testmode;
     let p_header_idempotency_key = idempotency_key;
 
-    let uri_str = format!("{}/payments/{paymentId}/refunds/{refundId}", configuration.base_path, paymentId=crate::apis::urlencode(p_path_payment_id), refundId=crate::apis::urlencode(p_path_refund_id));
+    let uri_str = format!("{}/v2/payments/{paymentId}/refunds/{refundId}", configuration.base_path, paymentId=crate::apis::urlencode(p_path_payment_id), refundId=crate::apis::urlencode(p_path_refund_id));
     let mut req_builder = configuration.client.request(reqwest::Method::DELETE, &uri_str);
 
     if let Some(ref param_value) = p_query_testmode {
@@ -85,25 +85,17 @@ pub async fn cancel_refund(configuration: &configuration::Configuration, payment
     if let Some(ref token) = configuration.oauth_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
+    if let Some(ref token) = configuration.bearer_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
 
     let req = req_builder.build()?;
     let resp = configuration.client.execute(req).await?;
 
     let status = resp.status();
-    let content_type = resp
-        .headers()
-        .get("content-type")
-        .and_then(|v| v.to_str().ok())
-        .unwrap_or("application/octet-stream");
-    let content_type = super::ContentType::from(content_type);
 
     if !status.is_client_error() && !status.is_server_error() {
-        let content = resp.text().await?;
-        match content_type {
-            ContentType::Json => serde_json::from_str(&content).map_err(Error::from),
-            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `serde_json::Value`"))),
-            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `serde_json::Value`")))),
-        }
+        Ok(())
     } else {
         let content = resp.text().await?;
         let entity: Option<CancelRefundError> = serde_json::from_str(&content).ok();
@@ -118,7 +110,7 @@ pub async fn create_refund(configuration: &configuration::Configuration, payment
     let p_header_idempotency_key = idempotency_key;
     let p_body_refund_request = refund_request;
 
-    let uri_str = format!("{}/payments/{paymentId}/refunds", configuration.base_path, paymentId=crate::apis::urlencode(p_path_payment_id));
+    let uri_str = format!("{}/v2/payments/{paymentId}/refunds", configuration.base_path, paymentId=crate::apis::urlencode(p_path_payment_id));
     let mut req_builder = configuration.client.request(reqwest::Method::POST, &uri_str);
 
     if let Some(ref user_agent) = configuration.user_agent {
@@ -131,6 +123,9 @@ pub async fn create_refund(configuration: &configuration::Configuration, payment
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
     if let Some(ref token) = configuration.oauth_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
     req_builder = req_builder.json(&p_body_refund_request);
@@ -169,7 +164,7 @@ pub async fn get_refund(configuration: &configuration::Configuration, payment_id
     let p_query_testmode = testmode;
     let p_header_idempotency_key = idempotency_key;
 
-    let uri_str = format!("{}/payments/{paymentId}/refunds/{refundId}", configuration.base_path, paymentId=crate::apis::urlencode(p_path_payment_id), refundId=crate::apis::urlencode(p_path_refund_id));
+    let uri_str = format!("{}/v2/payments/{paymentId}/refunds/{refundId}", configuration.base_path, paymentId=crate::apis::urlencode(p_path_payment_id), refundId=crate::apis::urlencode(p_path_refund_id));
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
     if let Some(ref param_value) = p_query_embed {
@@ -188,6 +183,9 @@ pub async fn get_refund(configuration: &configuration::Configuration, payment_id
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
     if let Some(ref token) = configuration.oauth_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
 
@@ -217,7 +215,7 @@ pub async fn get_refund(configuration: &configuration::Configuration, payment_id
 }
 
 /// Retrieve a list of all of your refunds.  The results are paginated.
-pub async fn list_all_refunds(configuration: &configuration::Configuration, from: Option<&str>, limit: Option<i32>, sort: Option<&str>, embed: Option<&str>, profile_id: Option<&str>, testmode: Option<bool>, idempotency_key: Option<&str>) -> Result<models::ListSettlementRefunds200Response, Error<ListAllRefundsError>> {
+pub async fn list_all_refunds(configuration: &configuration::Configuration, from: Option<&str>, limit: Option<i32>, sort: Option<models::Sorting>, embed: Option<&str>, profile_id: Option<&str>, testmode: Option<bool>, idempotency_key: Option<&str>) -> Result<models::ListRefunds200Response, Error<ListAllRefundsError>> {
     // add a prefix to parameters to efficiently prevent name collisions
     let p_query_from = from;
     let p_query_limit = limit;
@@ -227,7 +225,7 @@ pub async fn list_all_refunds(configuration: &configuration::Configuration, from
     let p_query_testmode = testmode;
     let p_header_idempotency_key = idempotency_key;
 
-    let uri_str = format!("{}/refunds", configuration.base_path);
+    let uri_str = format!("{}/v2/refunds", configuration.base_path);
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
     if let Some(ref param_value) = p_query_from {
@@ -260,6 +258,9 @@ pub async fn list_all_refunds(configuration: &configuration::Configuration, from
     if let Some(ref token) = configuration.oauth_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
+    if let Some(ref token) = configuration.bearer_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
 
     let req = req_builder.build()?;
     let resp = configuration.client.execute(req).await?;
@@ -276,8 +277,8 @@ pub async fn list_all_refunds(configuration: &configuration::Configuration, from
         let content = resp.text().await?;
         match content_type {
             ContentType::Json => serde_json::from_str(&content).map_err(Error::from),
-            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `models::ListSettlementRefunds200Response`"))),
-            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `models::ListSettlementRefunds200Response`")))),
+            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `models::ListRefunds200Response`"))),
+            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `models::ListRefunds200Response`")))),
         }
     } else {
         let content = resp.text().await?;
@@ -287,7 +288,7 @@ pub async fn list_all_refunds(configuration: &configuration::Configuration, from
 }
 
 /// Retrieve a list of all refunds created for a specific payment.  The results are paginated.
-pub async fn list_refunds(configuration: &configuration::Configuration, payment_id: &str, from: Option<&str>, limit: Option<i32>, embed: Option<&str>, testmode: Option<bool>, idempotency_key: Option<&str>) -> Result<models::ListSettlementRefunds200Response, Error<ListRefundsError>> {
+pub async fn list_refunds(configuration: &configuration::Configuration, payment_id: &str, from: Option<&str>, limit: Option<i32>, embed: Option<&str>, testmode: Option<bool>, idempotency_key: Option<&str>) -> Result<models::ListRefunds200Response, Error<ListRefundsError>> {
     // add a prefix to parameters to efficiently prevent name collisions
     let p_path_payment_id = payment_id;
     let p_query_from = from;
@@ -296,7 +297,7 @@ pub async fn list_refunds(configuration: &configuration::Configuration, payment_
     let p_query_testmode = testmode;
     let p_header_idempotency_key = idempotency_key;
 
-    let uri_str = format!("{}/payments/{paymentId}/refunds", configuration.base_path, paymentId=crate::apis::urlencode(p_path_payment_id));
+    let uri_str = format!("{}/v2/payments/{paymentId}/refunds", configuration.base_path, paymentId=crate::apis::urlencode(p_path_payment_id));
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
     if let Some(ref param_value) = p_query_from {
@@ -323,6 +324,9 @@ pub async fn list_refunds(configuration: &configuration::Configuration, payment_
     if let Some(ref token) = configuration.oauth_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
+    if let Some(ref token) = configuration.bearer_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
 
     let req = req_builder.build()?;
     let resp = configuration.client.execute(req).await?;
@@ -339,8 +343,8 @@ pub async fn list_refunds(configuration: &configuration::Configuration, payment_
         let content = resp.text().await?;
         match content_type {
             ContentType::Json => serde_json::from_str(&content).map_err(Error::from),
-            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `models::ListSettlementRefunds200Response`"))),
-            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `models::ListSettlementRefunds200Response`")))),
+            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `models::ListRefunds200Response`"))),
+            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `models::ListRefunds200Response`")))),
         }
     } else {
         let content = resp.text().await?;

@@ -16,6 +16,7 @@ pub struct EntityMandate {
     /// Indicates the response contains a mandate object. Will always contain the string `mandate` for this endpoint.
     #[serde(rename = "resource", skip_serializing_if = "Option::is_none")]
     pub resource: Option<String>,
+    /// The identifier uniquely referring to this mandate. Example: `mdt_pWUnw6pkBN`.
     #[serde(rename = "id", skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
     #[serde(rename = "mode", skip_serializing_if = "Option::is_none")]
@@ -48,14 +49,18 @@ pub struct EntityMandate {
     /// The Vault ID given by PayPal. For example: `8kk8451t`. Required for PayPal mandates. Must provide either this field or `paypalBillingAgreementId`, but not both.
     #[serde(rename = "payPalVaultId", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
     pub pay_pal_vault_id: Option<Option<String>>,
+    /// An array defining the eligible use cases for the mandate. This field will always be  present and can contain one or both of the following values:
+    #[serde(rename = "scopes", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
+    pub scopes: Option<Option<Vec<models::MandateScopes>>>,
     #[serde(rename = "status", skip_serializing_if = "Option::is_none")]
     pub status: Option<models::MandateStatus>,
+    /// The identifier referring to the [customer](get-customer) this mandate was linked to.
     #[serde(rename = "customerId", skip_serializing_if = "Option::is_none")]
     pub customer_id: Option<String>,
     /// The entity's date and time of creation, in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format.
     #[serde(rename = "createdAt", skip_serializing_if = "Option::is_none")]
     pub created_at: Option<String>,
-    /// Whether to create the entity in test mode or live mode.  Most API credentials are specifically created for either live mode or test mode, in which case this parameter can be omitted. For organization-level credentials such as OAuth access tokens, you can enable test mode by setting `testmode` to `true`.
+    /// Whether to create the entity in test mode or live mode.  Most API credentials are specifically created for either live mode or test mode, in which case this parameter must not be sent. For organization-level credentials such as OAuth access tokens, you can enable test mode by setting `testmode` to `true`.
     #[serde(rename = "testmode", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
     pub testmode: Option<Option<bool>>,
     #[serde(rename = "_links", skip_serializing_if = "Option::is_none")]
@@ -78,6 +83,7 @@ impl EntityMandate {
             mandate_reference: None,
             paypal_billing_agreement_id: None,
             pay_pal_vault_id: None,
+            scopes: None,
             status: None,
             customer_id: None,
             created_at: None,

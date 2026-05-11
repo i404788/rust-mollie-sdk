@@ -14,8 +14,8 @@ use serde::{Deserialize, Serialize};
 /// EntityClientLinks : An object with several relevant URLs. Every URL object will contain an `href` and a `type` field.
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
 pub struct EntityClientLinks {
-    #[serde(rename = "self", skip_serializing_if = "Option::is_none")]
-    pub param_self: Option<models::Url>,
+    #[serde(rename = "self")]
+    pub param_self: models::Url,
     /// The API resource URL of the client's organization.
     #[serde(rename = "organization", skip_serializing_if = "Option::is_none")]
     pub organization: Option<models::Url>,
@@ -28,9 +28,9 @@ pub struct EntityClientLinks {
 
 impl EntityClientLinks {
     /// An object with several relevant URLs. Every URL object will contain an `href` and a `type` field.
-    pub fn new() -> EntityClientLinks {
+    pub fn new(param_self: models::Url) -> EntityClientLinks {
         EntityClientLinks {
-            param_self: None,
+            param_self,
             organization: None,
             onboarding: None,
             documentation: None,

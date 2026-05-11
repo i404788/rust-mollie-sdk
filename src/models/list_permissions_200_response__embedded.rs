@@ -14,14 +14,14 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
 pub struct ListPermissions200ResponseEmbedded {
     /// An array of permission objects.
-    #[serde(rename = "permissions", skip_serializing_if = "Option::is_none")]
-    pub permissions: Option<Vec<models::EntityPermission>>,
+    #[serde(rename = "permissions")]
+    pub permissions: Vec<models::ListEntityPermission>,
 }
 
 impl ListPermissions200ResponseEmbedded {
-    pub fn new() -> ListPermissions200ResponseEmbedded {
+    pub fn new(permissions: Vec<models::ListEntityPermission>) -> ListPermissions200ResponseEmbedded {
         ListPermissions200ResponseEmbedded {
-            permissions: None,
+            permissions,
         }
     }
 }

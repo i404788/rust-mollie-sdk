@@ -51,7 +51,7 @@ pub async fn get_chargeback(configuration: &configuration::Configuration, paymen
     let p_query_testmode = testmode;
     let p_header_idempotency_key = idempotency_key;
 
-    let uri_str = format!("{}/payments/{paymentId}/chargebacks/{chargebackId}", configuration.base_path, paymentId=crate::apis::urlencode(p_path_payment_id), chargebackId=crate::apis::urlencode(p_path_chargeback_id));
+    let uri_str = format!("{}/v2/payments/{paymentId}/chargebacks/{chargebackId}", configuration.base_path, paymentId=crate::apis::urlencode(p_path_payment_id), chargebackId=crate::apis::urlencode(p_path_chargeback_id));
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
     if let Some(ref param_value) = p_query_embed {
@@ -70,6 +70,9 @@ pub async fn get_chargeback(configuration: &configuration::Configuration, paymen
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
     if let Some(ref token) = configuration.oauth_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
 
@@ -99,7 +102,7 @@ pub async fn get_chargeback(configuration: &configuration::Configuration, paymen
 }
 
 /// Retrieve all chargebacks initiated for all your payments.  The results are paginated.
-pub async fn list_all_chargebacks(configuration: &configuration::Configuration, from: Option<&str>, limit: Option<i32>, embed: Option<&str>, sort: Option<&str>, profile_id: Option<&str>, testmode: Option<bool>, idempotency_key: Option<&str>) -> Result<models::ListSettlementChargebacks200Response, Error<ListAllChargebacksError>> {
+pub async fn list_all_chargebacks(configuration: &configuration::Configuration, from: Option<&str>, limit: Option<i32>, embed: Option<&str>, sort: Option<models::Sorting>, profile_id: Option<&str>, testmode: Option<bool>, idempotency_key: Option<&str>) -> Result<models::ListChargebacks200Response, Error<ListAllChargebacksError>> {
     // add a prefix to parameters to efficiently prevent name collisions
     let p_query_from = from;
     let p_query_limit = limit;
@@ -109,7 +112,7 @@ pub async fn list_all_chargebacks(configuration: &configuration::Configuration, 
     let p_query_testmode = testmode;
     let p_header_idempotency_key = idempotency_key;
 
-    let uri_str = format!("{}/chargebacks", configuration.base_path);
+    let uri_str = format!("{}/v2/chargebacks", configuration.base_path);
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
     if let Some(ref param_value) = p_query_from {
@@ -142,6 +145,9 @@ pub async fn list_all_chargebacks(configuration: &configuration::Configuration, 
     if let Some(ref token) = configuration.oauth_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
+    if let Some(ref token) = configuration.bearer_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
 
     let req = req_builder.build()?;
     let resp = configuration.client.execute(req).await?;
@@ -158,8 +164,8 @@ pub async fn list_all_chargebacks(configuration: &configuration::Configuration, 
         let content = resp.text().await?;
         match content_type {
             ContentType::Json => serde_json::from_str(&content).map_err(Error::from),
-            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `models::ListSettlementChargebacks200Response`"))),
-            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `models::ListSettlementChargebacks200Response`")))),
+            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `models::ListChargebacks200Response`"))),
+            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `models::ListChargebacks200Response`")))),
         }
     } else {
         let content = resp.text().await?;
@@ -169,7 +175,7 @@ pub async fn list_all_chargebacks(configuration: &configuration::Configuration, 
 }
 
 /// Retrieve the chargebacks initiated for a specific payment.  The results are paginated.
-pub async fn list_chargebacks(configuration: &configuration::Configuration, payment_id: &str, from: Option<&str>, limit: Option<i32>, embed: Option<&str>, testmode: Option<bool>, idempotency_key: Option<&str>) -> Result<models::ListSettlementChargebacks200Response, Error<ListChargebacksError>> {
+pub async fn list_chargebacks(configuration: &configuration::Configuration, payment_id: &str, from: Option<&str>, limit: Option<i32>, embed: Option<&str>, testmode: Option<bool>, idempotency_key: Option<&str>) -> Result<models::ListChargebacks200Response, Error<ListChargebacksError>> {
     // add a prefix to parameters to efficiently prevent name collisions
     let p_path_payment_id = payment_id;
     let p_query_from = from;
@@ -178,7 +184,7 @@ pub async fn list_chargebacks(configuration: &configuration::Configuration, paym
     let p_query_testmode = testmode;
     let p_header_idempotency_key = idempotency_key;
 
-    let uri_str = format!("{}/payments/{paymentId}/chargebacks", configuration.base_path, paymentId=crate::apis::urlencode(p_path_payment_id));
+    let uri_str = format!("{}/v2/payments/{paymentId}/chargebacks", configuration.base_path, paymentId=crate::apis::urlencode(p_path_payment_id));
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
     if let Some(ref param_value) = p_query_from {
@@ -205,6 +211,9 @@ pub async fn list_chargebacks(configuration: &configuration::Configuration, paym
     if let Some(ref token) = configuration.oauth_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
+    if let Some(ref token) = configuration.bearer_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
 
     let req = req_builder.build()?;
     let resp = configuration.client.execute(req).await?;
@@ -221,8 +230,8 @@ pub async fn list_chargebacks(configuration: &configuration::Configuration, paym
         let content = resp.text().await?;
         match content_type {
             ContentType::Json => serde_json::from_str(&content).map_err(Error::from),
-            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `models::ListSettlementChargebacks200Response`"))),
-            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `models::ListSettlementChargebacks200Response`")))),
+            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `models::ListChargebacks200Response`"))),
+            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `models::ListChargebacks200Response`")))),
         }
     } else {
         let content = resp.text().await?;

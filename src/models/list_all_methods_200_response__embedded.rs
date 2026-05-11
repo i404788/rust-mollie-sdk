@@ -15,11 +15,11 @@ use serde::{Deserialize, Serialize};
 pub struct ListAllMethods200ResponseEmbedded {
     /// An array of payment method objects. For a complete reference of the payment method object, refer to the [Get payment method endpoint](get-method) documentation.
     #[serde(rename = "methods")]
-    pub methods: Vec<models::EntityMethodAll>,
+    pub methods: Vec<models::ListEntityMethodAll>,
 }
 
 impl ListAllMethods200ResponseEmbedded {
-    pub fn new(methods: Vec<models::EntityMethodAll>) -> ListAllMethods200ResponseEmbedded {
+    pub fn new(methods: Vec<models::ListEntityMethodAll>) -> ListAllMethods200ResponseEmbedded {
         ListAllMethods200ResponseEmbedded {
             methods,
         }

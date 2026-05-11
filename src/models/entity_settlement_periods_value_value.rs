@@ -19,6 +19,7 @@ pub struct EntitySettlementPeriodsValueValue {
     /// An array of revenue objects containing the total revenue for each payment method during this period.
     #[serde(rename = "revenue", skip_serializing_if = "Option::is_none")]
     pub revenue: Option<Vec<models::EntitySettlementPeriodsValueValueRevenueInner>>,
+    /// The ID of the invoice created for this period, if the invoice has been created already.
     #[serde(rename = "invoiceId", skip_serializing_if = "Option::is_none")]
     pub invoice_id: Option<String>,
     /// The invoice reference, if the invoice has been created already.

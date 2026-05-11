@@ -11,8 +11,10 @@
 | DeDe | de_DE |
 | DeAt | de_AT |
 | DeCh | de_CH |
+| DeLu | de_LU |
 | FrFr | fr_FR |
 | FrBe | fr_BE |
+| FrLu | fr_LU |
 | EsEs | es_ES |
 | CaEs | ca_ES |
 | PtPt | pt_PT |
@@ -26,6 +28,7 @@
 | PlPl | pl_PL |
 | LvLv | lv_LV |
 | LtLt | lt_LT |
+| Null | null |
 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

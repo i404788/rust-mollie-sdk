@@ -14,13 +14,14 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum EntityWebhookEventEmbeddedEntity {
-    PaymentLinkResponse(models::PaymentLinkResponse),
-    EntityProfileResponse(models::EntityProfileResponse),
+    PaymentLinkStar(models::PaymentLinkResponse),
+    SalesInvoiceStar(models::SalesInvoiceResponse),
+    BusinessAccountTransferStar(models::TransferResponse),
 }
 
 impl Default for EntityWebhookEventEmbeddedEntity {
     fn default() -> Self {
-        Self::PaymentLinkResponse(Default::default())
+        Self::PaymentLinkStar(Default::default())
     }
 }
 

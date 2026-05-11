@@ -33,7 +33,7 @@ pub struct SalesInvoiceRecipientResponse {
     /// The VAT number of the organization for a `business` type recipient. Either this or `organizationNumber` has to be provided.
     #[serde(rename = "vatNumber", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
     pub vat_number: Option<Option<String>>,
-    /// The email address of the recipient.
+    /// The email address of the recipient.  If the domain contains non-ASCII characters, encode it as Punycode per [RFC 3492](https://www.rfc-editor.org/rfc/rfc3492).
     #[serde(rename = "email")]
     pub email: String,
     /// The phone number of the recipient.

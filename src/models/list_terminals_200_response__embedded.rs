@@ -15,7 +15,7 @@ use serde::{Deserialize, Serialize};
 pub struct ListTerminals200ResponseEmbedded {
     /// An array of terminal objects.
     #[serde(rename = "terminals", skip_serializing_if = "Option::is_none")]
-    pub terminals: Option<Vec<models::EntityTerminal>>,
+    pub terminals: Option<Vec<models::ListEntityTerminal>>,
 }
 
 impl ListTerminals200ResponseEmbedded {

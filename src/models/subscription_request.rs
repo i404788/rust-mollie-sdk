@@ -16,6 +16,7 @@ pub struct SubscriptionRequest {
     /// Indicates the response contains a subscription object. Will always contain the string `subscription` for this endpoint.
     #[serde(rename = "resource", skip_serializing_if = "Option::is_none")]
     pub resource: Option<String>,
+    /// The identifier uniquely referring to this subscription. Example: `sub_rVKGtNd6s3`.
     #[serde(rename = "id", skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
     #[serde(rename = "mode", skip_serializing_if = "Option::is_none")]
@@ -51,10 +52,12 @@ pub struct SubscriptionRequest {
     #[serde(rename = "metadata", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
     pub metadata: Option<Option<models::Metadata>>,
     /// We will call this URL for any payment status changes of payments resulting from this subscription.  This webhook will receive **all** events for the subscription's payments. This may include payment failures as well. Be sure to verify the payment's subscription ID and its status.
-    #[serde(rename = "webhookUrl", skip_serializing_if = "Option::is_none")]
-    pub webhook_url: Option<String>,
+    #[serde(rename = "webhookUrl", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
+    pub webhook_url: Option<Option<String>>,
+    /// The customer this subscription belongs to.
     #[serde(rename = "customerId", skip_serializing_if = "Option::is_none")]
     pub customer_id: Option<String>,
+    /// The mandate used for this subscription, if any.
     #[serde(rename = "mandateId", skip_serializing_if = "Option::is_none")]
     pub mandate_id: Option<String>,
     /// The entity's date and time of creation, in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format.
@@ -63,7 +66,10 @@ pub struct SubscriptionRequest {
     /// The subscription's date and time of cancellation, in ISO 8601 format. This parameter is omitted if the subscription is not canceled (yet).
     #[serde(rename = "canceledAt", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
     pub canceled_at: Option<Option<String>>,
-    /// Whether to create the entity in test mode or live mode.  Most API credentials are specifically created for either live mode or test mode, in which case this parameter can be omitted. For organization-level credentials such as OAuth access tokens, you can enable test mode by setting `testmode` to `true`.
+    /// The identifier referring to the [profile](get-profile) this entity belongs to.  When using an API Key, the `profileId` must not be sent since it is linked to the key. However, for OAuth and Organization tokens, the `profileId` is required.  For more information, see [Authentication](authentication).
+    #[serde(rename = "profileId", skip_serializing_if = "Option::is_none")]
+    pub profile_id: Option<String>,
+    /// Whether to create the entity in test mode or live mode.  Most API credentials are specifically created for either live mode or test mode, in which case this parameter must not be sent. For organization-level credentials such as OAuth access tokens, you can enable test mode by setting `testmode` to `true`.
     #[serde(rename = "testmode", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
     pub testmode: Option<Option<bool>>,
     #[serde(rename = "_links", skip_serializing_if = "Option::is_none")]
@@ -92,6 +98,7 @@ impl SubscriptionRequest {
             mandate_id: None,
             created_at: None,
             canceled_at: None,
+            profile_id: None,
             testmode: None,
             _links: None,
         }

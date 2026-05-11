@@ -22,15 +22,11 @@
 | In3 | in3 |
 | Kbc | kbc |
 | Klarna | klarna |
-| Klarnapaylater | klarnapaylater |
-| Klarnapaynow | klarnapaynow |
-| Klarnasliceit | klarnasliceit |
 | Mbway | mbway |
 | Mobilepay | mobilepay |
 | Multibanco | multibanco |
 | Mybank | mybank |
 | Paybybank | paybybank |
-| Payconiq | payconiq |
 | Paypal | paypal |
 | Paysafecard | paysafecard |
 | Pointofsale | pointofsale |

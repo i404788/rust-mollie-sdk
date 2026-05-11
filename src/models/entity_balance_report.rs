@@ -14,38 +14,39 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
 pub struct EntityBalanceReport {
     /// Indicates the response contains a balance report object. Will always contain the string `balance-report` for this endpoint.
-    #[serde(rename = "resource", skip_serializing_if = "Option::is_none")]
-    pub resource: Option<String>,
-    #[serde(rename = "balanceId", skip_serializing_if = "Option::is_none")]
-    pub balance_id: Option<String>,
+    #[serde(rename = "resource")]
+    pub resource: String,
+    /// The ID of the balance this report is generated for.
+    #[serde(rename = "balanceId")]
+    pub balance_id: String,
     /// The time zone used for the from and until parameters. Currently only time zone `Europe/Amsterdam` is supported.
-    #[serde(rename = "timeZone", skip_serializing_if = "Option::is_none")]
-    pub time_zone: Option<String>,
+    #[serde(rename = "timeZone")]
+    pub time_zone: String,
     /// The start date of the report, in `YYYY-MM-DD` format. The from date is 'inclusive', and in Central European Time. This means a report with for example `from=2024-01-01` will include movements of 2024-01-01 00:00:00 CET and onwards.
-    #[serde(rename = "from", skip_serializing_if = "Option::is_none")]
-    pub from: Option<String>,
+    #[serde(rename = "from")]
+    pub from: String,
     /// The end date of the report, in `YYYY-MM-DD` format. The until date is 'exclusive', and in Central European Time. This means a report with for example `until=2024-02-01` will include movements up until 2024-01-31 23:59:59 CET.
-    #[serde(rename = "until", skip_serializing_if = "Option::is_none")]
-    pub until: Option<String>,
-    #[serde(rename = "grouping", skip_serializing_if = "Option::is_none")]
-    pub grouping: Option<models::BalanceReportGrouping>,
-    #[serde(rename = "totals", skip_serializing_if = "Option::is_none")]
-    pub totals: Option<models::EntityBalanceReportTotals>,
-    #[serde(rename = "_links", skip_serializing_if = "Option::is_none")]
-    pub _links: Option<models::EntityBalanceLinks>,
+    #[serde(rename = "until")]
+    pub until: String,
+    #[serde(rename = "grouping")]
+    pub grouping: models::BalanceReportGrouping,
+    #[serde(rename = "totals")]
+    pub totals: models::EntityBalanceReportTotals,
+    #[serde(rename = "_links")]
+    pub _links: models::EntityBalanceLinks,
 }
 
 impl EntityBalanceReport {
-    pub fn new() -> EntityBalanceReport {
+    pub fn new(resource: String, balance_id: String, time_zone: String, from: String, until: String, grouping: models::BalanceReportGrouping, totals: models::EntityBalanceReportTotals, _links: models::EntityBalanceLinks) -> EntityBalanceReport {
         EntityBalanceReport {
-            resource: None,
-            balance_id: None,
-            time_zone: None,
-            from: None,
-            until: None,
-            grouping: None,
-            totals: None,
-            _links: None,
+            resource,
+            balance_id,
+            time_zone,
+            from,
+            until,
+            grouping,
+            totals,
+            _links,
         }
     }
 }

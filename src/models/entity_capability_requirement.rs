@@ -13,25 +13,25 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
 pub struct EntityCapabilityRequirement {
-    /// The name of this requirement, referring to the task to be fulfilled by the organization to enable or re-enable the capability. The name is unique among other requirements of the same capability.
-    #[serde(rename = "id", skip_serializing_if = "Option::is_none")]
-    pub id: Option<String>,
-    #[serde(rename = "status", skip_serializing_if = "Option::is_none")]
-    pub status: Option<models::CapabilityRequirementStatus>,
+    /// The name of this requirement, referring to the task to be fulfilled by the organization to enable or re-enable the capability. The name is unique among other requirements of the same capability. Examples include `needs-data` and `process-first-payment`.
+    #[serde(rename = "id")]
+    pub id: String,
+    #[serde(rename = "status")]
+    pub status: models::CapabilityRequirementStatus,
     /// Due date until the requirement must be fulfilled, if any. The date is shown in ISO-8601 format.
-    #[serde(rename = "dueDate", skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "dueDate", deserialize_with = "Option::deserialize")]
     pub due_date: Option<String>,
-    #[serde(rename = "_links", skip_serializing_if = "Option::is_none")]
-    pub _links: Option<models::EntityCapabilityRequirementLinks>,
+    #[serde(rename = "_links")]
+    pub _links: models::EntityCapabilityRequirementLinks,
 }
 
 impl EntityCapabilityRequirement {
-    pub fn new() -> EntityCapabilityRequirement {
+    pub fn new(id: String, status: models::CapabilityRequirementStatus, due_date: Option<String>, _links: models::EntityCapabilityRequirementLinks) -> EntityCapabilityRequirement {
         EntityCapabilityRequirement {
-            id: None,
-            status: None,
-            due_date: None,
-            _links: None,
+            id,
+            status,
+            due_date,
+            _links,
         }
     }
 }

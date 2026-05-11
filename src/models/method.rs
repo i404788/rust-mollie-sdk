@@ -51,12 +51,6 @@ pub enum Method {
     Kbc,
     #[serde(rename = "klarna")]
     Klarna,
-    #[serde(rename = "klarnapaylater")]
-    Klarnapaylater,
-    #[serde(rename = "klarnapaynow")]
-    Klarnapaynow,
-    #[serde(rename = "klarnasliceit")]
-    Klarnasliceit,
     #[serde(rename = "mbway")]
     Mbway,
     #[serde(rename = "mobilepay")]
@@ -67,8 +61,6 @@ pub enum Method {
     Mybank,
     #[serde(rename = "paybybank")]
     Paybybank,
-    #[serde(rename = "payconiq")]
-    Payconiq,
     #[serde(rename = "paypal")]
     Paypal,
     #[serde(rename = "paysafecard")]
@@ -115,15 +107,11 @@ impl std::fmt::Display for Method {
             Self::In3 => write!(f, "in3"),
             Self::Kbc => write!(f, "kbc"),
             Self::Klarna => write!(f, "klarna"),
-            Self::Klarnapaylater => write!(f, "klarnapaylater"),
-            Self::Klarnapaynow => write!(f, "klarnapaynow"),
-            Self::Klarnasliceit => write!(f, "klarnasliceit"),
             Self::Mbway => write!(f, "mbway"),
             Self::Mobilepay => write!(f, "mobilepay"),
             Self::Multibanco => write!(f, "multibanco"),
             Self::Mybank => write!(f, "mybank"),
             Self::Paybybank => write!(f, "paybybank"),
-            Self::Payconiq => write!(f, "payconiq"),
             Self::Paypal => write!(f, "paypal"),
             Self::Paysafecard => write!(f, "paysafecard"),
             Self::Pointofsale => write!(f, "pointofsale"),

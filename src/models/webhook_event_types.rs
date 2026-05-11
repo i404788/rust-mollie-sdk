@@ -11,8 +11,8 @@
 use crate::models;
 use serde::{Deserialize, Serialize};
 
-/// WebhookEventTypes : The event's type
-/// The event's type
+/// WebhookEventTypes : The list of events to enable for this webhook. You may specify `'*'` to add all events, except those that require explicit selection.
+/// The list of events to enable for this webhook. You may specify `'*'` to add all events, except those that require explicit selection.
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize)]
 pub enum WebhookEventTypes {
     #[serde(rename = "payment-link.paid")]
@@ -27,6 +27,20 @@ pub enum WebhookEventTypes {
     SalesInvoiceCanceled,
     #[serde(rename = "sales-invoice.paid")]
     SalesInvoicePaid,
+    #[serde(rename = "business-account-transfer.requested")]
+    BusinessAccountTransferRequested,
+    #[serde(rename = "business-account-transfer.initiated")]
+    BusinessAccountTransferInitiated,
+    #[serde(rename = "business-account-transfer.pending-review")]
+    BusinessAccountTransferPendingReview,
+    #[serde(rename = "business-account-transfer.processed")]
+    BusinessAccountTransferProcessed,
+    #[serde(rename = "business-account-transfer.failed")]
+    BusinessAccountTransferFailed,
+    #[serde(rename = "business-account-transfer.blocked")]
+    BusinessAccountTransferBlocked,
+    #[serde(rename = "business-account-transfer.returned")]
+    BusinessAccountTransferReturned,
     #[serde(rename = "*")]
     Star,
 
@@ -41,6 +55,13 @@ impl std::fmt::Display for WebhookEventTypes {
             Self::SalesInvoiceIssued => write!(f, "sales-invoice.issued"),
             Self::SalesInvoiceCanceled => write!(f, "sales-invoice.canceled"),
             Self::SalesInvoicePaid => write!(f, "sales-invoice.paid"),
+            Self::BusinessAccountTransferRequested => write!(f, "business-account-transfer.requested"),
+            Self::BusinessAccountTransferInitiated => write!(f, "business-account-transfer.initiated"),
+            Self::BusinessAccountTransferPendingReview => write!(f, "business-account-transfer.pending-review"),
+            Self::BusinessAccountTransferProcessed => write!(f, "business-account-transfer.processed"),
+            Self::BusinessAccountTransferFailed => write!(f, "business-account-transfer.failed"),
+            Self::BusinessAccountTransferBlocked => write!(f, "business-account-transfer.blocked"),
+            Self::BusinessAccountTransferReturned => write!(f, "business-account-transfer.returned"),
             Self::Star => write!(f, "*"),
         }
     }

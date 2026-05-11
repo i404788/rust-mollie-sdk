@@ -19,7 +19,7 @@ pub struct UpdateProfileRequest {
     /// The URL to the profile's website or application. Only `https` or `http` URLs are allowed. No `@` signs are allowed.
     #[serde(rename = "website", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
     pub website: Option<Option<String>>,
-    /// The email address associated with the profile's trade name or brand.
+    /// The email address associated with the profile's trade name or brand.  If the domain contains non-ASCII characters, encode it as Punycode per [RFC 3492](https://www.rfc-editor.org/rfc/rfc3492).
     #[serde(rename = "email", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
     pub email: Option<Option<String>>,
     /// The phone number associated with the profile's trade name or brand.
@@ -35,8 +35,8 @@ pub struct UpdateProfileRequest {
     #[serde(rename = "businessCategory", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
     pub business_category: Option<Option<String>>,
     /// Updating a profile from `test` mode to `live` mode will trigger a verification process, where we review the profile before it can start accepting payments.
-    #[serde(rename = "mode", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
-    pub mode: Option<Option<Mode>>,
+    #[serde(rename = "mode", skip_serializing_if = "Option::is_none")]
+    pub mode: Option<models::Mode>,
 }
 
 impl UpdateProfileRequest {
@@ -51,20 +51,6 @@ impl UpdateProfileRequest {
             business_category: None,
             mode: None,
         }
-    }
-}
-/// Updating a profile from `test` mode to `live` mode will trigger a verification process, where we review the profile before it can start accepting payments.
-#[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize)]
-pub enum Mode {
-    #[serde(rename = "live")]
-    Live,
-    #[serde(rename = "test")]
-    Test,
-}
-
-impl Default for Mode {
-    fn default() -> Mode {
-        Self::Live
     }
 }
 

@@ -15,11 +15,11 @@ use serde::{Deserialize, Serialize};
 pub struct ListCustomers200ResponseEmbedded {
     /// An array of customer objects.
     #[serde(rename = "customers")]
-    pub customers: Vec<models::CustomerResponse>,
+    pub customers: Vec<models::ListCustomerResponse>,
 }
 
 impl ListCustomers200ResponseEmbedded {
-    pub fn new(customers: Vec<models::CustomerResponse>) -> ListCustomers200ResponseEmbedded {
+    pub fn new(customers: Vec<models::ListCustomerResponse>) -> ListCustomers200ResponseEmbedded {
         ListCustomers200ResponseEmbedded {
             customers,
         }

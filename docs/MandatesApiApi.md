@@ -1,13 +1,13 @@
 # \MandatesApiApi
 
-All URIs are relative to *https://api.mollie.com/v2*
+All URIs are relative to *https://api.mollie.com*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**create_mandate**](MandatesApiApi.md#create_mandate) | **POST** /customers/{customerId}/mandates | Create mandate
-[**get_mandate**](MandatesApiApi.md#get_mandate) | **GET** /customers/{customerId}/mandates/{mandateId} | Get mandate
-[**list_mandates**](MandatesApiApi.md#list_mandates) | **GET** /customers/{customerId}/mandates | List mandates
-[**revoke_mandate**](MandatesApiApi.md#revoke_mandate) | **DELETE** /customers/{customerId}/mandates/{mandateId} | Revoke mandate
+[**create_mandate**](MandatesApiApi.md#create_mandate) | **POST** /v2/customers/{customerId}/mandates | Create mandate
+[**get_mandate**](MandatesApiApi.md#get_mandate) | **GET** /v2/customers/{customerId}/mandates/{mandateId} | Get mandate
+[**list_mandates**](MandatesApiApi.md#list_mandates) | **GET** /v2/customers/{customerId}/mandates | List mandates
+[**revoke_mandate**](MandatesApiApi.md#revoke_mandate) | **DELETE** /v2/customers/{customerId}/mandates/{mandateId} | Revoke mandate
 
 
 
@@ -33,7 +33,7 @@ Name | Type | Description  | Required | Notes
 
 ### Authorization
 
-[apiKey](../README.md#apiKey), [oAuth](../README.md#oAuth)
+[apiKey](../README.md#apiKey), [oAuth](../README.md#oAuth), [organizationAccessToken](../README.md#organizationAccessToken)
 
 ### HTTP request headers
 
@@ -57,7 +57,7 @@ Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
 **customer_id** | **String** | Provide the ID of the related customer. | [required] |
 **mandate_id** | **String** | Provide the ID of the related mandate. | [required] |
-**testmode** | Option<**bool**> | Most API credentials are specifically created for either live mode or test mode. In those cases the `testmode` query parameter can be omitted. For organization-level credentials such as OAuth access tokens, you can enable test mode by setting the `testmode` query parameter to `true`.  Test entities cannot be retrieved when the endpoint is set to live mode, and vice versa. |  |
+**testmode** | Option<**bool**> | Most API credentials are specifically created for either live mode or test mode. In those cases the `testmode` query parameter must not be sent. For organization-level credentials such as OAuth access tokens, you can enable test mode by setting the `testmode` query parameter to `true`.  Test entities cannot be retrieved when the endpoint is set to live mode, and vice versa. |  |
 **idempotency_key** | Option<**String**> | A unique key to ensure idempotent requests. This key should be a UUID v4 string. |  |
 
 ### Return type
@@ -66,7 +66,7 @@ Name | Type | Description  | Required | Notes
 
 ### Authorization
 
-[apiKey](../README.md#apiKey), [oAuth](../README.md#oAuth)
+[apiKey](../README.md#apiKey), [oAuth](../README.md#oAuth), [organizationAccessToken](../README.md#organizationAccessToken)
 
 ### HTTP request headers
 
@@ -78,7 +78,7 @@ Name | Type | Description  | Required | Notes
 
 ## list_mandates
 
-> models::ListMandates200Response list_mandates(customer_id, from, limit, sort, testmode, idempotency_key)
+> models::ListMandates200Response list_mandates(customer_id, from, limit, sort, scopes, testmode, idempotency_key)
 List mandates
 
 Retrieve a list of all mandates.  The results are paginated.
@@ -91,8 +91,9 @@ Name | Type | Description  | Required | Notes
 **customer_id** | **String** | Provide the ID of the related customer. | [required] |
 **from** | Option<**String**> | Provide an ID to start the result set from the item with the given ID and onwards. This allows you to paginate the result set. |  |
 **limit** | Option<**i32**> | The maximum number of items to return. Defaults to 50 items. |  |
-**sort** | Option<**String**> | Used for setting the direction of the result set. Defaults to descending order, meaning the results are ordered from newest to oldest. |  |
-**testmode** | Option<**bool**> | Most API credentials are specifically created for either live mode or test mode. In those cases the `testmode` query parameter can be omitted. For organization-level credentials such as OAuth access tokens, you can enable test mode by setting the `testmode` query parameter to `true`.  Test entities cannot be retrieved when the endpoint is set to live mode, and vice versa. |  |
+**sort** | Option<[**Sorting**](Sorting.md)> | Used for setting the direction of the result set. Defaults to descending order, meaning the results are ordered from newest to oldest. |  |
+**scopes** | Option<[**Vec<models::MandateScopes>**](Models__MandateScopes.md)> | Returns only mandates that include the specified scopes. |  |
+**testmode** | Option<**bool**> | Most API credentials are specifically created for either live mode or test mode. In those cases the `testmode` query parameter must not be sent. For organization-level credentials such as OAuth access tokens, you can enable test mode by setting the `testmode` query parameter to `true`.  Test entities cannot be retrieved when the endpoint is set to live mode, and vice versa. |  |
 **idempotency_key** | Option<**String**> | A unique key to ensure idempotent requests. This key should be a UUID v4 string. |  |
 
 ### Return type
@@ -101,7 +102,7 @@ Name | Type | Description  | Required | Notes
 
 ### Authorization
 
-[apiKey](../README.md#apiKey), [oAuth](../README.md#oAuth)
+[apiKey](../README.md#apiKey), [oAuth](../README.md#oAuth), [organizationAccessToken](../README.md#organizationAccessToken)
 
 ### HTTP request headers
 
@@ -113,7 +114,7 @@ Name | Type | Description  | Required | Notes
 
 ## revoke_mandate
 
-> serde_json::Value revoke_mandate(customer_id, mandate_id, idempotency_key, delete_webhook_request)
+> revoke_mandate(customer_id, mandate_id, idempotency_key, delete_payment_link_request)
 Revoke mandate
 
 Revoke a customer's mandate. You will no longer be able to charge the customer's bank account or card with this mandate, and all connected subscriptions will be canceled.
@@ -126,15 +127,15 @@ Name | Type | Description  | Required | Notes
 **customer_id** | **String** | Provide the ID of the related customer. | [required] |
 **mandate_id** | **String** | Provide the ID of the related mandate. | [required] |
 **idempotency_key** | Option<**String**> | A unique key to ensure idempotent requests. This key should be a UUID v4 string. |  |
-**delete_webhook_request** | Option<[**DeleteWebhookRequest**](DeleteWebhookRequest.md)> |  |  |
+**delete_payment_link_request** | Option<[**DeletePaymentLinkRequest**](DeletePaymentLinkRequest.md)> |  |  |
 
 ### Return type
 
-[**serde_json::Value**](serde_json::Value.md)
+ (empty response body)
 
 ### Authorization
 
-[apiKey](../README.md#apiKey), [oAuth](../README.md#oAuth)
+[apiKey](../README.md#apiKey), [oAuth](../README.md#oAuth), [organizationAccessToken](../README.md#organizationAccessToken)
 
 ### HTTP request headers
 

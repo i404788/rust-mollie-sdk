@@ -16,6 +16,7 @@ pub struct EntityBalanceTransfer {
     /// Indicates the response contains a balance transfer object. Will always contain the string `connect-balance-transfer` for this endpoint.
     #[serde(rename = "resource")]
     pub resource: String,
+    /// The identifier uniquely referring to this balance transfer. Mollie assigns this identifier at balance transfer creation time. Mollie will always refer to the balance transfer by this ID. Example: `cbtr_j8NvRAM2WNZtsykpLEX8J`.
     #[serde(rename = "id")]
     pub id: String,
     /// The amount to be transferred, e.g. `{\"currency\":\"EUR\", \"value\":\"1000.00\"}` if you would like to transfer €1000.00.
@@ -34,15 +35,18 @@ pub struct EntityBalanceTransfer {
     pub status_reason: models::EntityBalanceTransferStatusReason,
     #[serde(rename = "category", skip_serializing_if = "Option::is_none")]
     pub category: Option<models::BalanceTransferCategory>,
+    /// A JSON object that you can attach to a balance transfer. This can be useful for storing additional information about the transfer in a structured format. Maximum size is approximately 1KB.
+    #[serde(rename = "metadata", skip_serializing_if = "Option::is_none")]
+    pub metadata: Option<std::collections::HashMap<String, serde_json::Value>>,
     /// The entity's date and time of creation, in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format.
     #[serde(rename = "createdAt")]
     pub created_at: String,
     /// The date and time when the transfer was completed, in ISO 8601 format. This parameter is omitted if the transfer is not executed (yet).
     #[serde(rename = "executedAt", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
     pub executed_at: Option<Option<String>>,
-    /// Whether to create the entity in test mode or live mode.  Most API credentials are specifically created for either live mode or test mode, in which case this parameter can be omitted. For organization-level credentials such as OAuth access tokens, you can enable test mode by setting `testmode` to `true`.
-    #[serde(rename = "testmode", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
-    pub testmode: Option<Option<bool>>,
+    /// Whether to create the entity in test mode or live mode.  You can enable test mode by setting `testmode` to `true`.
+    #[serde(rename = "testmode", skip_serializing_if = "Option::is_none")]
+    pub testmode: Option<bool>,
     #[serde(rename = "mode")]
     pub mode: models::Mode,
 }
@@ -59,6 +63,7 @@ impl EntityBalanceTransfer {
             status,
             status_reason,
             category: None,
+            metadata: None,
             created_at,
             executed_at: None,
             testmode: None,

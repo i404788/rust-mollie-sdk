@@ -75,8 +75,6 @@ pub enum PaymentMethod {
     Mybank,
     #[serde(rename = "paybybank")]
     Paybybank,
-    #[serde(rename = "payconiq")]
-    Payconiq,
     #[serde(rename = "paypal")]
     Paypal,
     #[serde(rename = "paysafecard")]
@@ -139,7 +137,6 @@ impl std::fmt::Display for PaymentMethod {
             Self::Multibanco => write!(f, "multibanco"),
             Self::Mybank => write!(f, "mybank"),
             Self::Paybybank => write!(f, "paybybank"),
-            Self::Payconiq => write!(f, "payconiq"),
             Self::Paypal => write!(f, "paypal"),
             Self::Paysafecard => write!(f, "paysafecard"),
             Self::Przelewy24 => write!(f, "przelewy24"),

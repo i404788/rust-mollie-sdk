@@ -14,48 +14,49 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
 pub struct GetCustomer200Response {
     /// Indicates the response contains a customer object. Will always contain the string `customer` for this endpoint.
-    #[serde(rename = "resource", skip_serializing_if = "Option::is_none")]
-    pub resource: Option<String>,
-    #[serde(rename = "id", skip_serializing_if = "Option::is_none")]
-    pub id: Option<String>,
-    #[serde(rename = "mode", skip_serializing_if = "Option::is_none")]
-    pub mode: Option<models::Mode>,
+    #[serde(rename = "resource")]
+    pub resource: String,
+    /// The identifier uniquely referring to this customer. Example: `cst_vsKJpSsabw`.
+    #[serde(rename = "id")]
+    pub id: String,
+    #[serde(rename = "mode")]
+    pub mode: models::Mode,
     /// The full name of the customer.
-    #[serde(rename = "name", skip_serializing_if = "Option::is_none")]
-    pub name: Option<String>,
-    /// The email address of the customer.
-    #[serde(rename = "email", skip_serializing_if = "Option::is_none")]
-    pub email: Option<String>,
+    #[serde(rename = "name")]
+    pub name: String,
+    /// The email address of the customer.  If the domain contains non-ASCII characters, encode it as Punycode per [RFC 3492](https://www.rfc-editor.org/rfc/rfc3492).
+    #[serde(rename = "email")]
+    pub email: String,
     /// Preconfigure the language to be used in the hosted payment pages shown to the customer. Should only be provided if absolutely necessary. If not provided, the browser language will be used which is typically highly accurate.
-    #[serde(rename = "locale", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
-    pub locale: Option<Option<models::LocaleResponse>>,
-    #[serde(rename = "metadata", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
-    pub metadata: Option<Option<models::Metadata>>,
+    #[serde(rename = "locale", deserialize_with = "Option::deserialize")]
+    pub locale: Option<models::LocaleResponse>,
+    #[serde(rename = "metadata", deserialize_with = "Option::deserialize")]
+    pub metadata: Option<models::Metadata>,
     /// The entity's date and time of creation, in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format.
-    #[serde(rename = "createdAt", skip_serializing_if = "Option::is_none")]
-    pub created_at: Option<String>,
-    /// Whether to create the entity in test mode or live mode.  Most API credentials are specifically created for either live mode or test mode, in which case this parameter can be omitted. For organization-level credentials such as OAuth access tokens, you can enable test mode by setting `testmode` to `true`.
+    #[serde(rename = "createdAt")]
+    pub created_at: String,
+    /// Whether to create the entity in test mode or live mode.  Most API credentials are specifically created for either live mode or test mode, in which case this parameter must not be sent. For organization-level credentials such as OAuth access tokens, you can enable test mode by setting `testmode` to `true`.
     #[serde(rename = "testmode", skip_serializing_if = "Option::is_none")]
     pub testmode: Option<bool>,
-    #[serde(rename = "_links", skip_serializing_if = "Option::is_none")]
-    pub _links: Option<models::EntityCustomerLinks>,
+    #[serde(rename = "_links")]
+    pub _links: models::EntityCustomerLinks,
     #[serde(rename = "events", skip_serializing_if = "Option::is_none")]
     pub events: Option<Vec<models::EntityEvent>>,
 }
 
 impl GetCustomer200Response {
-    pub fn new() -> GetCustomer200Response {
+    pub fn new(resource: String, id: String, mode: models::Mode, name: String, email: String, locale: Option<models::LocaleResponse>, metadata: Option<models::Metadata>, created_at: String, _links: models::EntityCustomerLinks) -> GetCustomer200Response {
         GetCustomer200Response {
-            resource: None,
-            id: None,
-            mode: None,
-            name: None,
-            email: None,
-            locale: None,
-            metadata: None,
-            created_at: None,
+            resource,
+            id,
+            mode,
+            name,
+            email,
+            locale,
+            metadata,
+            created_at,
             testmode: None,
-            _links: None,
+            _links,
             events: None,
         }
     }

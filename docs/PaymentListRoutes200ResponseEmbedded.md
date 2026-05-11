@@ -4,7 +4,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**routes** | Option<[**Vec<models::RouteGetResponse>**](route-get-response.md)> | An array of route objects. | [optional]
+**routes** | [**Vec<models::ListRouteGetResponse>**](ListRouteGetResponse.md) | An array of route objects. | 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

@@ -14,28 +14,28 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
 pub struct EntityClient {
     /// Indicates the response contains a client object. Will always contain the string `client` for this resource type.
-    #[serde(rename = "resource", skip_serializing_if = "Option::is_none")]
-    pub resource: Option<String>,
+    #[serde(rename = "resource")]
+    pub resource: String,
     /// The identifier uniquely referring to this client. Example: `org_12345678`.
-    #[serde(rename = "id", skip_serializing_if = "Option::is_none")]
-    pub id: Option<String>,
+    #[serde(rename = "id")]
+    pub id: String,
     #[serde(rename = "commission", skip_serializing_if = "Option::is_none")]
     pub commission: Option<models::EntityClientCommission>,
     /// The date and time the client organization was created, in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format.
     #[serde(rename = "organizationCreatedAt", skip_serializing_if = "Option::is_none")]
     pub organization_created_at: Option<String>,
-    #[serde(rename = "_links", skip_serializing_if = "Option::is_none")]
-    pub _links: Option<models::EntityClientLinks>,
+    #[serde(rename = "_links")]
+    pub _links: models::EntityClientLinks,
 }
 
 impl EntityClient {
-    pub fn new() -> EntityClient {
+    pub fn new(resource: String, id: String, _links: models::EntityClientLinks) -> EntityClient {
         EntityClient {
-            resource: None,
-            id: None,
+            resource,
+            id,
             commission: None,
             organization_created_at: None,
-            _links: None,
+            _links,
         }
     }
 }

@@ -15,7 +15,7 @@ use serde::{Deserialize, Serialize};
 pub struct ListSalesInvoices200ResponseEmbedded {
     /// An array of sales invoice objects. For a complete reference of the sales invoice object, refer to the [Get sales invoice endpoint](get-sales-invoice) documentation.
     #[serde(rename = "sales_invoices", skip_serializing_if = "Option::is_none")]
-    pub sales_invoices: Option<Vec<models::EntitySalesInvoiceResponse>>,
+    pub sales_invoices: Option<Vec<models::ListSalesInvoiceResponse>>,
 }
 
 impl ListSalesInvoices200ResponseEmbedded {

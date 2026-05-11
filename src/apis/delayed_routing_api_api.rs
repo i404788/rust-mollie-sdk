@@ -23,6 +23,14 @@ pub enum PaymentCreateRouteError {
     UnknownValue(serde_json::Value),
 }
 
+/// struct for typed errors of method [`payment_get_route`]
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(untagged)]
+pub enum PaymentGetRouteError {
+    Status404(models::ErrorResponse),
+    UnknownValue(serde_json::Value),
+}
+
 /// struct for typed errors of method [`payment_list_routes`]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
@@ -39,7 +47,7 @@ pub async fn payment_create_route(configuration: &configuration::Configuration, 
     let p_header_idempotency_key = idempotency_key;
     let p_body_route_create_request = route_create_request;
 
-    let uri_str = format!("{}/payments/{paymentId}/routes", configuration.base_path, paymentId=crate::apis::urlencode(p_path_payment_id));
+    let uri_str = format!("{}/v2/payments/{paymentId}/routes", configuration.base_path, paymentId=crate::apis::urlencode(p_path_payment_id));
     let mut req_builder = configuration.client.request(reqwest::Method::POST, &uri_str);
 
     if let Some(ref user_agent) = configuration.user_agent {
@@ -52,6 +60,9 @@ pub async fn payment_create_route(configuration: &configuration::Configuration, 
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
     if let Some(ref token) = configuration.oauth_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
     req_builder = req_builder.json(&p_body_route_create_request);
@@ -81,6 +92,57 @@ pub async fn payment_create_route(configuration: &configuration::Configuration, 
     }
 }
 
+/// Retrieve a single route created for a specific payment.
+pub async fn payment_get_route(configuration: &configuration::Configuration, payment_id: &str, route_id: &str, idempotency_key: Option<&str>) -> Result<models::RouteGetResponse, Error<PaymentGetRouteError>> {
+    // add a prefix to parameters to efficiently prevent name collisions
+    let p_path_payment_id = payment_id;
+    let p_path_route_id = route_id;
+    let p_header_idempotency_key = idempotency_key;
+
+    let uri_str = format!("{}/v2/payments/{paymentId}/routes/{routeId}", configuration.base_path, paymentId=crate::apis::urlencode(p_path_payment_id), routeId=crate::apis::urlencode(p_path_route_id));
+    let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
+
+    if let Some(ref user_agent) = configuration.user_agent {
+        req_builder = req_builder.header(reqwest::header::USER_AGENT, user_agent.clone());
+    }
+    if let Some(param_value) = p_header_idempotency_key {
+        req_builder = req_builder.header("idempotency-key", param_value.to_string());
+    }
+    if let Some(ref token) = configuration.bearer_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    if let Some(ref token) = configuration.oauth_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    if let Some(ref token) = configuration.bearer_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+
+    let req = req_builder.build()?;
+    let resp = configuration.client.execute(req).await?;
+
+    let status = resp.status();
+    let content_type = resp
+        .headers()
+        .get("content-type")
+        .and_then(|v| v.to_str().ok())
+        .unwrap_or("application/octet-stream");
+    let content_type = super::ContentType::from(content_type);
+
+    if !status.is_client_error() && !status.is_server_error() {
+        let content = resp.text().await?;
+        match content_type {
+            ContentType::Json => serde_json::from_str(&content).map_err(Error::from),
+            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `models::RouteGetResponse`"))),
+            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `models::RouteGetResponse`")))),
+        }
+    } else {
+        let content = resp.text().await?;
+        let entity: Option<PaymentGetRouteError> = serde_json::from_str(&content).ok();
+        Err(Error::ResponseError(ResponseContent { status, content, entity }))
+    }
+}
+
 /// Retrieve a list of all routes created for a specific payment.
 pub async fn payment_list_routes(configuration: &configuration::Configuration, payment_id: &str, testmode: Option<bool>, idempotency_key: Option<&str>) -> Result<models::PaymentListRoutes200Response, Error<PaymentListRoutesError>> {
     // add a prefix to parameters to efficiently prevent name collisions
@@ -88,7 +150,7 @@ pub async fn payment_list_routes(configuration: &configuration::Configuration, p
     let p_query_testmode = testmode;
     let p_header_idempotency_key = idempotency_key;
 
-    let uri_str = format!("{}/payments/{paymentId}/routes", configuration.base_path, paymentId=crate::apis::urlencode(p_path_payment_id));
+    let uri_str = format!("{}/v2/payments/{paymentId}/routes", configuration.base_path, paymentId=crate::apis::urlencode(p_path_payment_id));
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
     if let Some(ref param_value) = p_query_testmode {
@@ -104,6 +166,9 @@ pub async fn payment_list_routes(configuration: &configuration::Configuration, p
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
     if let Some(ref token) = configuration.oauth_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
 

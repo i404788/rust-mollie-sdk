@@ -1,15 +1,15 @@
 # \WebhooksApiApi
 
-All URIs are relative to *https://api.mollie.com/v2*
+All URIs are relative to *https://api.mollie.com*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**create_webhook**](WebhooksApiApi.md#create_webhook) | **POST** /webhooks | Create a webhook
-[**delete_webhook**](WebhooksApiApi.md#delete_webhook) | **DELETE** /webhooks/{id} | Delete a webhook
-[**get_webhook**](WebhooksApiApi.md#get_webhook) | **GET** /webhooks/{id} | Get a webhook
-[**list_webhooks**](WebhooksApiApi.md#list_webhooks) | **GET** /webhooks | List all webhooks
-[**test_webhook**](WebhooksApiApi.md#test_webhook) | **POST** /webhooks/{id}/ping | Test a webhook
-[**update_webhook**](WebhooksApiApi.md#update_webhook) | **PATCH** /webhooks/{id} | Update a webhook
+[**create_webhook**](WebhooksApiApi.md#create_webhook) | **POST** /v2/webhooks | Create a webhook
+[**delete_webhook**](WebhooksApiApi.md#delete_webhook) | **DELETE** /v2/webhooks/{webhookId} | Delete a webhook
+[**get_webhook**](WebhooksApiApi.md#get_webhook) | **GET** /v2/webhooks/{webhookId} | Get a webhook
+[**list_webhooks**](WebhooksApiApi.md#list_webhooks) | **GET** /v2/webhooks | List all webhooks
+[**test_webhook**](WebhooksApiApi.md#test_webhook) | **POST** /v2/webhooks/{webhookId}/ping | Test a webhook
+[**update_webhook**](WebhooksApiApi.md#update_webhook) | **PATCH** /v2/webhooks/{webhookId} | Update a webhook
 
 
 
@@ -34,7 +34,7 @@ Name | Type | Description  | Required | Notes
 
 ### Authorization
 
-[oAuth](../README.md#oAuth)
+[oAuth](../README.md#oAuth), [organizationAccessToken](../README.md#organizationAccessToken)
 
 ### HTTP request headers
 
@@ -46,7 +46,7 @@ Name | Type | Description  | Required | Notes
 
 ## delete_webhook
 
-> serde_json::Value delete_webhook(id, idempotency_key, delete_webhook_request)
+> delete_webhook(webhook_id, idempotency_key, delete_webhook_request)
 Delete a webhook
 
 Delete a single webhook object by its webhook ID.
@@ -56,17 +56,17 @@ Delete a single webhook object by its webhook ID.
 
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
-**id** | **String** | Provide the ID of the item you want to perform this operation on. | [required] |
+**webhook_id** | **String** | Provide the ID of the related webhook. | [required] |
 **idempotency_key** | Option<**String**> | A unique key to ensure idempotent requests. This key should be a UUID v4 string. |  |
 **delete_webhook_request** | Option<[**DeleteWebhookRequest**](DeleteWebhookRequest.md)> |  |  |
 
 ### Return type
 
-[**serde_json::Value**](serde_json::Value.md)
+ (empty response body)
 
 ### Authorization
 
-[oAuth](../README.md#oAuth)
+[oAuth](../README.md#oAuth), [organizationAccessToken](../README.md#organizationAccessToken)
 
 ### HTTP request headers
 
@@ -78,7 +78,7 @@ Name | Type | Description  | Required | Notes
 
 ## get_webhook
 
-> models::EntityWebhook get_webhook(id, testmode, idempotency_key)
+> models::EntityWebhook get_webhook(webhook_id, testmode, idempotency_key)
 Get a webhook
 
 Retrieve a single webhook object by its ID.
@@ -88,8 +88,8 @@ Retrieve a single webhook object by its ID.
 
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
-**id** | **String** | Provide the ID of the item you want to perform this operation on. | [required] |
-**testmode** | Option<**bool**> | Most API credentials are specifically created for either live mode or test mode. In those cases the `testmode` query parameter can be omitted. For organization-level credentials such as OAuth access tokens, you can enable test mode by setting the `testmode` query parameter to `true`.  Test entities cannot be retrieved when the endpoint is set to live mode, and vice versa. |  |
+**webhook_id** | **String** | Provide the ID of the related webhook. | [required] |
+**testmode** | Option<**bool**> | You can enable test mode by setting the `testmode` query parameter to `true`.  Test entities cannot be retrieved when the endpoint is set to live mode, and vice versa. |  |
 **idempotency_key** | Option<**String**> | A unique key to ensure idempotent requests. This key should be a UUID v4 string. |  |
 
 ### Return type
@@ -98,7 +98,7 @@ Name | Type | Description  | Required | Notes
 
 ### Authorization
 
-[oAuth](../README.md#oAuth)
+[oAuth](../README.md#oAuth), [organizationAccessToken](../README.md#organizationAccessToken)
 
 ### HTTP request headers
 
@@ -122,9 +122,9 @@ Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
 **from** | Option<**String**> | Provide an ID to start the result set from the item with the given ID and onwards. This allows you to paginate the result set. |  |
 **limit** | Option<**i32**> | The maximum number of items to return. Defaults to 50 items. |  |
-**sort** | Option<**String**> | Used for setting the direction of the result set. Defaults to descending order, meaning the results are ordered from newest to oldest. |  |
-**event_types** | Option<[**WebhookEventTypes**](.md)> | Used to filter out only the webhooks that are subscribed to certain types of events. |  |
-**testmode** | Option<**bool**> | Most API credentials are specifically created for either live mode or test mode. In those cases the `testmode` query parameter can be omitted. For organization-level credentials such as OAuth access tokens, you can enable test mode by setting the `testmode` query parameter to `true`.  Test entities cannot be retrieved when the endpoint is set to live mode, and vice versa. |  |
+**sort** | Option<[**Sorting**](Sorting.md)> | Used for setting the direction of the result set. Defaults to descending order, meaning the results are ordered from newest to oldest. |  |
+**event_types** | Option<[**WebhookEventTypes**](WebhookEventTypes.md)> | Used to filter out only the webhooks that are subscribed to certain types of events. |  |
+**testmode** | Option<**bool**> | You can enable test mode by setting the `testmode` query parameter to `true`.  Test entities cannot be retrieved when the endpoint is set to live mode, and vice versa. |  |
 **idempotency_key** | Option<**String**> | A unique key to ensure idempotent requests. This key should be a UUID v4 string. |  |
 
 ### Return type
@@ -133,7 +133,7 @@ Name | Type | Description  | Required | Notes
 
 ### Authorization
 
-[oAuth](../README.md#oAuth)
+[oAuth](../README.md#oAuth), [organizationAccessToken](../README.md#organizationAccessToken)
 
 ### HTTP request headers
 
@@ -145,7 +145,7 @@ Name | Type | Description  | Required | Notes
 
 ## test_webhook
 
-> serde_json::Value test_webhook(id, idempotency_key, delete_webhook_request)
+> test_webhook(webhook_id, idempotency_key, delete_webhook_request)
 Test a webhook
 
 Sends a test event to the webhook to verify the endpoint is working as expected.
@@ -155,17 +155,17 @@ Sends a test event to the webhook to verify the endpoint is working as expected.
 
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
-**id** | **String** | Provide the ID of the item you want to perform this operation on. | [required] |
+**webhook_id** | **String** | Provide the ID of the related webhook. | [required] |
 **idempotency_key** | Option<**String**> | A unique key to ensure idempotent requests. This key should be a UUID v4 string. |  |
 **delete_webhook_request** | Option<[**DeleteWebhookRequest**](DeleteWebhookRequest.md)> |  |  |
 
 ### Return type
 
-[**serde_json::Value**](serde_json::Value.md)
+ (empty response body)
 
 ### Authorization
 
-[oAuth](../README.md#oAuth)
+[oAuth](../README.md#oAuth), [organizationAccessToken](../README.md#organizationAccessToken)
 
 ### HTTP request headers
 
@@ -177,7 +177,7 @@ Name | Type | Description  | Required | Notes
 
 ## update_webhook
 
-> models::EntityWebhook update_webhook(id, idempotency_key, update_webhook_request)
+> models::EntityWebhook update_webhook(webhook_id, idempotency_key, update_webhook_request)
 Update a webhook
 
 Updates the webhook. You may edit the name, url and the list of subscribed event types.
@@ -187,7 +187,7 @@ Updates the webhook. You may edit the name, url and the list of subscribed event
 
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
-**id** | **String** | Provide the ID of the item you want to perform this operation on. | [required] |
+**webhook_id** | **String** | Provide the ID of the related webhook. | [required] |
 **idempotency_key** | Option<**String**> | A unique key to ensure idempotent requests. This key should be a UUID v4 string. |  |
 **update_webhook_request** | Option<[**UpdateWebhookRequest**](UpdateWebhookRequest.md)> |  |  |
 
@@ -197,7 +197,7 @@ Name | Type | Description  | Required | Notes
 
 ### Authorization
 
-[oAuth](../README.md#oAuth)
+[oAuth](../README.md#oAuth), [organizationAccessToken](../README.md#organizationAccessToken)
 
 ### HTTP request headers
 

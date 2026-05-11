@@ -24,7 +24,7 @@ pub struct EntityPaymentLinks {
     pub mobile_app_checkout: Option<models::Url>,
     /// For test mode payments in certain scenarios, a hosted interface is available to help you test different payment states.  Firstly, for recurring test mode payments. Recurring payments do not have a checkout URL, because these payments are executed without any user interaction.  Secondly, for paid test mode payments. The payment state screen will then allow you to create a refund or chargeback for the test payment.
     #[serde(rename = "changePaymentState", skip_serializing_if = "Option::is_none")]
-    pub change_payment_state: Option<models::Url>,
+    pub change_payment_state: Option<models::UrlNullable>,
     /// Direct link to the payment in the Mollie Dashboard.
     #[serde(rename = "dashboard")]
     pub dashboard: models::Url,

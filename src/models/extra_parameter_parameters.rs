@@ -29,7 +29,7 @@ pub struct ExtraParameterParameters {
     pub voucher_pin: Option<String>,
     /// The customer's date of birth. If not provided via the API, iDeal in3 will ask the customer to provide it during the payment process.
     #[serde(rename = "consumerDateOfBirth", skip_serializing_if = "Option::is_none")]
-    pub consumer_date_of_birth: Option<String>,
+    pub consumer_date_of_birth: Option<chrono::NaiveDate>,
     /// For some industries, additional purchase information can be sent to Klarna to increase the authorization rate. You can submit your extra data in this field if you have agreed upon this with Klarna. This field should be an object containing any of the allowed keys and sub-objects described at the Klarna Developer Documentation.
     #[serde(rename = "extraMerchantData", skip_serializing_if = "Option::is_none")]
     pub extra_merchant_data: Option<std::collections::HashMap<String, serde_json::Value>>,

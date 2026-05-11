@@ -56,7 +56,7 @@ pub async fn create_mandate(configuration: &configuration::Configuration, custom
     let p_header_idempotency_key = idempotency_key;
     let p_body_mandate_request = mandate_request;
 
-    let uri_str = format!("{}/customers/{customerId}/mandates", configuration.base_path, customerId=crate::apis::urlencode(p_path_customer_id));
+    let uri_str = format!("{}/v2/customers/{customerId}/mandates", configuration.base_path, customerId=crate::apis::urlencode(p_path_customer_id));
     let mut req_builder = configuration.client.request(reqwest::Method::POST, &uri_str);
 
     if let Some(ref user_agent) = configuration.user_agent {
@@ -69,6 +69,9 @@ pub async fn create_mandate(configuration: &configuration::Configuration, custom
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
     if let Some(ref token) = configuration.oauth_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
     req_builder = req_builder.json(&p_body_mandate_request);
@@ -106,7 +109,7 @@ pub async fn get_mandate(configuration: &configuration::Configuration, customer_
     let p_query_testmode = testmode;
     let p_header_idempotency_key = idempotency_key;
 
-    let uri_str = format!("{}/customers/{customerId}/mandates/{mandateId}", configuration.base_path, customerId=crate::apis::urlencode(p_path_customer_id), mandateId=crate::apis::urlencode(p_path_mandate_id));
+    let uri_str = format!("{}/v2/customers/{customerId}/mandates/{mandateId}", configuration.base_path, customerId=crate::apis::urlencode(p_path_customer_id), mandateId=crate::apis::urlencode(p_path_mandate_id));
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
     if let Some(ref param_value) = p_query_testmode {
@@ -122,6 +125,9 @@ pub async fn get_mandate(configuration: &configuration::Configuration, customer_
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
     if let Some(ref token) = configuration.oauth_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
 
@@ -151,16 +157,17 @@ pub async fn get_mandate(configuration: &configuration::Configuration, customer_
 }
 
 /// Retrieve a list of all mandates.  The results are paginated.
-pub async fn list_mandates(configuration: &configuration::Configuration, customer_id: &str, from: Option<&str>, limit: Option<i32>, sort: Option<&str>, testmode: Option<bool>, idempotency_key: Option<&str>) -> Result<models::ListMandates200Response, Error<ListMandatesError>> {
+pub async fn list_mandates(configuration: &configuration::Configuration, customer_id: &str, from: Option<&str>, limit: Option<i32>, sort: Option<models::Sorting>, scopes: Option<Vec<models::MandateScopes>>, testmode: Option<bool>, idempotency_key: Option<&str>) -> Result<models::ListMandates200Response, Error<ListMandatesError>> {
     // add a prefix to parameters to efficiently prevent name collisions
     let p_path_customer_id = customer_id;
     let p_query_from = from;
     let p_query_limit = limit;
     let p_query_sort = sort;
+    let p_query_scopes = scopes;
     let p_query_testmode = testmode;
     let p_header_idempotency_key = idempotency_key;
 
-    let uri_str = format!("{}/customers/{customerId}/mandates", configuration.base_path, customerId=crate::apis::urlencode(p_path_customer_id));
+    let uri_str = format!("{}/v2/customers/{customerId}/mandates", configuration.base_path, customerId=crate::apis::urlencode(p_path_customer_id));
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
     if let Some(ref param_value) = p_query_from {
@@ -171,6 +178,12 @@ pub async fn list_mandates(configuration: &configuration::Configuration, custome
     }
     if let Some(ref param_value) = p_query_sort {
         req_builder = req_builder.query(&[("sort", &param_value.to_string())]);
+    }
+    if let Some(ref param_value) = p_query_scopes {
+        req_builder = match "multi" {
+            "multi" => req_builder.query(&param_value.into_iter().map(|p| ("scopes".to_owned(), p.to_string())).collect::<Vec<(std::string::String, std::string::String)>>()),
+            _ => req_builder.query(&[("scopes", &param_value.into_iter().map(|p| p.to_string()).collect::<Vec<String>>().join(",").to_string())]),
+        };
     }
     if let Some(ref param_value) = p_query_testmode {
         req_builder = req_builder.query(&[("testmode", &param_value.to_string())]);
@@ -185,6 +198,9 @@ pub async fn list_mandates(configuration: &configuration::Configuration, custome
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
     if let Some(ref token) = configuration.oauth_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
 
@@ -214,14 +230,14 @@ pub async fn list_mandates(configuration: &configuration::Configuration, custome
 }
 
 /// Revoke a customer's mandate. You will no longer be able to charge the customer's bank account or card with this mandate, and all connected subscriptions will be canceled.
-pub async fn revoke_mandate(configuration: &configuration::Configuration, customer_id: &str, mandate_id: &str, idempotency_key: Option<&str>, delete_webhook_request: Option<models::DeleteWebhookRequest>) -> Result<serde_json::Value, Error<RevokeMandateError>> {
+pub async fn revoke_mandate(configuration: &configuration::Configuration, customer_id: &str, mandate_id: &str, idempotency_key: Option<&str>, delete_payment_link_request: Option<models::DeletePaymentLinkRequest>) -> Result<(), Error<RevokeMandateError>> {
     // add a prefix to parameters to efficiently prevent name collisions
     let p_path_customer_id = customer_id;
     let p_path_mandate_id = mandate_id;
     let p_header_idempotency_key = idempotency_key;
-    let p_body_delete_webhook_request = delete_webhook_request;
+    let p_body_delete_payment_link_request = delete_payment_link_request;
 
-    let uri_str = format!("{}/customers/{customerId}/mandates/{mandateId}", configuration.base_path, customerId=crate::apis::urlencode(p_path_customer_id), mandateId=crate::apis::urlencode(p_path_mandate_id));
+    let uri_str = format!("{}/v2/customers/{customerId}/mandates/{mandateId}", configuration.base_path, customerId=crate::apis::urlencode(p_path_customer_id), mandateId=crate::apis::urlencode(p_path_mandate_id));
     let mut req_builder = configuration.client.request(reqwest::Method::DELETE, &uri_str);
 
     if let Some(ref user_agent) = configuration.user_agent {
@@ -236,26 +252,18 @@ pub async fn revoke_mandate(configuration: &configuration::Configuration, custom
     if let Some(ref token) = configuration.oauth_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
-    req_builder = req_builder.json(&p_body_delete_webhook_request);
+    if let Some(ref token) = configuration.bearer_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    req_builder = req_builder.json(&p_body_delete_payment_link_request);
 
     let req = req_builder.build()?;
     let resp = configuration.client.execute(req).await?;
 
     let status = resp.status();
-    let content_type = resp
-        .headers()
-        .get("content-type")
-        .and_then(|v| v.to_str().ok())
-        .unwrap_or("application/octet-stream");
-    let content_type = super::ContentType::from(content_type);
 
     if !status.is_client_error() && !status.is_server_error() {
-        let content = resp.text().await?;
-        match content_type {
-            ContentType::Json => serde_json::from_str(&content).map_err(Error::from),
-            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `serde_json::Value`"))),
-            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `serde_json::Value`")))),
-        }
+        Ok(())
     } else {
         let content = resp.text().await?;
         let entity: Option<RevokeMandateError> = serde_json::from_str(&content).ok();

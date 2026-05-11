@@ -16,6 +16,7 @@ use serde::{Deserialize, Serialize};
 pub struct EntityBalanceTransferPartyResponse {
     #[serde(rename = "type")]
     pub r#type: models::BalanceTransferPartyTypeResponse,
+    /// Identifier of the party. For example, this contains the organization token if the type is `organization`.
     #[serde(rename = "id")]
     pub id: String,
     /// The transfer description for the transfer party. This is the description that will appear in the financial reports of the party.

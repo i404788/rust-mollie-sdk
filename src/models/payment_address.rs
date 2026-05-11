@@ -34,7 +34,7 @@ pub struct PaymentAddress {
     /// A postal code. This field may be required if the provided country has a postal code system.  Required for payment methods `billie`, `in3`, `klarna` and `riverty`.
     #[serde(rename = "postalCode", skip_serializing_if = "Option::is_none")]
     pub postal_code: Option<String>,
-    /// A valid e-mail address.  If you provide the email address for a `banktransfer` payment, we will automatically send the instructions email upon payment creation. The language of the email will follow the locale parameter of the payment.  Required for payment methods `billie`, `in3`, `klarna` and `riverty`.
+    /// A valid e-mail address.  If you provide the email address for a `banktransfer` payment, we will automatically send the instructions email upon payment creation. The language of the email will follow the locale parameter of the payment.  Required for payment methods `billie`, `in3`, `klarna` and `riverty`.  If the domain contains non-ASCII characters, encode it as Punycode per [RFC 3492](https://www.rfc-editor.org/rfc/rfc3492).
     #[serde(rename = "email", skip_serializing_if = "Option::is_none")]
     pub email: Option<String>,
     /// If provided, it must be in the [E.164](https://en.wikipedia.org/wiki/E.164) format. For example: +31208202070.

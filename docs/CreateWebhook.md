@@ -10,11 +10,11 @@ Name | Type | Description | Notes
 **profile_id** | Option<**String**> | The identifier uniquely referring to the profile that created the subscription. | [readonly]
 **created_at** | **String** | The subscription's date time of creation. | [readonly]
 **name** | **String** | The subscription's name. | 
-**event_types** | [**Vec<models::WebhookEventTypesResponse>**](webhook-event-types-response.md) | The events types that are subscribed. | 
-**status** | [**models::WebhookStatus**](webhook-status.md) |  | 
-**mode** | [**models::Mode**](mode.md) |  | 
+**event_types** | [**Vec<models::WebhookEventTypesResponse>**](WebhookEventTypesResponse.md) | The events types that are subscribed. | 
+**status** | [**models::WebhookStatus**](WebhookStatus.md) |  | 
+**mode** | [**models::Mode**](Mode.md) |  | 
 **webhook_secret** | **String** | The subscription's secret. | 
-**_links** | [**models::EntityWebhookLinks**](entity_webhook__links.md) |  | 
+**_links** | [**models::EntityWebhookLinks**](EntityWebhookLinks.md) |  | 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

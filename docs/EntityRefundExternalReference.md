@@ -4,7 +4,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**r#type** | Option<[**models::RefundExternalReferenceType**](refund-external-reference-type.md)> |  | [optional]
+**r#type** | Option<[**models::RefundExternalReferenceType**](RefundExternalReferenceType.md)> |  | [optional]
 **id** | Option<**String**> | Unique reference from the payment provider | [optional]
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

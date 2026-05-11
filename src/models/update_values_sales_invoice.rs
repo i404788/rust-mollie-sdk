@@ -13,12 +13,12 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
 pub struct UpdateValuesSalesInvoice {
-    /// Most API credentials are specifically created for either live mode or test mode. For organization-level credentials such as OAuth access tokens, you can enable test mode by setting `testmode` to `true`.  Test entities cannot be retrieved when the endpoint is set to live mode, and vice versa.
+    /// Most API credentials are specifically created for either live mode or test mode, in which case this parameter must not be sent. For organization-level credentials such as OAuth access tokens, you can enable test mode by setting `testmode` to `true`.  Test entities cannot be retrieved when the endpoint is set to live mode, and vice versa.
     #[serde(rename = "testmode", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
     pub testmode: Option<Option<bool>>,
     /// The status for the invoice to end up in.  Dependent parameters: `paymentDetails` for `paid`, `emailDetails` for `issued` and `paid`.
     #[serde(rename = "status", skip_serializing_if = "Option::is_none")]
-    pub status: Option<models::SalesInvoiceStatus>,
+    pub status: Option<models::SalesInvoiceStatusUpdate>,
     /// A free-form memo you can set on the invoice, and will be shown on the invoice PDF.
     #[serde(rename = "memo", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
     pub memo: Option<Option<String>>,
@@ -42,6 +42,9 @@ pub struct UpdateValuesSalesInvoice {
     /// The discount to be applied to the entire invoice, possibly on top of the line item discounts.
     #[serde(rename = "discount", skip_serializing_if = "Option::is_none")]
     pub discount: Option<models::SalesInvoiceDiscount>,
+    /// This indicates whether the invoice is an e-invoice. The default value is `false` and can't be changed after the invoice has been issued.  When `emailDetails` is provided, an additional email is sent to the recipient.
+    #[serde(rename = "isEInvoice", skip_serializing_if = "Option::is_none")]
+    pub is_e_invoice: Option<bool>,
 }
 
 impl UpdateValuesSalesInvoice {
@@ -57,6 +60,7 @@ impl UpdateValuesSalesInvoice {
             recipient: None,
             lines: None,
             discount: None,
+            is_e_invoice: None,
         }
     }
 }

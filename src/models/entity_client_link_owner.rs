@@ -14,7 +14,7 @@ use serde::{Deserialize, Serialize};
 /// EntityClientLinkOwner : Personal data of your customer.
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
 pub struct EntityClientLinkOwner {
-    /// The email address of your customer.
+    /// The email address of your customer.  If the domain contains non-ASCII characters, encode it as Punycode per [RFC 3492](https://www.rfc-editor.org/rfc/rfc3492).
     #[serde(rename = "email")]
     pub email: String,
     /// The given name (first name) of your customer.

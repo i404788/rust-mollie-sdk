@@ -16,6 +16,7 @@ pub struct EntityTerminal {
     /// Indicates the response contains a terminal object. Will always contain the string `terminal` for this endpoint.
     #[serde(rename = "resource")]
     pub resource: String,
+    /// The identifier uniquely referring to this terminal. Example: `term_7MgL4wea46qkRcoTZjWEH`.
     #[serde(rename = "id")]
     pub id: String,
     #[serde(rename = "mode")]
@@ -35,7 +36,7 @@ pub struct EntityTerminal {
     /// The currency configured on the terminal, in ISO 4217 format. Currently most of our terminals are bound to a specific currency, chosen during setup.
     #[serde(rename = "currency")]
     pub currency: String,
-    /// The identifier referring to the [profile](get-profile) this entity belongs to.  Most API credentials are linked to a single profile. In these cases the `profileId` can be omitted in the creation request. For organization-level credentials such as OAuth access tokens however, the `profileId` parameter is required.
+    /// The identifier referring to the [profile](get-profile) this entity belongs to.  Most API credentials are linked to a single profile. In these cases the `profileId` must not be sent in the creation request. For organization-level credentials such as OAuth access tokens however, the `profileId` parameter is required.
     #[serde(rename = "profileId")]
     pub profile_id: String,
     /// The entity's date and time of creation, in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format.

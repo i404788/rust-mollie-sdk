@@ -14,86 +14,93 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
 pub struct SubscriptionResponse {
     /// Indicates the response contains a subscription object. Will always contain the string `subscription` for this endpoint.
-    #[serde(rename = "resource", skip_serializing_if = "Option::is_none")]
-    pub resource: Option<String>,
-    #[serde(rename = "id", skip_serializing_if = "Option::is_none")]
-    pub id: Option<String>,
-    #[serde(rename = "mode", skip_serializing_if = "Option::is_none")]
-    pub mode: Option<models::Mode>,
-    #[serde(rename = "status", skip_serializing_if = "Option::is_none")]
-    pub status: Option<models::SubscriptionStatus>,
+    #[serde(rename = "resource")]
+    pub resource: String,
+    /// The identifier uniquely referring to this subscription. Example: `sub_rVKGtNd6s3`.
+    #[serde(rename = "id")]
+    pub id: String,
+    #[serde(rename = "mode")]
+    pub mode: models::Mode,
+    #[serde(rename = "status")]
+    pub status: models::SubscriptionStatusResponse,
     /// The amount for each individual payment that is charged with this subscription. For example, for a monthly subscription of €10, the subscription amount should be set to €10.
-    #[serde(rename = "amount", skip_serializing_if = "Option::is_none")]
-    pub amount: Option<models::Amount>,
+    #[serde(rename = "amount")]
+    pub amount: models::Amount,
     /// Total number of payments for the subscription. Once this number of payments is reached, the subscription is considered completed.  Test mode subscriptions will get canceled automatically after 10 payments.
-    #[serde(rename = "times", skip_serializing_if = "Option::is_none")]
-    pub times: Option<i32>,
+    #[serde(rename = "times")]
+    pub times: i32,
     /// Number of payments left for the subscription.
-    #[serde(rename = "timesRemaining", skip_serializing_if = "Option::is_none")]
-    pub times_remaining: Option<i32>,
+    #[serde(rename = "timesRemaining")]
+    pub times_remaining: i32,
     /// Interval to wait between payments, for example `1 month` or `14 days`.  The maximum interval is one year (`12 months`, `52 weeks`, or `365 days`).  Possible values: `... days`, `... weeks`, `... months`.
-    #[serde(rename = "interval", skip_serializing_if = "Option::is_none")]
-    pub interval: Option<String>,
+    #[serde(rename = "interval")]
+    pub interval: String,
     /// The start date of the subscription in `YYYY-MM-DD` format.
-    #[serde(rename = "startDate", skip_serializing_if = "Option::is_none")]
-    pub start_date: Option<String>,
+    #[serde(rename = "startDate")]
+    pub start_date: String,
     /// The date of the next scheduled payment in `YYYY-MM-DD` format. If the subscription has been completed or canceled, this parameter will not be returned.
     #[serde(rename = "nextPaymentDate", skip_serializing_if = "Option::is_none")]
     pub next_payment_date: Option<String>,
     /// The subscription's description will be used as the description of the resulting individual payments and so showing up on the bank statement of the consumer.  **Please note:** the description needs to be unique for the Customer in case it has multiple active subscriptions.
-    #[serde(rename = "description", skip_serializing_if = "Option::is_none")]
-    pub description: Option<String>,
-    #[serde(rename = "method", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
-    pub method: Option<Option<models::SubscriptionMethodResponse>>,
+    #[serde(rename = "description")]
+    pub description: String,
+    #[serde(rename = "method", deserialize_with = "Option::deserialize")]
+    pub method: Option<models::SubscriptionMethodResponse>,
     #[serde(rename = "applicationFee", skip_serializing_if = "Option::is_none")]
     pub application_fee: Option<models::EntitySubscriptionApplicationFee>,
     /// Provide any data you like, for example a string or a JSON object. We will save the data alongside the entity. Whenever you fetch the entity with our API, we will also include the metadata. You can use up to approximately 1kB.  Any metadata added to the subscription will be automatically forwarded to the payments generated for it.
-    #[serde(rename = "metadata", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
-    pub metadata: Option<Option<models::Metadata>>,
+    #[serde(rename = "metadata", deserialize_with = "Option::deserialize")]
+    pub metadata: Option<models::Metadata>,
     /// We will call this URL for any payment status changes of payments resulting from this subscription.  This webhook will receive **all** events for the subscription's payments. This may include payment failures as well. Be sure to verify the payment's subscription ID and its status.
-    #[serde(rename = "webhookUrl", skip_serializing_if = "Option::is_none")]
-    pub webhook_url: Option<String>,
-    #[serde(rename = "customerId", skip_serializing_if = "Option::is_none")]
-    pub customer_id: Option<String>,
+    #[serde(rename = "webhookUrl")]
+    pub webhook_url: String,
+    /// The customer this subscription belongs to.
+    #[serde(rename = "customerId")]
+    pub customer_id: String,
+    /// The mandate used for this subscription, if any.
     #[serde(rename = "mandateId", skip_serializing_if = "Option::is_none")]
     pub mandate_id: Option<String>,
     /// The entity's date and time of creation, in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format.
-    #[serde(rename = "createdAt", skip_serializing_if = "Option::is_none")]
-    pub created_at: Option<String>,
+    #[serde(rename = "createdAt")]
+    pub created_at: String,
     /// The subscription's date and time of cancellation, in ISO 8601 format. This parameter is omitted if the subscription is not canceled (yet).
     #[serde(rename = "canceledAt", skip_serializing_if = "Option::is_none")]
     pub canceled_at: Option<String>,
-    /// Whether to create the entity in test mode or live mode.  Most API credentials are specifically created for either live mode or test mode, in which case this parameter can be omitted. For organization-level credentials such as OAuth access tokens, you can enable test mode by setting `testmode` to `true`.
+    /// The identifier referring to the [profile](get-profile) this entity belongs to.  When using an API Key, the `profileId` must not be sent since it is linked to the key. However, for OAuth and Organization tokens, the `profileId` is required.  For more information, see [Authentication](authentication).
+    #[serde(rename = "profileId", skip_serializing_if = "Option::is_none")]
+    pub profile_id: Option<String>,
+    /// Whether to create the entity in test mode or live mode.  Most API credentials are specifically created for either live mode or test mode, in which case this parameter must not be sent. For organization-level credentials such as OAuth access tokens, you can enable test mode by setting `testmode` to `true`.
     #[serde(rename = "testmode", skip_serializing_if = "Option::is_none")]
     pub testmode: Option<bool>,
-    #[serde(rename = "_links", skip_serializing_if = "Option::is_none")]
-    pub _links: Option<models::EntitySubscriptionLinks>,
+    #[serde(rename = "_links")]
+    pub _links: models::EntitySubscriptionLinks,
 }
 
 impl SubscriptionResponse {
-    pub fn new() -> SubscriptionResponse {
+    pub fn new(resource: String, id: String, mode: models::Mode, status: models::SubscriptionStatusResponse, amount: models::Amount, times: i32, times_remaining: i32, interval: String, start_date: String, description: String, method: Option<models::SubscriptionMethodResponse>, metadata: Option<models::Metadata>, webhook_url: String, customer_id: String, created_at: String, _links: models::EntitySubscriptionLinks) -> SubscriptionResponse {
         SubscriptionResponse {
-            resource: None,
-            id: None,
-            mode: None,
-            status: None,
-            amount: None,
-            times: None,
-            times_remaining: None,
-            interval: None,
-            start_date: None,
+            resource,
+            id,
+            mode,
+            status,
+            amount,
+            times,
+            times_remaining,
+            interval,
+            start_date,
             next_payment_date: None,
-            description: None,
-            method: None,
+            description,
+            method,
             application_fee: None,
-            metadata: None,
-            webhook_url: None,
-            customer_id: None,
+            metadata,
+            webhook_url,
+            customer_id,
             mandate_id: None,
-            created_at: None,
+            created_at,
             canceled_at: None,
+            profile_id: None,
             testmode: None,
-            _links: None,
+            _links,
         }
     }
 }

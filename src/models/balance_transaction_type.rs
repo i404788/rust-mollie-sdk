@@ -14,157 +14,136 @@ use serde::{Deserialize, Serialize};
 /// 
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize)]
 pub enum BalanceTransactionType {
-    #[serde(rename = "application-fee")]
-    ApplicationFee,
-    #[serde(rename = "capture")]
-    Capture,
-    #[serde(rename = "chargeback")]
-    Chargeback,
-    #[serde(rename = "chargeback-reversal")]
-    ChargebackReversal,
-    #[serde(rename = "failed-payment-fee")]
-    FailedPaymentFee,
-    #[serde(rename = "failed-payment")]
-    FailedPayment,
-    #[serde(rename = "invoice-compensation")]
-    InvoiceCompensation,
     #[serde(rename = "payment")]
     Payment,
-    #[serde(rename = "payment-fee")]
-    PaymentFee,
-    #[serde(rename = "payment-commission")]
-    PaymentCommission,
-    #[serde(rename = "refund")]
-    Refund,
-    #[serde(rename = "returned-refund")]
-    ReturnedRefund,
-    #[serde(rename = "returned-transfer")]
-    ReturnedTransfer,
     #[serde(rename = "split-payment")]
     SplitPayment,
-    #[serde(rename = "outgoing-transfer")]
-    OutgoingTransfer,
-    #[serde(rename = "capture-commission")]
-    CaptureCommission,
-    #[serde(rename = "canceled-outgoing-transfer")]
-    CanceledOutgoingTransfer,
-    #[serde(rename = "incoming-transfer")]
-    IncomingTransfer,
-    #[serde(rename = "api-payment-rolling-reserve-release")]
-    ApiPaymentRollingReserveRelease,
-    #[serde(rename = "capture-rolling-reserve-release")]
-    CaptureRollingReserveRelease,
-    #[serde(rename = "reimbursement-fee")]
-    ReimbursementFee,
-    #[serde(rename = "balance-correction")]
-    BalanceCorrection,
-    #[serde(rename = "unauthorized-direct-debit")]
-    UnauthorizedDirectDebit,
-    #[serde(rename = "bank-charged-failure-fee")]
-    BankChargedFailureFee,
+    #[serde(rename = "failed-payment")]
+    FailedPayment,
+    #[serde(rename = "failed-platform-split-payment")]
+    FailedPlatformSplitPayment,
+    #[serde(rename = "failed-split-payment-compensation")]
+    FailedSplitPaymentCompensation,
+    #[serde(rename = "capture")]
+    Capture,
+    #[serde(rename = "split-transaction")]
+    SplitTransaction,
+    #[serde(rename = "refund")]
+    Refund,
     #[serde(rename = "platform-payment-refund")]
     PlatformPaymentRefund,
+    #[serde(rename = "returned-platform-payment-refund")]
+    ReturnedPlatformPaymentRefund,
     #[serde(rename = "refund-compensation")]
     RefundCompensation,
     #[serde(rename = "returned-refund-compensation")]
     ReturnedRefundCompensation,
-    #[serde(rename = "returned-platform-payment-refund")]
-    ReturnedPlatformPaymentRefund,
-    #[serde(rename = "platform-payment-chargeback")]
-    PlatformPaymentChargeback,
+    #[serde(rename = "returned-refund")]
+    ReturnedRefund,
+    #[serde(rename = "chargeback")]
+    Chargeback,
+    #[serde(rename = "chargeback-reversal")]
+    ChargebackReversal,
     #[serde(rename = "chargeback-compensation")]
     ChargebackCompensation,
-    #[serde(rename = "reversed-platform-payment-chargeback")]
-    ReversedPlatformPaymentChargeback,
     #[serde(rename = "reversed-chargeback-compensation")]
     ReversedChargebackCompensation,
-    #[serde(rename = "failed-split-payment-platform")]
-    FailedSplitPaymentPlatform,
-    #[serde(rename = "failed-split-payment-compensation")]
-    FailedSplitPaymentCompensation,
-    #[serde(rename = "cash-advance-loan")]
-    CashAdvanceLoan,
-    #[serde(rename = "platform-connected-organizations-fee")]
-    PlatformConnectedOrganizationsFee,
-    #[serde(rename = "split-transaction")]
-    SplitTransaction,
-    #[serde(rename = "managed-fee")]
-    ManagedFee,
-    #[serde(rename = "returned-managed-fee")]
-    ReturnedManagedFee,
-    #[serde(rename = "topup")]
-    Topup,
+    #[serde(rename = "platform-payment-chargeback")]
+    PlatformPaymentChargeback,
+    #[serde(rename = "reversed-platform-payment-chargeback")]
+    ReversedPlatformPaymentChargeback,
+    #[serde(rename = "fee-prepayment")]
+    FeePrepayment,
+    #[serde(rename = "outgoing-transfer")]
+    OutgoingTransfer,
+    #[serde(rename = "incoming-transfer")]
+    IncomingTransfer,
+    #[serde(rename = "canceled-transfer")]
+    CanceledTransfer,
+    #[serde(rename = "returned-transfer")]
+    ReturnedTransfer,
     #[serde(rename = "balance-reserve")]
     BalanceReserve,
     #[serde(rename = "balance-reserve-return")]
     BalanceReserveReturn,
-    #[serde(rename = "movement")]
-    Movement,
-    #[serde(rename = "post-payment-split-payment")]
-    PostPaymentSplitPayment,
-    #[serde(rename = "cash-collateral-issuance")]
-    CashCollateralIssuance,
+    #[serde(rename = "invoice-rounding-compensation")]
+    InvoiceRoundingCompensation,
+    #[serde(rename = "rolling-reserve-hold")]
+    RollingReserveHold,
+    #[serde(rename = "rolling-reserve-release")]
+    RollingReserveRelease,
+    #[serde(rename = "balance-correction")]
+    BalanceCorrection,
+    #[serde(rename = "repayment")]
+    Repayment,
+    #[serde(rename = "loan")]
+    Loan,
+    #[serde(rename = "balance-topup")]
+    BalanceTopup,
+    #[serde(rename = "cash-collateral-issuance';")]
+    CashCollateralIssuanceQuoteSemicolon,
     #[serde(rename = "cash-collateral-release")]
     CashCollateralRelease,
+    #[serde(rename = "pending-rolling-reserve")]
+    PendingRollingReserve,
+    #[serde(rename = "to-be-released-rolling-reserve")]
+    ToBeReleasedRollingReserve,
+    #[serde(rename = "held-rolling-reserve")]
+    HeldRollingReserve,
+    #[serde(rename = "released-rolling-reserve")]
+    ReleasedRollingReserve,
 
 }
 
 impl std::fmt::Display for BalanceTransactionType {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         match self {
-            Self::ApplicationFee => write!(f, "application-fee"),
-            Self::Capture => write!(f, "capture"),
-            Self::Chargeback => write!(f, "chargeback"),
-            Self::ChargebackReversal => write!(f, "chargeback-reversal"),
-            Self::FailedPaymentFee => write!(f, "failed-payment-fee"),
-            Self::FailedPayment => write!(f, "failed-payment"),
-            Self::InvoiceCompensation => write!(f, "invoice-compensation"),
             Self::Payment => write!(f, "payment"),
-            Self::PaymentFee => write!(f, "payment-fee"),
-            Self::PaymentCommission => write!(f, "payment-commission"),
-            Self::Refund => write!(f, "refund"),
-            Self::ReturnedRefund => write!(f, "returned-refund"),
-            Self::ReturnedTransfer => write!(f, "returned-transfer"),
             Self::SplitPayment => write!(f, "split-payment"),
-            Self::OutgoingTransfer => write!(f, "outgoing-transfer"),
-            Self::CaptureCommission => write!(f, "capture-commission"),
-            Self::CanceledOutgoingTransfer => write!(f, "canceled-outgoing-transfer"),
-            Self::IncomingTransfer => write!(f, "incoming-transfer"),
-            Self::ApiPaymentRollingReserveRelease => write!(f, "api-payment-rolling-reserve-release"),
-            Self::CaptureRollingReserveRelease => write!(f, "capture-rolling-reserve-release"),
-            Self::ReimbursementFee => write!(f, "reimbursement-fee"),
-            Self::BalanceCorrection => write!(f, "balance-correction"),
-            Self::UnauthorizedDirectDebit => write!(f, "unauthorized-direct-debit"),
-            Self::BankChargedFailureFee => write!(f, "bank-charged-failure-fee"),
+            Self::FailedPayment => write!(f, "failed-payment"),
+            Self::FailedPlatformSplitPayment => write!(f, "failed-platform-split-payment"),
+            Self::FailedSplitPaymentCompensation => write!(f, "failed-split-payment-compensation"),
+            Self::Capture => write!(f, "capture"),
+            Self::SplitTransaction => write!(f, "split-transaction"),
+            Self::Refund => write!(f, "refund"),
             Self::PlatformPaymentRefund => write!(f, "platform-payment-refund"),
+            Self::ReturnedPlatformPaymentRefund => write!(f, "returned-platform-payment-refund"),
             Self::RefundCompensation => write!(f, "refund-compensation"),
             Self::ReturnedRefundCompensation => write!(f, "returned-refund-compensation"),
-            Self::ReturnedPlatformPaymentRefund => write!(f, "returned-platform-payment-refund"),
-            Self::PlatformPaymentChargeback => write!(f, "platform-payment-chargeback"),
+            Self::ReturnedRefund => write!(f, "returned-refund"),
+            Self::Chargeback => write!(f, "chargeback"),
+            Self::ChargebackReversal => write!(f, "chargeback-reversal"),
             Self::ChargebackCompensation => write!(f, "chargeback-compensation"),
-            Self::ReversedPlatformPaymentChargeback => write!(f, "reversed-platform-payment-chargeback"),
             Self::ReversedChargebackCompensation => write!(f, "reversed-chargeback-compensation"),
-            Self::FailedSplitPaymentPlatform => write!(f, "failed-split-payment-platform"),
-            Self::FailedSplitPaymentCompensation => write!(f, "failed-split-payment-compensation"),
-            Self::CashAdvanceLoan => write!(f, "cash-advance-loan"),
-            Self::PlatformConnectedOrganizationsFee => write!(f, "platform-connected-organizations-fee"),
-            Self::SplitTransaction => write!(f, "split-transaction"),
-            Self::ManagedFee => write!(f, "managed-fee"),
-            Self::ReturnedManagedFee => write!(f, "returned-managed-fee"),
-            Self::Topup => write!(f, "topup"),
+            Self::PlatformPaymentChargeback => write!(f, "platform-payment-chargeback"),
+            Self::ReversedPlatformPaymentChargeback => write!(f, "reversed-platform-payment-chargeback"),
+            Self::FeePrepayment => write!(f, "fee-prepayment"),
+            Self::OutgoingTransfer => write!(f, "outgoing-transfer"),
+            Self::IncomingTransfer => write!(f, "incoming-transfer"),
+            Self::CanceledTransfer => write!(f, "canceled-transfer"),
+            Self::ReturnedTransfer => write!(f, "returned-transfer"),
             Self::BalanceReserve => write!(f, "balance-reserve"),
             Self::BalanceReserveReturn => write!(f, "balance-reserve-return"),
-            Self::Movement => write!(f, "movement"),
-            Self::PostPaymentSplitPayment => write!(f, "post-payment-split-payment"),
-            Self::CashCollateralIssuance => write!(f, "cash-collateral-issuance"),
+            Self::InvoiceRoundingCompensation => write!(f, "invoice-rounding-compensation"),
+            Self::RollingReserveHold => write!(f, "rolling-reserve-hold"),
+            Self::RollingReserveRelease => write!(f, "rolling-reserve-release"),
+            Self::BalanceCorrection => write!(f, "balance-correction"),
+            Self::Repayment => write!(f, "repayment"),
+            Self::Loan => write!(f, "loan"),
+            Self::BalanceTopup => write!(f, "balance-topup"),
+            Self::CashCollateralIssuanceQuoteSemicolon => write!(f, "cash-collateral-issuance';"),
             Self::CashCollateralRelease => write!(f, "cash-collateral-release"),
+            Self::PendingRollingReserve => write!(f, "pending-rolling-reserve"),
+            Self::ToBeReleasedRollingReserve => write!(f, "to-be-released-rolling-reserve"),
+            Self::HeldRollingReserve => write!(f, "held-rolling-reserve"),
+            Self::ReleasedRollingReserve => write!(f, "released-rolling-reserve"),
         }
     }
 }
 
 impl Default for BalanceTransactionType {
     fn default() -> BalanceTransactionType {
-        Self::ApplicationFee
+        Self::Payment
     }
 }
 

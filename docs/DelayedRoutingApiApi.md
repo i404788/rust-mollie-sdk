@@ -1,11 +1,12 @@
 # \DelayedRoutingApiApi
 
-All URIs are relative to *https://api.mollie.com/v2*
+All URIs are relative to *https://api.mollie.com*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**payment_create_route**](DelayedRoutingApiApi.md#payment_create_route) | **POST** /payments/{paymentId}/routes | Create a delayed route
-[**payment_list_routes**](DelayedRoutingApiApi.md#payment_list_routes) | **GET** /payments/{paymentId}/routes | List payment routes
+[**payment_create_route**](DelayedRoutingApiApi.md#payment_create_route) | **POST** /v2/payments/{paymentId}/routes | Create a delayed route
+[**payment_get_route**](DelayedRoutingApiApi.md#payment_get_route) | **GET** /v2/payments/{paymentId}/routes/{routeId} | Get a delayed route
+[**payment_list_routes**](DelayedRoutingApiApi.md#payment_list_routes) | **GET** /v2/payments/{paymentId}/routes | List payment routes
 
 
 
@@ -31,11 +32,43 @@ Name | Type | Description  | Required | Notes
 
 ### Authorization
 
-[apiKey](../README.md#apiKey), [oAuth](../README.md#oAuth)
+[apiKey](../README.md#apiKey), [oAuth](../README.md#oAuth), [organizationAccessToken](../README.md#organizationAccessToken)
 
 ### HTTP request headers
 
 - **Content-Type**: application/json
+- **Accept**: application/hal+json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+
+## payment_get_route
+
+> models::RouteGetResponse payment_get_route(payment_id, route_id, idempotency_key)
+Get a delayed route
+
+Retrieve a single route created for a specific payment.
+
+### Parameters
+
+
+Name | Type | Description  | Required | Notes
+------------- | ------------- | ------------- | ------------- | -------------
+**payment_id** | **String** | Provide the ID of the related payment. | [required] |
+**route_id** | **String** | Provide the ID of the route. | [required] |
+**idempotency_key** | Option<**String**> | A unique key to ensure idempotent requests. This key should be a UUID v4 string. |  |
+
+### Return type
+
+[**models::RouteGetResponse**](route-get-response.md)
+
+### Authorization
+
+[apiKey](../README.md#apiKey), [oAuth](../README.md#oAuth), [organizationAccessToken](../README.md#organizationAccessToken)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
 - **Accept**: application/hal+json
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
@@ -54,7 +87,7 @@ Retrieve a list of all routes created for a specific payment.
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
 **payment_id** | **String** | Provide the ID of the related payment. | [required] |
-**testmode** | Option<**bool**> | Most API credentials are specifically created for either live mode or test mode. In those cases the `testmode` query parameter can be omitted. For organization-level credentials such as OAuth access tokens, you can enable test mode by setting the `testmode` query parameter to `true`.  Test entities cannot be retrieved when the endpoint is set to live mode, and vice versa. |  |
+**testmode** | Option<**bool**> | Most API credentials are specifically created for either live mode or test mode. In those cases the `testmode` query parameter must not be sent. For organization-level credentials such as OAuth access tokens, you can enable test mode by setting the `testmode` query parameter to `true`.  Test entities cannot be retrieved when the endpoint is set to live mode, and vice versa. |  |
 **idempotency_key** | Option<**String**> | A unique key to ensure idempotent requests. This key should be a UUID v4 string. |  |
 
 ### Return type
@@ -63,7 +96,7 @@ Name | Type | Description  | Required | Notes
 
 ### Authorization
 
-[apiKey](../README.md#apiKey), [oAuth](../README.md#oAuth)
+[apiKey](../README.md#apiKey), [oAuth](../README.md#oAuth), [organizationAccessToken](../README.md#organizationAccessToken)
 
 ### HTTP request headers
 

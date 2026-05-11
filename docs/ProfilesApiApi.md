@@ -1,21 +1,21 @@
 # \ProfilesApiApi
 
-All URIs are relative to *https://api.mollie.com/v2*
+All URIs are relative to *https://api.mollie.com*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**create_profile**](ProfilesApiApi.md#create_profile) | **POST** /profiles | Create profile
-[**delete_profile**](ProfilesApiApi.md#delete_profile) | **DELETE** /profiles/{id} | Delete profile
-[**get_current_profile**](ProfilesApiApi.md#get_current_profile) | **GET** /profiles/me | Get current profile
-[**get_profile**](ProfilesApiApi.md#get_profile) | **GET** /profiles/{id} | Get profile
-[**list_profiles**](ProfilesApiApi.md#list_profiles) | **GET** /profiles | List profiles
-[**update_profile**](ProfilesApiApi.md#update_profile) | **PATCH** /profiles/{id} | Update profile
+[**create_profile**](ProfilesApiApi.md#create_profile) | **POST** /v2/profiles | Create profile
+[**delete_profile**](ProfilesApiApi.md#delete_profile) | **DELETE** /v2/profiles/{profileId} | Delete profile
+[**get_current_profile**](ProfilesApiApi.md#get_current_profile) | **GET** /v2/profiles/me | Get current profile
+[**get_profile**](ProfilesApiApi.md#get_profile) | **GET** /v2/profiles/{profileId} | Get profile
+[**list_profiles**](ProfilesApiApi.md#list_profiles) | **GET** /v2/profiles | List profiles
+[**update_profile**](ProfilesApiApi.md#update_profile) | **PATCH** /v2/profiles/{profileId} | Update profile
 
 
 
 ## create_profile
 
-> models::EntityProfileResponse create_profile(entity_profile, idempotency_key)
+> models::ProfileResponse create_profile(profile_request, idempotency_key)
 Create profile
 
 Create a profile to process payments on.  Profiles are required for payment processing. Normally they are created via the Mollie dashboard. Alternatively, you can use this endpoint to automate profile creation.
@@ -25,16 +25,16 @@ Create a profile to process payments on.  Profiles are required for payment proc
 
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
-**entity_profile** | [**EntityProfile**](EntityProfile.md) |  | [required] |
+**profile_request** | [**ProfileRequest**](ProfileRequest.md) |  | [required] |
 **idempotency_key** | Option<**String**> | A unique key to ensure idempotent requests. This key should be a UUID v4 string. |  |
 
 ### Return type
 
-[**models::EntityProfileResponse**](entity-profile-response.md)
+[**models::ProfileResponse**](profile-response.md)
 
 ### Authorization
 
-[oAuth](../README.md#oAuth)
+[oAuth](../README.md#oAuth), [organizationAccessToken](../README.md#organizationAccessToken)
 
 ### HTTP request headers
 
@@ -46,7 +46,7 @@ Name | Type | Description  | Required | Notes
 
 ## delete_profile
 
-> serde_json::Value delete_profile(id, idempotency_key)
+> delete_profile(profile_id, idempotency_key)
 Delete profile
 
 Delete a profile. A deleted profile and its related credentials can no longer be used for accepting payments.
@@ -56,16 +56,16 @@ Delete a profile. A deleted profile and its related credentials can no longer be
 
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
-**id** | **String** | Provide the ID of the item you want to perform this operation on. | [required] |
+**profile_id** | **String** | Provide the ID of the related profile. | [required] |
 **idempotency_key** | Option<**String**> | A unique key to ensure idempotent requests. This key should be a UUID v4 string. |  |
 
 ### Return type
 
-[**serde_json::Value**](serde_json::Value.md)
+ (empty response body)
 
 ### Authorization
 
-[oAuth](../README.md#oAuth)
+[oAuth](../README.md#oAuth), [organizationAccessToken](../README.md#organizationAccessToken)
 
 ### HTTP request headers
 
@@ -77,7 +77,7 @@ Name | Type | Description  | Required | Notes
 
 ## get_current_profile
 
-> models::EntityProfileResponse get_current_profile(idempotency_key)
+> models::ProfileResponse get_current_profile(idempotency_key)
 Get current profile
 
 Retrieve the currently authenticated profile. A convenient alias of the [Get profile](get-profile) endpoint.  For a complete reference of the profile object, refer to the [Get profile](get-profile) endpoint documentation.
@@ -91,7 +91,7 @@ Name | Type | Description  | Required | Notes
 
 ### Return type
 
-[**models::EntityProfileResponse**](entity-profile-response.md)
+[**models::ProfileResponse**](profile-response.md)
 
 ### Authorization
 
@@ -107,7 +107,7 @@ Name | Type | Description  | Required | Notes
 
 ## get_profile
 
-> models::EntityProfileResponse get_profile(id, testmode, idempotency_key)
+> models::ProfileResponse get_profile(profile_id, testmode, idempotency_key)
 Get profile
 
 Retrieve a single profile by its ID.
@@ -117,17 +117,17 @@ Retrieve a single profile by its ID.
 
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
-**id** | **String** | Provide the ID of the item you want to perform this operation on. | [required] |
-**testmode** | Option<**bool**> | Most API credentials are specifically created for either live mode or test mode. In those cases the `testmode` query parameter can be omitted. For organization-level credentials such as OAuth access tokens, you can enable test mode by setting the `testmode` query parameter to `true`.  Test entities cannot be retrieved when the endpoint is set to live mode, and vice versa. |  |
+**profile_id** | **String** | Provide the ID of the related profile. | [required] |
+**testmode** | Option<**bool**> | You can enable test mode by setting the `testmode` query parameter to `true`.  Test entities cannot be retrieved when the endpoint is set to live mode, and vice versa. |  |
 **idempotency_key** | Option<**String**> | A unique key to ensure idempotent requests. This key should be a UUID v4 string. |  |
 
 ### Return type
 
-[**models::EntityProfileResponse**](entity-profile-response.md)
+[**models::ProfileResponse**](profile-response.md)
 
 ### Authorization
 
-[oAuth](../README.md#oAuth)
+[oAuth](../README.md#oAuth), [organizationAccessToken](../README.md#organizationAccessToken)
 
 ### HTTP request headers
 
@@ -159,7 +159,7 @@ Name | Type | Description  | Required | Notes
 
 ### Authorization
 
-[oAuth](../README.md#oAuth)
+[oAuth](../README.md#oAuth), [organizationAccessToken](../README.md#organizationAccessToken)
 
 ### HTTP request headers
 
@@ -171,7 +171,7 @@ Name | Type | Description  | Required | Notes
 
 ## update_profile
 
-> models::EntityProfileResponse update_profile(id, update_profile_request, idempotency_key)
+> models::ProfileResponse update_profile(profile_id, update_profile_request, idempotency_key)
 Update profile
 
 Update an existing profile.  Profiles are required for payment processing. Normally they are created and updated via the Mollie dashboard. Alternatively, you can use this endpoint to automate profile management.
@@ -181,17 +181,17 @@ Update an existing profile.  Profiles are required for payment processing. Norma
 
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
-**id** | **String** | Provide the ID of the item you want to perform this operation on. | [required] |
+**profile_id** | **String** | Provide the ID of the related profile. | [required] |
 **update_profile_request** | [**UpdateProfileRequest**](UpdateProfileRequest.md) |  | [required] |
 **idempotency_key** | Option<**String**> | A unique key to ensure idempotent requests. This key should be a UUID v4 string. |  |
 
 ### Return type
 
-[**models::EntityProfileResponse**](entity-profile-response.md)
+[**models::ProfileResponse**](profile-response.md)
 
 ### Authorization
 
-[oAuth](../README.md#oAuth)
+[oAuth](../README.md#oAuth), [organizationAccessToken](../README.md#organizationAccessToken)
 
 ### HTTP request headers
 

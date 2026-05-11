@@ -19,6 +19,7 @@ use super::{Error, configuration, ContentType};
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum CreateProfileError {
+    Status403(models::ErrorResponse),
     Status422(models::ErrorResponse),
     UnknownValue(serde_json::Value),
 }
@@ -60,6 +61,7 @@ pub enum ListProfilesError {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum UpdateProfileError {
+    Status403(models::ErrorResponse),
     Status404(models::ErrorResponse),
     Status410(models::ErrorResponse),
     Status422(models::ErrorResponse),
@@ -68,12 +70,12 @@ pub enum UpdateProfileError {
 
 
 /// Create a profile to process payments on.  Profiles are required for payment processing. Normally they are created via the Mollie dashboard. Alternatively, you can use this endpoint to automate profile creation.
-pub async fn create_profile(configuration: &configuration::Configuration, entity_profile: models::EntityProfile, idempotency_key: Option<&str>) -> Result<models::EntityProfileResponse, Error<CreateProfileError>> {
+pub async fn create_profile(configuration: &configuration::Configuration, profile_request: models::ProfileRequest, idempotency_key: Option<&str>) -> Result<models::ProfileResponse, Error<CreateProfileError>> {
     // add a prefix to parameters to efficiently prevent name collisions
-    let p_body_entity_profile = entity_profile;
+    let p_body_profile_request = profile_request;
     let p_header_idempotency_key = idempotency_key;
 
-    let uri_str = format!("{}/profiles", configuration.base_path);
+    let uri_str = format!("{}/v2/profiles", configuration.base_path);
     let mut req_builder = configuration.client.request(reqwest::Method::POST, &uri_str);
 
     if let Some(ref user_agent) = configuration.user_agent {
@@ -85,7 +87,10 @@ pub async fn create_profile(configuration: &configuration::Configuration, entity
     if let Some(ref token) = configuration.oauth_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
-    req_builder = req_builder.json(&p_body_entity_profile);
+    if let Some(ref token) = configuration.bearer_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    req_builder = req_builder.json(&p_body_profile_request);
 
     let req = req_builder.build()?;
     let resp = configuration.client.execute(req).await?;
@@ -102,8 +107,8 @@ pub async fn create_profile(configuration: &configuration::Configuration, entity
         let content = resp.text().await?;
         match content_type {
             ContentType::Json => serde_json::from_str(&content).map_err(Error::from),
-            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `models::EntityProfileResponse`"))),
-            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `models::EntityProfileResponse`")))),
+            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `models::ProfileResponse`"))),
+            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `models::ProfileResponse`")))),
         }
     } else {
         let content = resp.text().await?;
@@ -113,12 +118,12 @@ pub async fn create_profile(configuration: &configuration::Configuration, entity
 }
 
 /// Delete a profile. A deleted profile and its related credentials can no longer be used for accepting payments.
-pub async fn delete_profile(configuration: &configuration::Configuration, id: &str, idempotency_key: Option<&str>) -> Result<serde_json::Value, Error<DeleteProfileError>> {
+pub async fn delete_profile(configuration: &configuration::Configuration, profile_id: &str, idempotency_key: Option<&str>) -> Result<(), Error<DeleteProfileError>> {
     // add a prefix to parameters to efficiently prevent name collisions
-    let p_path_id = id;
+    let p_path_profile_id = profile_id;
     let p_header_idempotency_key = idempotency_key;
 
-    let uri_str = format!("{}/profiles/{id}", configuration.base_path, id=crate::apis::urlencode(p_path_id));
+    let uri_str = format!("{}/v2/profiles/{profileId}", configuration.base_path, profileId=crate::apis::urlencode(p_path_profile_id));
     let mut req_builder = configuration.client.request(reqwest::Method::DELETE, &uri_str);
 
     if let Some(ref user_agent) = configuration.user_agent {
@@ -130,25 +135,17 @@ pub async fn delete_profile(configuration: &configuration::Configuration, id: &s
     if let Some(ref token) = configuration.oauth_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
+    if let Some(ref token) = configuration.bearer_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
 
     let req = req_builder.build()?;
     let resp = configuration.client.execute(req).await?;
 
     let status = resp.status();
-    let content_type = resp
-        .headers()
-        .get("content-type")
-        .and_then(|v| v.to_str().ok())
-        .unwrap_or("application/octet-stream");
-    let content_type = super::ContentType::from(content_type);
 
     if !status.is_client_error() && !status.is_server_error() {
-        let content = resp.text().await?;
-        match content_type {
-            ContentType::Json => serde_json::from_str(&content).map_err(Error::from),
-            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `serde_json::Value`"))),
-            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `serde_json::Value`")))),
-        }
+        Ok(())
     } else {
         let content = resp.text().await?;
         let entity: Option<DeleteProfileError> = serde_json::from_str(&content).ok();
@@ -157,11 +154,11 @@ pub async fn delete_profile(configuration: &configuration::Configuration, id: &s
 }
 
 /// Retrieve the currently authenticated profile. A convenient alias of the [Get profile](get-profile) endpoint.  For a complete reference of the profile object, refer to the [Get profile](get-profile) endpoint documentation.
-pub async fn get_current_profile(configuration: &configuration::Configuration, idempotency_key: Option<&str>) -> Result<models::EntityProfileResponse, Error<GetCurrentProfileError>> {
+pub async fn get_current_profile(configuration: &configuration::Configuration, idempotency_key: Option<&str>) -> Result<models::ProfileResponse, Error<GetCurrentProfileError>> {
     // add a prefix to parameters to efficiently prevent name collisions
     let p_header_idempotency_key = idempotency_key;
 
-    let uri_str = format!("{}/profiles/me", configuration.base_path);
+    let uri_str = format!("{}/v2/profiles/me", configuration.base_path);
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
     if let Some(ref user_agent) = configuration.user_agent {
@@ -189,8 +186,8 @@ pub async fn get_current_profile(configuration: &configuration::Configuration, i
         let content = resp.text().await?;
         match content_type {
             ContentType::Json => serde_json::from_str(&content).map_err(Error::from),
-            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `models::EntityProfileResponse`"))),
-            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `models::EntityProfileResponse`")))),
+            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `models::ProfileResponse`"))),
+            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `models::ProfileResponse`")))),
         }
     } else {
         let content = resp.text().await?;
@@ -200,13 +197,13 @@ pub async fn get_current_profile(configuration: &configuration::Configuration, i
 }
 
 /// Retrieve a single profile by its ID.
-pub async fn get_profile(configuration: &configuration::Configuration, id: &str, testmode: Option<bool>, idempotency_key: Option<&str>) -> Result<models::EntityProfileResponse, Error<GetProfileError>> {
+pub async fn get_profile(configuration: &configuration::Configuration, profile_id: &str, testmode: Option<bool>, idempotency_key: Option<&str>) -> Result<models::ProfileResponse, Error<GetProfileError>> {
     // add a prefix to parameters to efficiently prevent name collisions
-    let p_path_id = id;
+    let p_path_profile_id = profile_id;
     let p_query_testmode = testmode;
     let p_header_idempotency_key = idempotency_key;
 
-    let uri_str = format!("{}/profiles/{id}", configuration.base_path, id=crate::apis::urlencode(p_path_id));
+    let uri_str = format!("{}/v2/profiles/{profileId}", configuration.base_path, profileId=crate::apis::urlencode(p_path_profile_id));
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
     if let Some(ref param_value) = p_query_testmode {
@@ -219,6 +216,9 @@ pub async fn get_profile(configuration: &configuration::Configuration, id: &str,
         req_builder = req_builder.header("idempotency-key", param_value.to_string());
     }
     if let Some(ref token) = configuration.oauth_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
 
@@ -237,8 +237,8 @@ pub async fn get_profile(configuration: &configuration::Configuration, id: &str,
         let content = resp.text().await?;
         match content_type {
             ContentType::Json => serde_json::from_str(&content).map_err(Error::from),
-            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `models::EntityProfileResponse`"))),
-            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `models::EntityProfileResponse`")))),
+            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `models::ProfileResponse`"))),
+            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `models::ProfileResponse`")))),
         }
     } else {
         let content = resp.text().await?;
@@ -254,7 +254,7 @@ pub async fn list_profiles(configuration: &configuration::Configuration, from: O
     let p_query_limit = limit;
     let p_header_idempotency_key = idempotency_key;
 
-    let uri_str = format!("{}/profiles", configuration.base_path);
+    let uri_str = format!("{}/v2/profiles", configuration.base_path);
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
     if let Some(ref param_value) = p_query_from {
@@ -270,6 +270,9 @@ pub async fn list_profiles(configuration: &configuration::Configuration, from: O
         req_builder = req_builder.header("idempotency-key", param_value.to_string());
     }
     if let Some(ref token) = configuration.oauth_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
 
@@ -299,13 +302,13 @@ pub async fn list_profiles(configuration: &configuration::Configuration, from: O
 }
 
 /// Update an existing profile.  Profiles are required for payment processing. Normally they are created and updated via the Mollie dashboard. Alternatively, you can use this endpoint to automate profile management.
-pub async fn update_profile(configuration: &configuration::Configuration, id: &str, update_profile_request: models::UpdateProfileRequest, idempotency_key: Option<&str>) -> Result<models::EntityProfileResponse, Error<UpdateProfileError>> {
+pub async fn update_profile(configuration: &configuration::Configuration, profile_id: &str, update_profile_request: models::UpdateProfileRequest, idempotency_key: Option<&str>) -> Result<models::ProfileResponse, Error<UpdateProfileError>> {
     // add a prefix to parameters to efficiently prevent name collisions
-    let p_path_id = id;
+    let p_path_profile_id = profile_id;
     let p_body_update_profile_request = update_profile_request;
     let p_header_idempotency_key = idempotency_key;
 
-    let uri_str = format!("{}/profiles/{id}", configuration.base_path, id=crate::apis::urlencode(p_path_id));
+    let uri_str = format!("{}/v2/profiles/{profileId}", configuration.base_path, profileId=crate::apis::urlencode(p_path_profile_id));
     let mut req_builder = configuration.client.request(reqwest::Method::PATCH, &uri_str);
 
     if let Some(ref user_agent) = configuration.user_agent {
@@ -315,6 +318,9 @@ pub async fn update_profile(configuration: &configuration::Configuration, id: &s
         req_builder = req_builder.header("idempotency-key", param_value.to_string());
     }
     if let Some(ref token) = configuration.oauth_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
     req_builder = req_builder.json(&p_body_update_profile_request);
@@ -334,8 +340,8 @@ pub async fn update_profile(configuration: &configuration::Configuration, id: &s
         let content = resp.text().await?;
         match content_type {
             ContentType::Json => serde_json::from_str(&content).map_err(Error::from),
-            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `models::EntityProfileResponse`"))),
-            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `models::EntityProfileResponse`")))),
+            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `models::ProfileResponse`"))),
+            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `models::ProfileResponse`")))),
         }
     } else {
         let content = resp.text().await?;

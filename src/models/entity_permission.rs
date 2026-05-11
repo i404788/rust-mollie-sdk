@@ -14,28 +14,29 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
 pub struct EntityPermission {
     /// Indicates the response contains a permission object. Will always contain the string `permission` for this endpoint.
-    #[serde(rename = "resource", skip_serializing_if = "Option::is_none")]
-    pub resource: Option<String>,
-    #[serde(rename = "id", skip_serializing_if = "Option::is_none")]
-    pub id: Option<String>,
+    #[serde(rename = "resource")]
+    pub resource: String,
+    /// The identifier uniquely referring to this permission. Example: `payments.read`.
+    #[serde(rename = "id")]
+    pub id: String,
     /// A short description of what kind of access the permission enables.
-    #[serde(rename = "description", skip_serializing_if = "Option::is_none")]
-    pub description: Option<String>,
+    #[serde(rename = "description")]
+    pub description: String,
     /// Whether this permission is granted to the app by the organization.
-    #[serde(rename = "granted", skip_serializing_if = "Option::is_none")]
-    pub granted: Option<bool>,
-    #[serde(rename = "_links", skip_serializing_if = "Option::is_none")]
-    pub _links: Option<models::EntityBalanceLinks>,
+    #[serde(rename = "granted")]
+    pub granted: bool,
+    #[serde(rename = "_links")]
+    pub _links: models::EntityBalanceLinks,
 }
 
 impl EntityPermission {
-    pub fn new() -> EntityPermission {
+    pub fn new(resource: String, id: String, description: String, granted: bool, _links: models::EntityBalanceLinks) -> EntityPermission {
         EntityPermission {
-            resource: None,
-            id: None,
-            description: None,
-            granted: None,
-            _links: None,
+            resource,
+            id,
+            description,
+            granted,
+            _links,
         }
     }
 }

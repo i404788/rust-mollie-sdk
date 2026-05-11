@@ -22,9 +22,9 @@ pub struct UpdatePaymentLinkRequest {
     /// Whether the payment link is archived. Customers will not be able to complete payments on archived payment links.
     #[serde(rename = "archived", skip_serializing_if = "Option::is_none")]
     pub archived: Option<bool>,
-    /// An array of payment methods that are allowed to be used for this payment link. When this parameter is not provided or is an empty array, all enabled payment methods will be available.  Enum: 'applepay', 'bancomatpay', 'bancontact', 'banktransfer', 'belfius', 'blik', 'creditcard', 'eps', 'giftcard', 'ideal', 'kbc', 'mybank', 'paybybank', 'paypal', 'paysafecard', 'pointofsale', 'przelewy24', 'satispay', 'trustly', 'twint', 'in3', 'riverty', 'klarna', 'billie'.
+    /// An array of payment methods that are allowed to be used for this payment link. When this parameter is not provided or is an empty array, all enabled payment methods will be available.
     #[serde(rename = "allowedMethods", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
-    pub allowed_methods: Option<Option<Vec<String>>>,
+    pub allowed_methods: Option<Option<Vec<models::PaymentLinkMethod>>>,
     /// Optionally provide the order lines for the payment. Each line contains details such as a description of the item ordered and its price.  All lines must have the same currency as the payment.  Required for payment methods `billie`, `in3`, `klarna`, `riverty` and `voucher`.
     #[serde(rename = "lines", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
     pub lines: Option<Option<Vec<models::PaymentLineItem>>>,
@@ -34,9 +34,9 @@ pub struct UpdatePaymentLinkRequest {
     /// The customer's shipping address details. We advise to provide these details to improve fraud protection and conversion.  Should include `email` or a valid postal address consisting of `streetAndNumber`, `postalCode`, `city` and `country`.
     #[serde(rename = "shippingAddress", skip_serializing_if = "Option::is_none")]
     pub shipping_address: Option<models::PaymentAddress>,
-    /// Most API credentials are specifically created for either live mode or test mode. For organization-level credentials such as OAuth access tokens, you can enable test mode by setting `testmode` to `true`.  Test entities cannot be retrieved when the endpoint is set to live mode, and vice versa.
-    #[serde(rename = "testmode", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
-    pub testmode: Option<Option<bool>>,
+    /// Whether the entity was created in test mode or live mode. This field does not update the mode of the entity.  Most API credentials are specifically created for either live mode or test mode, in which case this parameter must not be sent. For organization-level credentials such as OAuth access tokens, you can enable test mode by setting `testmode` to `true`.
+    #[serde(rename = "testmode", skip_serializing_if = "Option::is_none")]
+    pub testmode: Option<bool>,
 }
 
 impl UpdatePaymentLinkRequest {

@@ -14,48 +14,47 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
 pub struct EntityOrganization {
     /// Indicates the response contains an organization object. Will always contain the string `organization` for this resource type.
-    #[serde(rename = "resource", skip_serializing_if = "Option::is_none")]
-    pub resource: Option<String>,
-    /// The identifier uniquely referring to this organization. Example: `org_12345678`.
-    #[serde(rename = "id", skip_serializing_if = "Option::is_none")]
-    pub id: Option<String>,
+    #[serde(rename = "resource")]
+    pub resource: String,
+    #[serde(rename = "id")]
+    pub id: String,
     /// The name of the organization.
-    #[serde(rename = "name", skip_serializing_if = "Option::is_none")]
-    pub name: Option<String>,
-    /// The email address associated with the organization.
-    #[serde(rename = "email", skip_serializing_if = "Option::is_none")]
-    pub email: Option<String>,
+    #[serde(rename = "name")]
+    pub name: String,
+    /// The email address associated with the organization.  If the domain contains non-ASCII characters, encode it as Punycode per [RFC 3492](https://www.rfc-editor.org/rfc/rfc3492).
+    #[serde(rename = "email")]
+    pub email: String,
     /// The preferred locale of the merchant, as set in their Mollie dashboard.
-    #[serde(rename = "locale", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
-    pub locale: Option<Option<models::LocaleResponse>>,
+    #[serde(rename = "locale", deserialize_with = "Option::deserialize")]
+    pub locale: Option<models::LocaleResponse>,
     /// The address of the organization.
-    #[serde(rename = "address", skip_serializing_if = "Option::is_none")]
-    pub address: Option<models::Address>,
+    #[serde(rename = "address")]
+    pub address: models::Address,
     /// The registration number of the organization at their local chamber of commerce.
-    #[serde(rename = "registrationNumber", skip_serializing_if = "Option::is_none")]
-    pub registration_number: Option<String>,
+    #[serde(rename = "registrationNumber")]
+    pub registration_number: String,
     /// The VAT number of the organization, if based in the European Union or in The United Kingdom. VAT numbers are verified against the international registry *VIES*.  The field is not present for merchants residing in other countries.
     #[serde(rename = "vatNumber", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
     pub vat_number: Option<Option<String>>,
     #[serde(rename = "vatRegulation", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
     pub vat_regulation: Option<Option<models::OrganizationVatRegulation>>,
-    #[serde(rename = "_links", skip_serializing_if = "Option::is_none")]
-    pub _links: Option<models::EntityOrganizationLinks>,
+    #[serde(rename = "_links")]
+    pub _links: models::EntityOrganizationLinks,
 }
 
 impl EntityOrganization {
-    pub fn new() -> EntityOrganization {
+    pub fn new(resource: String, id: String, name: String, email: String, locale: Option<models::LocaleResponse>, address: models::Address, registration_number: String, _links: models::EntityOrganizationLinks) -> EntityOrganization {
         EntityOrganization {
-            resource: None,
-            id: None,
-            name: None,
-            email: None,
-            locale: None,
-            address: None,
-            registration_number: None,
+            resource,
+            id,
+            name,
+            email,
+            locale,
+            address,
+            registration_number,
             vat_number: None,
             vat_regulation: None,
-            _links: None,
+            _links,
         }
     }
 }

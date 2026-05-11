@@ -11,41 +11,26 @@
 use crate::models;
 use serde::{Deserialize, Serialize};
 
+/// RouteCreateRequest : Payload to create a new delayed route for a payment.
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
 pub struct RouteCreateRequest {
-    /// Indicates the response contains a route object. Will always contain the string `route` for this endpoint.
-    #[serde(rename = "resource", skip_serializing_if = "Option::is_none")]
-    pub resource: Option<String>,
-    #[serde(rename = "id", skip_serializing_if = "Option::is_none")]
-    pub id: Option<String>,
-    #[serde(rename = "paymentId", skip_serializing_if = "Option::is_none")]
-    pub payment_id: Option<String>,
-    /// The amount of the route. That amount that will be routed to the specified destination.
-    #[serde(rename = "amount", skip_serializing_if = "Option::is_none")]
-    pub amount: Option<models::Amount>,
-    /// The description of the route. This description is shown in the reports.
+    /// The amount to be routed.
+    #[serde(rename = "amount")]
+    pub amount: models::Amount,
+    #[serde(rename = "destination")]
+    pub destination: models::RouteCreateRequestDestination,
+    /// Description shown in reports.
     #[serde(rename = "description", skip_serializing_if = "Option::is_none")]
     pub description: Option<String>,
-    #[serde(rename = "destination", skip_serializing_if = "Option::is_none")]
-    pub destination: Option<models::RouteCreateRequestDestination>,
-    /// Whether to create the entity in test mode or live mode.  Most API credentials are specifically created for either live mode or test mode, in which case this parameter can be omitted. For organization-level credentials such as OAuth access tokens, you can enable test mode by setting `testmode` to `true`.
-    #[serde(rename = "testmode", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
-    pub testmode: Option<Option<bool>>,
-    #[serde(rename = "_links", skip_serializing_if = "Option::is_none")]
-    pub _links: Option<models::EntityWebhookLinks>,
 }
 
 impl RouteCreateRequest {
-    pub fn new() -> RouteCreateRequest {
+    /// Payload to create a new delayed route for a payment.
+    pub fn new(amount: models::Amount, destination: models::RouteCreateRequestDestination) -> RouteCreateRequest {
         RouteCreateRequest {
-            resource: None,
-            id: None,
-            payment_id: None,
-            amount: None,
+            amount,
+            destination,
             description: None,
-            destination: None,
-            testmode: None,
-            _links: None,
         }
     }
 }

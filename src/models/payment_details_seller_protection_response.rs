@@ -15,8 +15,14 @@ use serde::{Deserialize, Serialize};
 /// Indicates to what extent the payment is eligible for PayPal's Seller Protection. Only available for PayPal payments, and if the information is made available by PayPal.
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize)]
 pub enum PaymentDetailsSellerProtectionResponse {
-    #[serde(rename = "Eligible")]
+    #[serde(rename = "ELIGIBLE")]
     Eligible,
+    #[serde(rename = "PARTIALLY_ELIGIBLE")]
+    PartiallyEligible,
+    #[serde(rename = "NOT_ELIGIBLE")]
+    NotEligible,
+    #[serde(rename = "Eligible")]
+    Eligible2,
     #[serde(rename = "Ineligible")]
     Ineligible,
     #[serde(rename = "Partially Eligible - INR Only")]
@@ -24,7 +30,7 @@ pub enum PaymentDetailsSellerProtectionResponse {
     #[serde(rename = "Partially Eligible - Unauth Only")]
     PartiallyEligibleUnauthOnly,
     #[serde(rename = "Partially Eligible")]
-    PartiallyEligible,
+    PartiallyEligible2,
     #[serde(rename = "None")]
     None,
     #[serde(rename = "Active")]
@@ -37,11 +43,14 @@ pub enum PaymentDetailsSellerProtectionResponse {
 impl std::fmt::Display for PaymentDetailsSellerProtectionResponse {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         match self {
-            Self::Eligible => write!(f, "Eligible"),
+            Self::Eligible => write!(f, "ELIGIBLE"),
+            Self::PartiallyEligible => write!(f, "PARTIALLY_ELIGIBLE"),
+            Self::NotEligible => write!(f, "NOT_ELIGIBLE"),
+            Self::Eligible2 => write!(f, "Eligible"),
             Self::Ineligible => write!(f, "Ineligible"),
             Self::PartiallyEligibleInrOnly => write!(f, "Partially Eligible - INR Only"),
             Self::PartiallyEligibleUnauthOnly => write!(f, "Partially Eligible - Unauth Only"),
-            Self::PartiallyEligible => write!(f, "Partially Eligible"),
+            Self::PartiallyEligible2 => write!(f, "Partially Eligible"),
             Self::None => write!(f, "None"),
             Self::Active => write!(f, "Active"),
             Self::FraudControlUnauthPremiumEligible => write!(f, "Fraud Control - Unauth Premium Eligible"),

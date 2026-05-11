@@ -14,27 +14,27 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
 pub struct EntityCapability {
     /// Always the word `capability` for this resource type.
-    #[serde(rename = "resource", skip_serializing_if = "Option::is_none")]
-    pub resource: Option<String>,
+    #[serde(rename = "resource")]
+    pub resource: String,
     /// A unique name for this capability like `payments` / `settlements`.
-    #[serde(rename = "name", skip_serializing_if = "Option::is_none")]
-    pub name: Option<String>,
-    #[serde(rename = "status", skip_serializing_if = "Option::is_none")]
-    pub status: Option<models::CapabilityStatus>,
-    #[serde(rename = "statusReason", skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "name")]
+    pub name: String,
+    #[serde(rename = "status")]
+    pub status: models::CapabilityStatus,
+    #[serde(rename = "statusReason", deserialize_with = "Option::deserialize")]
     pub status_reason: Option<models::CapabilityStatusReason>,
-    #[serde(rename = "requirements", skip_serializing_if = "Option::is_none")]
-    pub requirements: Option<Vec<models::EntityCapabilityRequirement>>,
+    #[serde(rename = "requirements")]
+    pub requirements: Vec<models::EntityCapabilityRequirement>,
 }
 
 impl EntityCapability {
-    pub fn new() -> EntityCapability {
+    pub fn new(resource: String, name: String, status: models::CapabilityStatus, status_reason: Option<models::CapabilityStatusReason>, requirements: Vec<models::EntityCapabilityRequirement>) -> EntityCapability {
         EntityCapability {
-            resource: None,
-            name: None,
-            status: None,
-            status_reason: None,
-            requirements: None,
+            resource,
+            name,
+            status,
+            status_reason,
+            requirements,
         }
     }
 }

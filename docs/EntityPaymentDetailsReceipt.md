@@ -6,8 +6,8 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **authorization_code** | Option<**String**> | A unique code provided by the cardholder’s bank to confirm that the transaction was successfully approved. | [optional]
 **application_identifier** | Option<**String**> | The unique number that identifies a specific payment application on a chip card. | [optional]
-**card_read_method** | Option<[**models::PaymentDetailsReceiptCardReadMethod**](payment-details-receipt-card-read-method.md)> |  | [optional]
-**card_verification_method** | Option<[**models::PaymentDetailsReceiptCardVerificationMethod**](payment-details-receipt-card-verification-method.md)> |  | [optional]
+**card_read_method** | Option<[**models::PaymentDetailsReceiptCardReadMethod**](PaymentDetailsReceiptCardReadMethod.md)> |  | [optional]
+**card_verification_method** | Option<[**models::PaymentDetailsReceiptCardVerificationMethod**](PaymentDetailsReceiptCardVerificationMethod.md)> |  | [optional]
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

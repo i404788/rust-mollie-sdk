@@ -60,13 +60,13 @@ pub enum ListBalancesError {
 
 
 /// When processing payments with Mollie, we put all pending funds — usually minus Mollie fees — on a balance. Once you have linked a bank account to your Mollie account, we can pay out your balance towards this bank account.  With the Balances API you can retrieve your current balance. The response includes two amounts:  * The *pending amount*. These are payments that have been marked as `paid`, but are not yet available on your balance. * The *available amount*. This is the amount that you can get paid out to your bank account, or use for refunds.  With instant payment methods like iDEAL, payments are moved to the available balance instantly. With slower payment methods, like credit card for example, it can take a few days before the funds are available on your balance. These funds will be shown under the *pending amount* in the meanwhile.
-pub async fn get_balance(configuration: &configuration::Configuration, id: &str, testmode: Option<bool>, idempotency_key: Option<&str>) -> Result<models::EntityBalance, Error<GetBalanceError>> {
+pub async fn get_balance(configuration: &configuration::Configuration, balance_id: &str, testmode: Option<bool>, idempotency_key: Option<&str>) -> Result<models::EntityBalance, Error<GetBalanceError>> {
     // add a prefix to parameters to efficiently prevent name collisions
-    let p_path_id = id;
+    let p_path_balance_id = balance_id;
     let p_query_testmode = testmode;
     let p_header_idempotency_key = idempotency_key;
 
-    let uri_str = format!("{}/balances/{id}", configuration.base_path, id=crate::apis::urlencode(p_path_id));
+    let uri_str = format!("{}/v2/balances/{balanceId}", configuration.base_path, balanceId=crate::apis::urlencode(p_path_balance_id));
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
     if let Some(ref param_value) = p_query_testmode {
@@ -79,6 +79,9 @@ pub async fn get_balance(configuration: &configuration::Configuration, id: &str,
         req_builder = req_builder.header("idempotency-key", param_value.to_string());
     }
     if let Some(ref token) = configuration.oauth_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
 
@@ -108,7 +111,7 @@ pub async fn get_balance(configuration: &configuration::Configuration, id: &str,
 }
 
 /// Retrieve a summarized report for all transactions on a given balance within a given timeframe.  The API also provides a detailed report on all 'prepayments' for Mollie fees that were deducted from your balance during the reported period, ahead of your Mollie invoice.  The alias `primary` can be used instead of the balance ID to refer to the organization's primary balance.
-pub async fn get_balance_report(configuration: &configuration::Configuration, from: &str, until: &str, balance_id: &str, grouping: Option<&str>, testmode: Option<bool>, idempotency_key: Option<&str>) -> Result<models::EntityBalanceReport, Error<GetBalanceReportError>> {
+pub async fn get_balance_report(configuration: &configuration::Configuration, from: &str, until: &str, balance_id: &str, grouping: Option<models::BalanceReportGrouping>, testmode: Option<bool>, idempotency_key: Option<&str>) -> Result<models::EntityBalanceReport, Error<GetBalanceReportError>> {
     // add a prefix to parameters to efficiently prevent name collisions
     let p_query_from = from;
     let p_query_until = until;
@@ -117,7 +120,7 @@ pub async fn get_balance_report(configuration: &configuration::Configuration, fr
     let p_query_testmode = testmode;
     let p_header_idempotency_key = idempotency_key;
 
-    let uri_str = format!("{}/balances/{balanceId}/report", configuration.base_path, balanceId=crate::apis::urlencode(p_path_balance_id));
+    let uri_str = format!("{}/v2/balances/{balanceId}/report", configuration.base_path, balanceId=crate::apis::urlencode(p_path_balance_id));
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
     req_builder = req_builder.query(&[("from", &p_query_from.to_string())]);
@@ -135,6 +138,9 @@ pub async fn get_balance_report(configuration: &configuration::Configuration, fr
         req_builder = req_builder.header("idempotency-key", param_value.to_string());
     }
     if let Some(ref token) = configuration.oauth_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
 
@@ -168,7 +174,7 @@ pub async fn get_primary_balance(configuration: &configuration::Configuration, i
     // add a prefix to parameters to efficiently prevent name collisions
     let p_header_idempotency_key = idempotency_key;
 
-    let uri_str = format!("{}/balances/primary", configuration.base_path);
+    let uri_str = format!("{}/v2/balances/primary", configuration.base_path);
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
     if let Some(ref user_agent) = configuration.user_agent {
@@ -178,6 +184,9 @@ pub async fn get_primary_balance(configuration: &configuration::Configuration, i
         req_builder = req_builder.header("idempotency-key", param_value.to_string());
     }
     if let Some(ref token) = configuration.oauth_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
 
@@ -215,7 +224,7 @@ pub async fn list_balance_transactions(configuration: &configuration::Configurat
     let p_query_testmode = testmode;
     let p_header_idempotency_key = idempotency_key;
 
-    let uri_str = format!("{}/balances/{balanceId}/transactions", configuration.base_path, balanceId=crate::apis::urlencode(p_path_balance_id));
+    let uri_str = format!("{}/v2/balances/{balanceId}/transactions", configuration.base_path, balanceId=crate::apis::urlencode(p_path_balance_id));
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
     if let Some(ref param_value) = p_query_from {
@@ -234,6 +243,9 @@ pub async fn list_balance_transactions(configuration: &configuration::Configurat
         req_builder = req_builder.header("idempotency-key", param_value.to_string());
     }
     if let Some(ref token) = configuration.oauth_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
 
@@ -271,7 +283,7 @@ pub async fn list_balances(configuration: &configuration::Configuration, currenc
     let p_query_testmode = testmode;
     let p_header_idempotency_key = idempotency_key;
 
-    let uri_str = format!("{}/balances", configuration.base_path);
+    let uri_str = format!("{}/v2/balances", configuration.base_path);
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
     if let Some(ref param_value) = p_query_currency {
@@ -293,6 +305,9 @@ pub async fn list_balances(configuration: &configuration::Configuration, currenc
         req_builder = req_builder.header("idempotency-key", param_value.to_string());
     }
     if let Some(ref token) = configuration.oauth_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
 

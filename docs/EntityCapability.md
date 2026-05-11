@@ -4,11 +4,11 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**resource** | Option<**String**> | Always the word `capability` for this resource type. | [optional]
-**name** | Option<**String**> | A unique name for this capability like `payments` / `settlements`. | [optional]
-**status** | Option<[**models::CapabilityStatus**](capability-status.md)> |  | [optional]
-**status_reason** | Option<[**models::CapabilityStatusReason**](capability-status-reason.md)> |  | [optional]
-**requirements** | Option<[**Vec<models::EntityCapabilityRequirement>**](entity-capability-requirement.md)> |  | [optional]
+**resource** | **String** | Always the word `capability` for this resource type. | 
+**name** | **String** | A unique name for this capability like `payments` / `settlements`. | 
+**status** | [**models::CapabilityStatus**](CapabilityStatus.md) |  | 
+**status_reason** | Option<[**models::CapabilityStatusReason**](CapabilityStatusReason.md)> |  | 
+**requirements** | [**Vec<models::EntityCapabilityRequirement>**](EntityCapabilityRequirement.md) |  | 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

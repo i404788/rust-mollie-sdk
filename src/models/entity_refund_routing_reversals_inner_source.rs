@@ -16,6 +16,7 @@ use serde::{Deserialize, Serialize};
 pub struct EntityRefundRoutingReversalsInnerSource {
     #[serde(rename = "type", skip_serializing_if = "Option::is_none")]
     pub r#type: Option<models::RefundRoutingReversalsSourceType>,
+    /// Required for source type `organization`. The ID of the connected organization the funds should be pulled back from.
     #[serde(rename = "organizationId", skip_serializing_if = "Option::is_none")]
     pub organization_id: Option<String>,
 }

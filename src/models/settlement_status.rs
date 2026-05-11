@@ -19,6 +19,8 @@ pub enum SettlementStatus {
     Open,
     #[serde(rename = "pending")]
     Pending,
+    #[serde(rename = "processing-at-bank")]
+    ProcessingAtBank,
     #[serde(rename = "paidout")]
     Paidout,
     #[serde(rename = "failed")]
@@ -31,6 +33,7 @@ impl std::fmt::Display for SettlementStatus {
         match self {
             Self::Open => write!(f, "open"),
             Self::Pending => write!(f, "pending"),
+            Self::ProcessingAtBank => write!(f, "processing-at-bank"),
             Self::Paidout => write!(f, "paidout"),
             Self::Failed => write!(f, "failed"),
         }

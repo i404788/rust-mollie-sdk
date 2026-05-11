@@ -13,8 +13,9 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
 pub struct EntityCapabilityRequirementLinks {
+    /// If known, a deep link to the Mollie dashboard of the client, where the requirement can be fulfilled. For example, where necessary documents are to be uploaded.
     #[serde(rename = "dashboard", skip_serializing_if = "Option::is_none")]
-    pub dashboard: Option<models::EntityCapabilityRequirementLinksDashboard>,
+    pub dashboard: Option<models::Url>,
 }
 
 impl EntityCapabilityRequirementLinks {

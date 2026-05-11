@@ -27,7 +27,7 @@ pub struct EntityProfileResponse {
     /// The URL to the profile's website or application. Only `https` or `http` URLs are allowed. No `@` signs are allowed.
     #[serde(rename = "website", skip_serializing_if = "Option::is_none")]
     pub website: Option<String>,
-    /// The email address associated with the profile's trade name or brand.
+    /// The email address associated with the profile's trade name or brand.  If the domain contains non-ASCII characters, encode it as Punycode per [RFC 3492](https://www.rfc-editor.org/rfc/rfc3492).
     #[serde(rename = "email", skip_serializing_if = "Option::is_none")]
     pub email: Option<String>,
     /// The phone number associated with the profile's trade name or brand.
@@ -43,9 +43,9 @@ pub struct EntityProfileResponse {
     #[serde(rename = "businessCategory", skip_serializing_if = "Option::is_none")]
     pub business_category: Option<String>,
     #[serde(rename = "status", skip_serializing_if = "Option::is_none")]
-    pub status: Option<models::ProfileStatus>,
+    pub status: Option<models::ProfileStatusResponse>,
     #[serde(rename = "review", skip_serializing_if = "Option::is_none")]
-    pub review: Option<models::EntityProfileResponseReview>,
+    pub review: Option<models::ListEntityProfileReview>,
     /// The entity's date and time of creation, in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format.
     #[serde(rename = "createdAt", skip_serializing_if = "Option::is_none")]
     pub created_at: Option<String>,

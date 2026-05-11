@@ -15,11 +15,11 @@ use serde::{Deserialize, Serialize};
 pub struct ListSettlements200ResponseEmbedded {
     /// An array of settlement objects. For a complete reference of the settlement object, refer to the [Get settlement endpoint](get-settlement) documentation.
     #[serde(rename = "settlements")]
-    pub settlements: Vec<models::EntitySettlement>,
+    pub settlements: Vec<models::ListEntitySettlement>,
 }
 
 impl ListSettlements200ResponseEmbedded {
-    pub fn new(settlements: Vec<models::EntitySettlement>) -> ListSettlements200ResponseEmbedded {
+    pub fn new(settlements: Vec<models::ListEntitySettlement>) -> ListSettlements200ResponseEmbedded {
         ListSettlements200ResponseEmbedded {
             settlements,
         }

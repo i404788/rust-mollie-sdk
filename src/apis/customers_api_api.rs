@@ -80,7 +80,7 @@ pub async fn create_customer(configuration: &configuration::Configuration, idemp
     let p_header_idempotency_key = idempotency_key;
     let p_body_entity_customer = entity_customer;
 
-    let uri_str = format!("{}/customers", configuration.base_path);
+    let uri_str = format!("{}/v2/customers", configuration.base_path);
     let mut req_builder = configuration.client.request(reqwest::Method::POST, &uri_str);
 
     if let Some(ref user_agent) = configuration.user_agent {
@@ -93,6 +93,9 @@ pub async fn create_customer(configuration: &configuration::Configuration, idemp
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
     if let Some(ref token) = configuration.oauth_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
     req_builder = req_builder.json(&p_body_entity_customer);
@@ -129,7 +132,7 @@ pub async fn create_customer_payment(configuration: &configuration::Configuratio
     let p_header_idempotency_key = idempotency_key;
     let p_body_payment_request = payment_request;
 
-    let uri_str = format!("{}/customers/{customerId}/payments", configuration.base_path, customerId=crate::apis::urlencode(p_path_customer_id));
+    let uri_str = format!("{}/v2/customers/{customerId}/payments", configuration.base_path, customerId=crate::apis::urlencode(p_path_customer_id));
     let mut req_builder = configuration.client.request(reqwest::Method::POST, &uri_str);
 
     if let Some(ref user_agent) = configuration.user_agent {
@@ -142,6 +145,9 @@ pub async fn create_customer_payment(configuration: &configuration::Configuratio
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
     if let Some(ref token) = configuration.oauth_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
     req_builder = req_builder.json(&p_body_payment_request);
@@ -172,13 +178,13 @@ pub async fn create_customer_payment(configuration: &configuration::Configuratio
 }
 
 /// Delete a customer. All mandates and subscriptions created for this customer will be canceled as well.
-pub async fn delete_customer(configuration: &configuration::Configuration, customer_id: &str, idempotency_key: Option<&str>, delete_webhook_request: Option<models::DeleteWebhookRequest>) -> Result<serde_json::Value, Error<DeleteCustomerError>> {
+pub async fn delete_customer(configuration: &configuration::Configuration, customer_id: &str, idempotency_key: Option<&str>, delete_payment_link_request: Option<models::DeletePaymentLinkRequest>) -> Result<(), Error<DeleteCustomerError>> {
     // add a prefix to parameters to efficiently prevent name collisions
     let p_path_customer_id = customer_id;
     let p_header_idempotency_key = idempotency_key;
-    let p_body_delete_webhook_request = delete_webhook_request;
+    let p_body_delete_payment_link_request = delete_payment_link_request;
 
-    let uri_str = format!("{}/customers/{customerId}", configuration.base_path, customerId=crate::apis::urlencode(p_path_customer_id));
+    let uri_str = format!("{}/v2/customers/{customerId}", configuration.base_path, customerId=crate::apis::urlencode(p_path_customer_id));
     let mut req_builder = configuration.client.request(reqwest::Method::DELETE, &uri_str);
 
     if let Some(ref user_agent) = configuration.user_agent {
@@ -190,26 +196,21 @@ pub async fn delete_customer(configuration: &configuration::Configuration, custo
     if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
-    req_builder = req_builder.json(&p_body_delete_webhook_request);
+    if let Some(ref token) = configuration.oauth_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    if let Some(ref token) = configuration.bearer_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    req_builder = req_builder.json(&p_body_delete_payment_link_request);
 
     let req = req_builder.build()?;
     let resp = configuration.client.execute(req).await?;
 
     let status = resp.status();
-    let content_type = resp
-        .headers()
-        .get("content-type")
-        .and_then(|v| v.to_str().ok())
-        .unwrap_or("application/octet-stream");
-    let content_type = super::ContentType::from(content_type);
 
     if !status.is_client_error() && !status.is_server_error() {
-        let content = resp.text().await?;
-        match content_type {
-            ContentType::Json => serde_json::from_str(&content).map_err(Error::from),
-            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `serde_json::Value`"))),
-            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `serde_json::Value`")))),
-        }
+        Ok(())
     } else {
         let content = resp.text().await?;
         let entity: Option<DeleteCustomerError> = serde_json::from_str(&content).ok();
@@ -225,7 +226,7 @@ pub async fn get_customer(configuration: &configuration::Configuration, customer
     let p_query_testmode = testmode;
     let p_header_idempotency_key = idempotency_key;
 
-    let uri_str = format!("{}/customers/{customerId}", configuration.base_path, customerId=crate::apis::urlencode(p_path_customer_id));
+    let uri_str = format!("{}/v2/customers/{customerId}", configuration.base_path, customerId=crate::apis::urlencode(p_path_customer_id));
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
     if let Some(ref param_value) = p_query_include {
@@ -240,6 +241,12 @@ pub async fn get_customer(configuration: &configuration::Configuration, customer
     if let Some(param_value) = p_header_idempotency_key {
         req_builder = req_builder.header("idempotency-key", param_value.to_string());
     }
+    if let Some(ref token) = configuration.bearer_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    if let Some(ref token) = configuration.oauth_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
     if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
@@ -270,7 +277,7 @@ pub async fn get_customer(configuration: &configuration::Configuration, customer
 }
 
 /// Retrieve all payments linked to the customer.
-pub async fn list_customer_payments(configuration: &configuration::Configuration, customer_id: &str, from: Option<&str>, limit: Option<i32>, sort: Option<&str>, profile_id: Option<&str>, testmode: Option<bool>, idempotency_key: Option<&str>) -> Result<models::ListSettlementPayments200Response, Error<ListCustomerPaymentsError>> {
+pub async fn list_customer_payments(configuration: &configuration::Configuration, customer_id: &str, from: Option<&str>, limit: Option<i32>, sort: Option<models::Sorting>, profile_id: Option<&str>, testmode: Option<bool>, idempotency_key: Option<&str>) -> Result<models::ListPayments200Response, Error<ListCustomerPaymentsError>> {
     // add a prefix to parameters to efficiently prevent name collisions
     let p_path_customer_id = customer_id;
     let p_query_from = from;
@@ -280,7 +287,7 @@ pub async fn list_customer_payments(configuration: &configuration::Configuration
     let p_query_testmode = testmode;
     let p_header_idempotency_key = idempotency_key;
 
-    let uri_str = format!("{}/customers/{customerId}/payments", configuration.base_path, customerId=crate::apis::urlencode(p_path_customer_id));
+    let uri_str = format!("{}/v2/customers/{customerId}/payments", configuration.base_path, customerId=crate::apis::urlencode(p_path_customer_id));
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
     if let Some(ref param_value) = p_query_from {
@@ -310,6 +317,9 @@ pub async fn list_customer_payments(configuration: &configuration::Configuration
     if let Some(ref token) = configuration.oauth_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
+    if let Some(ref token) = configuration.bearer_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
 
     let req = req_builder.build()?;
     let resp = configuration.client.execute(req).await?;
@@ -326,8 +336,8 @@ pub async fn list_customer_payments(configuration: &configuration::Configuration
         let content = resp.text().await?;
         match content_type {
             ContentType::Json => serde_json::from_str(&content).map_err(Error::from),
-            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `models::ListSettlementPayments200Response`"))),
-            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `models::ListSettlementPayments200Response`")))),
+            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `models::ListPayments200Response`"))),
+            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `models::ListPayments200Response`")))),
         }
     } else {
         let content = resp.text().await?;
@@ -337,7 +347,7 @@ pub async fn list_customer_payments(configuration: &configuration::Configuration
 }
 
 /// Retrieve a list of all customers.  The results are paginated.
-pub async fn list_customers(configuration: &configuration::Configuration, from: Option<&str>, limit: Option<i32>, sort: Option<&str>, testmode: Option<bool>, idempotency_key: Option<&str>) -> Result<models::ListCustomers200Response, Error<ListCustomersError>> {
+pub async fn list_customers(configuration: &configuration::Configuration, from: Option<&str>, limit: Option<i32>, sort: Option<models::Sorting>, testmode: Option<bool>, idempotency_key: Option<&str>) -> Result<models::ListCustomers200Response, Error<ListCustomersError>> {
     // add a prefix to parameters to efficiently prevent name collisions
     let p_query_from = from;
     let p_query_limit = limit;
@@ -345,7 +355,7 @@ pub async fn list_customers(configuration: &configuration::Configuration, from: 
     let p_query_testmode = testmode;
     let p_header_idempotency_key = idempotency_key;
 
-    let uri_str = format!("{}/customers", configuration.base_path);
+    let uri_str = format!("{}/v2/customers", configuration.base_path);
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
     if let Some(ref param_value) = p_query_from {
@@ -370,6 +380,9 @@ pub async fn list_customers(configuration: &configuration::Configuration, from: 
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
     if let Some(ref token) = configuration.oauth_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
 
@@ -399,13 +412,13 @@ pub async fn list_customers(configuration: &configuration::Configuration, from: 
 }
 
 /// Update an existing customer.  For an in-depth explanation of each parameter, refer to the [Create customer](create-customer) endpoint.
-pub async fn update_customer(configuration: &configuration::Configuration, customer_id: &str, idempotency_key: Option<&str>, entity_customer: Option<models::EntityCustomer>) -> Result<models::CustomerResponse, Error<UpdateCustomerError>> {
+pub async fn update_customer(configuration: &configuration::Configuration, customer_id: &str, idempotency_key: Option<&str>, update_customer_request: Option<models::UpdateCustomerRequest>) -> Result<models::CustomerResponse, Error<UpdateCustomerError>> {
     // add a prefix to parameters to efficiently prevent name collisions
     let p_path_customer_id = customer_id;
     let p_header_idempotency_key = idempotency_key;
-    let p_body_entity_customer = entity_customer;
+    let p_body_update_customer_request = update_customer_request;
 
-    let uri_str = format!("{}/customers/{customerId}", configuration.base_path, customerId=crate::apis::urlencode(p_path_customer_id));
+    let uri_str = format!("{}/v2/customers/{customerId}", configuration.base_path, customerId=crate::apis::urlencode(p_path_customer_id));
     let mut req_builder = configuration.client.request(reqwest::Method::PATCH, &uri_str);
 
     if let Some(ref user_agent) = configuration.user_agent {
@@ -417,7 +430,13 @@ pub async fn update_customer(configuration: &configuration::Configuration, custo
     if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
-    req_builder = req_builder.json(&p_body_entity_customer);
+    if let Some(ref token) = configuration.oauth_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    if let Some(ref token) = configuration.bearer_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    req_builder = req_builder.json(&p_body_update_customer_request);
 
     let req = req_builder.build()?;
     let resp = configuration.client.execute(req).await?;

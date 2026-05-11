@@ -34,12 +34,12 @@ pub enum ListInvoicesError {
 
 
 /// Retrieve a single invoice by its ID.  If you want to retrieve the details of an invoice by its invoice number, call the [List invoices](list-invoices) endpoint with the `reference` parameter.
-pub async fn get_invoice(configuration: &configuration::Configuration, id: &str, idempotency_key: Option<&str>) -> Result<models::EntityInvoice, Error<GetInvoiceError>> {
+pub async fn get_invoice(configuration: &configuration::Configuration, invoice_id: &str, idempotency_key: Option<&str>) -> Result<models::EntityInvoice, Error<GetInvoiceError>> {
     // add a prefix to parameters to efficiently prevent name collisions
-    let p_path_id = id;
+    let p_path_invoice_id = invoice_id;
     let p_header_idempotency_key = idempotency_key;
 
-    let uri_str = format!("{}/invoices/{id}", configuration.base_path, id=crate::apis::urlencode(p_path_id));
+    let uri_str = format!("{}/v2/invoices/{invoiceId}", configuration.base_path, invoiceId=crate::apis::urlencode(p_path_invoice_id));
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
     if let Some(ref user_agent) = configuration.user_agent {
@@ -49,6 +49,9 @@ pub async fn get_invoice(configuration: &configuration::Configuration, id: &str,
         req_builder = req_builder.header("idempotency-key", param_value.to_string());
     }
     if let Some(ref token) = configuration.oauth_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
 
@@ -78,17 +81,16 @@ pub async fn get_invoice(configuration: &configuration::Configuration, id: &str,
 }
 
 /// Retrieve a list of all your invoices, optionally filtered by year or by invoice reference.  The results are paginated.
-pub async fn list_invoices(configuration: &configuration::Configuration, reference: Option<&str>, year: Option<&str>, month: Option<&str>, from: Option<&str>, limit: Option<i32>, sort: Option<&str>, idempotency_key: Option<&str>) -> Result<models::ListInvoices200Response, Error<ListInvoicesError>> {
+pub async fn list_invoices(configuration: &configuration::Configuration, reference: Option<&str>, year: Option<&str>, from: Option<&str>, limit: Option<i32>, sort: Option<models::Sorting>, idempotency_key: Option<&str>) -> Result<models::ListInvoices200Response, Error<ListInvoicesError>> {
     // add a prefix to parameters to efficiently prevent name collisions
     let p_query_reference = reference;
     let p_query_year = year;
-    let p_query_month = month;
     let p_query_from = from;
     let p_query_limit = limit;
     let p_query_sort = sort;
     let p_header_idempotency_key = idempotency_key;
 
-    let uri_str = format!("{}/invoices", configuration.base_path);
+    let uri_str = format!("{}/v2/invoices", configuration.base_path);
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
     if let Some(ref param_value) = p_query_reference {
@@ -96,9 +98,6 @@ pub async fn list_invoices(configuration: &configuration::Configuration, referen
     }
     if let Some(ref param_value) = p_query_year {
         req_builder = req_builder.query(&[("year", &param_value.to_string())]);
-    }
-    if let Some(ref param_value) = p_query_month {
-        req_builder = req_builder.query(&[("month", &param_value.to_string())]);
     }
     if let Some(ref param_value) = p_query_from {
         req_builder = req_builder.query(&[("from", &param_value.to_string())]);
@@ -116,6 +115,9 @@ pub async fn list_invoices(configuration: &configuration::Configuration, referen
         req_builder = req_builder.header("idempotency-key", param_value.to_string());
     }
     if let Some(ref token) = configuration.oauth_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
 

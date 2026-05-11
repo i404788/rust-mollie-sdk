@@ -34,11 +34,12 @@ pub struct UpdateSubscriptionRequest {
     /// We will call this URL for any payment status changes of payments resulting from this subscription.  This webhook will receive **all** events for the subscription's payments. This may include payment failures as well. Be sure to verify the payment's subscription ID and its status.
     #[serde(rename = "webhookUrl", skip_serializing_if = "Option::is_none")]
     pub webhook_url: Option<String>,
+    /// The mandate used for this subscription, if any.
     #[serde(rename = "mandateId", skip_serializing_if = "Option::is_none")]
     pub mandate_id: Option<String>,
-    /// Most API credentials are specifically created for either live mode or test mode. For organization-level credentials such as OAuth access tokens, you can enable test mode by setting `testmode` to `true`.  Test entities cannot be retrieved when the endpoint is set to live mode, and vice versa.
-    #[serde(rename = "testmode", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
-    pub testmode: Option<Option<bool>>,
+    /// Whether the entity was created in test mode or live mode. This field does not update the mode of the entity.  Most API credentials are specifically created for either live mode or test mode, in which case this parameter must not be sent. For organization-level credentials such as OAuth access tokens, you can enable test mode by setting `testmode` to `true`.
+    #[serde(rename = "testmode", skip_serializing_if = "Option::is_none")]
+    pub testmode: Option<bool>,
 }
 
 impl UpdateSubscriptionRequest {

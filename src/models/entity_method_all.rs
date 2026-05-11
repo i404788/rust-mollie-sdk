@@ -18,7 +18,7 @@ pub struct EntityMethodAll {
     pub resource: String,
     /// The unique identifier of the payment method. When used during [payment creation](create-payment), the payment method selection screen will be skipped.
     #[serde(rename = "id", deserialize_with = "Option::deserialize")]
-    pub id: Option<models::MethodResponse>,
+    pub id: Option<models::MethodId>,
     /// The full name of the payment method.  If a `locale` parameter is provided, the name is translated to the given locale if possible.
     #[serde(rename = "description")]
     pub description: String,
@@ -30,8 +30,8 @@ pub struct EntityMethodAll {
     pub maximum_amount: models::AmountNullable,
     #[serde(rename = "image")]
     pub image: models::EntityMethodImage,
-    #[serde(rename = "status")]
-    pub status: models::MethodStatus,
+    #[serde(rename = "status", deserialize_with = "Option::deserialize")]
+    pub status: Option<models::MethodStatus>,
     /// **Optional include.** Array of objects for each 'issuer' that is available for this payment method. Only relevant for iDEAL, KBC/CBC, gift cards, and vouchers.
     #[serde(rename = "issuers", skip_serializing_if = "Option::is_none")]
     pub issuers: Option<Vec<models::EntityMethodIssuersInner>>,
@@ -43,7 +43,7 @@ pub struct EntityMethodAll {
 }
 
 impl EntityMethodAll {
-    pub fn new(resource: String, id: Option<models::MethodResponse>, description: String, minimum_amount: models::Amount, maximum_amount: models::AmountNullable, image: models::EntityMethodImage, status: models::MethodStatus, _links: models::EntityMethodLinks) -> EntityMethodAll {
+    pub fn new(resource: String, id: Option<models::MethodId>, description: String, minimum_amount: models::Amount, maximum_amount: models::AmountNullable, image: models::EntityMethodImage, status: Option<models::MethodStatus>, _links: models::EntityMethodLinks) -> EntityMethodAll {
         EntityMethodAll {
             resource,
             id,

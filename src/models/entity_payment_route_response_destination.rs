@@ -16,6 +16,7 @@ use serde::{Deserialize, Serialize};
 pub struct EntityPaymentRouteResponseDestination {
     #[serde(rename = "type")]
     pub r#type: models::RouteDestinationTypeResponse,
+    /// Required for destination type `organization`. The ID of the connected organization the funds should be routed to.
     #[serde(rename = "organizationId")]
     pub organization_id: String,
 }

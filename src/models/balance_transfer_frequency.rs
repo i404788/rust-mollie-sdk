@@ -15,6 +15,8 @@ use serde::{Deserialize, Serialize};
 /// The frequency with which the available amount on the balance will be settled to the configured transfer destination.  Settlements created during weekends or on bank holidays will take place on the next business day.
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize)]
 pub enum BalanceTransferFrequency {
+    #[serde(rename = "every-day")]
+    EveryDay,
     #[serde(rename = "daily")]
     Daily,
     #[serde(rename = "every-monday")]
@@ -29,6 +31,8 @@ pub enum BalanceTransferFrequency {
     EveryFriday,
     #[serde(rename = "monthly")]
     Monthly,
+    #[serde(rename = "revenue-day")]
+    RevenueDay,
     #[serde(rename = "never")]
     Never,
 
@@ -37,6 +41,7 @@ pub enum BalanceTransferFrequency {
 impl std::fmt::Display for BalanceTransferFrequency {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         match self {
+            Self::EveryDay => write!(f, "every-day"),
             Self::Daily => write!(f, "daily"),
             Self::EveryMonday => write!(f, "every-monday"),
             Self::EveryTuesday => write!(f, "every-tuesday"),
@@ -44,6 +49,7 @@ impl std::fmt::Display for BalanceTransferFrequency {
             Self::EveryThursday => write!(f, "every-thursday"),
             Self::EveryFriday => write!(f, "every-friday"),
             Self::Monthly => write!(f, "monthly"),
+            Self::RevenueDay => write!(f, "revenue-day"),
             Self::Never => write!(f, "never"),
         }
     }
@@ -51,7 +57,7 @@ impl std::fmt::Display for BalanceTransferFrequency {
 
 impl Default for BalanceTransferFrequency {
     fn default() -> BalanceTransferFrequency {
-        Self::Daily
+        Self::EveryDay
     }
 }
 

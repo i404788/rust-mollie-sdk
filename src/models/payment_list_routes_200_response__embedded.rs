@@ -14,14 +14,14 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
 pub struct PaymentListRoutes200ResponseEmbedded {
     /// An array of route objects.
-    #[serde(rename = "routes", skip_serializing_if = "Option::is_none")]
-    pub routes: Option<Vec<models::RouteGetResponse>>,
+    #[serde(rename = "routes")]
+    pub routes: Vec<models::ListRouteGetResponse>,
 }
 
 impl PaymentListRoutes200ResponseEmbedded {
-    pub fn new() -> PaymentListRoutes200ResponseEmbedded {
+    pub fn new(routes: Vec<models::ListRouteGetResponse>) -> PaymentListRoutes200ResponseEmbedded {
         PaymentListRoutes200ResponseEmbedded {
-            routes: None,
+            routes,
         }
     }
 }

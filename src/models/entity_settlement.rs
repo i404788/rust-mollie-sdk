@@ -16,6 +16,7 @@ pub struct EntitySettlement {
     /// Indicates the response contains a settlement object. Will always contain the string `settlement` for this endpoint.
     #[serde(rename = "resource")]
     pub resource: String,
+    /// The identifier uniquely referring to this settlement.
     #[serde(rename = "id")]
     pub id: String,
     /// The entity's date and time of creation, in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format.
@@ -32,8 +33,10 @@ pub struct EntitySettlement {
     /// The total amount of the settlement.
     #[serde(rename = "amount")]
     pub amount: models::Amount,
+    /// The balance token that the settlement was settled to.
     #[serde(rename = "balanceId")]
     pub balance_id: String,
+    /// The ID of the oldest invoice created for all the periods, if the invoice has been created yet.
     #[serde(rename = "invoiceId", skip_serializing_if = "Option::is_none")]
     pub invoice_id: Option<String>,
     /// For bookkeeping purposes, the settlement includes an overview of transactions included in the settlement. These transactions are grouped into 'period' objects — one for each calendar month.  For example, if a settlement includes funds from 15 April until 4 May, it will include two period objects. One for all transactions processed between 15 April and 30 April, and one for all transactions between 1 May and 4 May.  Period objects are grouped by year, and then by month. So in the above example, the full `periods` collection will look as follows: `{\"2024\": {\"04\": {...}, \"05\": {...}}}`. The year and month in this documentation are referred as `<year>` and `<month>`.  The example response should give a good idea of what this looks like in practise.

@@ -4,7 +4,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**subscriptions** | Option<[**Vec<models::SubscriptionResponse>**](subscription-response.md)> | An array of subscription objects. | [optional]
+**subscriptions** | Option<[**Vec<models::ListSubscriptionResponse>**](ListSubscriptionResponse.md)> | An array of subscription objects. | [optional]
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

@@ -4,7 +4,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**balance_transactions** | Option<[**Vec<models::EntityBalanceTransaction>**](entity-balance-transaction.md)> | An array of balance transaction objects. | [optional]
+**balance_transactions** | [**Vec<models::EntityBalanceTransaction>**](EntityBalanceTransaction.md) | An array of balance transaction objects. | 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

@@ -14,30 +14,30 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
 pub struct EntityInvoiceLinesInner {
     /// The administrative period in `YYYY-MM` on which the line should be booked.
-    #[serde(rename = "period", skip_serializing_if = "Option::is_none")]
-    pub period: Option<String>,
+    #[serde(rename = "period")]
+    pub period: String,
     /// Description of the product.
-    #[serde(rename = "description", skip_serializing_if = "Option::is_none")]
-    pub description: Option<String>,
+    #[serde(rename = "description")]
+    pub description: String,
     /// Number of products invoiced. For example, the number of payments.
-    #[serde(rename = "count", skip_serializing_if = "Option::is_none")]
-    pub count: Option<i32>,
+    #[serde(rename = "count")]
+    pub count: i32,
     /// VAT percentage rate that applies to this product.
-    #[serde(rename = "vatPercentage", skip_serializing_if = "Option::is_none")]
-    pub vat_percentage: Option<i32>,
+    #[serde(rename = "vatPercentage")]
+    pub vat_percentage: i32,
     /// Line item amount excluding VAT.
-    #[serde(rename = "amount", skip_serializing_if = "Option::is_none")]
-    pub amount: Option<models::Amount>,
+    #[serde(rename = "amount")]
+    pub amount: models::Amount,
 }
 
 impl EntityInvoiceLinesInner {
-    pub fn new() -> EntityInvoiceLinesInner {
+    pub fn new(period: String, description: String, count: i32, vat_percentage: i32, amount: models::Amount) -> EntityInvoiceLinesInner {
         EntityInvoiceLinesInner {
-            period: None,
-            description: None,
-            count: None,
-            vat_percentage: None,
-            amount: None,
+            period,
+            description,
+            count,
+            vat_percentage,
+            amount,
         }
     }
 }

@@ -74,13 +74,13 @@ pub enum ListMethodsError {
 
 
 /// Disable a payment method on a specific profile.  When using a profile-specific API credential, the alias `me` can be used instead of the profile ID to refer to the current profile.
-pub async fn disable_method(configuration: &configuration::Configuration, profile_id: &str, id: &str, idempotency_key: Option<&str>) -> Result<serde_json::Value, Error<DisableMethodError>> {
+pub async fn disable_method(configuration: &configuration::Configuration, profile_id: &str, method_id: models::Method, idempotency_key: Option<&str>) -> Result<(), Error<DisableMethodError>> {
     // add a prefix to parameters to efficiently prevent name collisions
     let p_path_profile_id = profile_id;
-    let p_path_id = id;
+    let p_path_method_id = method_id;
     let p_header_idempotency_key = idempotency_key;
 
-    let uri_str = format!("{}/profiles/{profileId}/methods/{id}", configuration.base_path, profileId=p_path_profile_id.to_string(), id=crate::apis::urlencode(p_path_id));
+    let uri_str = format!("{}/v2/profiles/{profileId}/methods/{methodId}", configuration.base_path, profileId=p_path_profile_id.to_string(), methodId=p_path_method_id.to_string());
     let mut req_builder = configuration.client.request(reqwest::Method::DELETE, &uri_str);
 
     if let Some(ref user_agent) = configuration.user_agent {
@@ -95,25 +95,17 @@ pub async fn disable_method(configuration: &configuration::Configuration, profil
     if let Some(ref token) = configuration.oauth_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
+    if let Some(ref token) = configuration.bearer_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
 
     let req = req_builder.build()?;
     let resp = configuration.client.execute(req).await?;
 
     let status = resp.status();
-    let content_type = resp
-        .headers()
-        .get("content-type")
-        .and_then(|v| v.to_str().ok())
-        .unwrap_or("application/octet-stream");
-    let content_type = super::ContentType::from(content_type);
 
     if !status.is_client_error() && !status.is_server_error() {
-        let content = resp.text().await?;
-        match content_type {
-            ContentType::Json => serde_json::from_str(&content).map_err(Error::from),
-            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `serde_json::Value`"))),
-            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `serde_json::Value`")))),
-        }
+        Ok(())
     } else {
         let content = resp.text().await?;
         let entity: Option<DisableMethodError> = serde_json::from_str(&content).ok();
@@ -122,14 +114,14 @@ pub async fn disable_method(configuration: &configuration::Configuration, profil
 }
 
 /// Disable an issuer for a payment method on a specific profile.  Currently only the payment methods `voucher` and `giftcard` are supported.  When using a profile-specific API credential, the alias `me` can be used instead of the profile ID to refer to the current profile.
-pub async fn disable_method_issuer(configuration: &configuration::Configuration, profile_id: &str, method_id: &str, id: &str, idempotency_key: Option<&str>) -> Result<serde_json::Value, Error<DisableMethodIssuerError>> {
+pub async fn disable_method_issuer(configuration: &configuration::Configuration, profile_id: &str, method_id: models::MethodIdWithIssuer, issuer_id: &str, idempotency_key: Option<&str>) -> Result<(), Error<DisableMethodIssuerError>> {
     // add a prefix to parameters to efficiently prevent name collisions
     let p_path_profile_id = profile_id;
     let p_path_method_id = method_id;
-    let p_path_id = id;
+    let p_path_issuer_id = issuer_id;
     let p_header_idempotency_key = idempotency_key;
 
-    let uri_str = format!("{}/profiles/{profileId}/methods/{methodId}/issuers/{id}", configuration.base_path, profileId=p_path_profile_id.to_string(), methodId=crate::apis::urlencode(p_path_method_id), id=crate::apis::urlencode(p_path_id));
+    let uri_str = format!("{}/v2/profiles/{profileId}/methods/{methodId}/issuers/{issuerId}", configuration.base_path, profileId=p_path_profile_id.to_string(), methodId=p_path_method_id.to_string(), issuerId=crate::apis::urlencode(p_path_issuer_id));
     let mut req_builder = configuration.client.request(reqwest::Method::DELETE, &uri_str);
 
     if let Some(ref user_agent) = configuration.user_agent {
@@ -144,25 +136,17 @@ pub async fn disable_method_issuer(configuration: &configuration::Configuration,
     if let Some(ref token) = configuration.oauth_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
+    if let Some(ref token) = configuration.bearer_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
 
     let req = req_builder.build()?;
     let resp = configuration.client.execute(req).await?;
 
     let status = resp.status();
-    let content_type = resp
-        .headers()
-        .get("content-type")
-        .and_then(|v| v.to_str().ok())
-        .unwrap_or("application/octet-stream");
-    let content_type = super::ContentType::from(content_type);
 
     if !status.is_client_error() && !status.is_server_error() {
-        let content = resp.text().await?;
-        match content_type {
-            ContentType::Json => serde_json::from_str(&content).map_err(Error::from),
-            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `serde_json::Value`"))),
-            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `serde_json::Value`")))),
-        }
+        Ok(())
     } else {
         let content = resp.text().await?;
         let entity: Option<DisableMethodIssuerError> = serde_json::from_str(&content).ok();
@@ -171,13 +155,13 @@ pub async fn disable_method_issuer(configuration: &configuration::Configuration,
 }
 
 /// Enable a payment method on a specific profile.  When using a profile-specific API credential, the alias `me` can be used instead of the profile ID to refer to the current profile.  Some payment methods require extra steps in order to be activated. In cases where a step at the payment method provider needs to be completed first, the status will be set to `pending-external` and the response will contain a link to complete the activation at the provider.  To enable voucher or gift card issuers, refer to the [Enable payment method issuer](enable-method-issuer) endpoint.
-pub async fn enable_method(configuration: &configuration::Configuration, profile_id: &str, id: &str, idempotency_key: Option<&str>) -> Result<models::EntityMethod, Error<EnableMethodError>> {
+pub async fn enable_method(configuration: &configuration::Configuration, profile_id: &str, method_id: models::Method, idempotency_key: Option<&str>) -> Result<models::EntityMethodGet, Error<EnableMethodError>> {
     // add a prefix to parameters to efficiently prevent name collisions
     let p_path_profile_id = profile_id;
-    let p_path_id = id;
+    let p_path_method_id = method_id;
     let p_header_idempotency_key = idempotency_key;
 
-    let uri_str = format!("{}/profiles/{profileId}/methods/{id}", configuration.base_path, profileId=p_path_profile_id.to_string(), id=crate::apis::urlencode(p_path_id));
+    let uri_str = format!("{}/v2/profiles/{profileId}/methods/{methodId}", configuration.base_path, profileId=p_path_profile_id.to_string(), methodId=p_path_method_id.to_string());
     let mut req_builder = configuration.client.request(reqwest::Method::POST, &uri_str);
 
     if let Some(ref user_agent) = configuration.user_agent {
@@ -192,6 +176,9 @@ pub async fn enable_method(configuration: &configuration::Configuration, profile
     if let Some(ref token) = configuration.oauth_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
+    if let Some(ref token) = configuration.bearer_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
 
     let req = req_builder.build()?;
     let resp = configuration.client.execute(req).await?;
@@ -208,8 +195,8 @@ pub async fn enable_method(configuration: &configuration::Configuration, profile
         let content = resp.text().await?;
         match content_type {
             ContentType::Json => serde_json::from_str(&content).map_err(Error::from),
-            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `models::EntityMethod`"))),
-            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `models::EntityMethod`")))),
+            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `models::EntityMethodGet`"))),
+            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `models::EntityMethodGet`")))),
         }
     } else {
         let content = resp.text().await?;
@@ -219,15 +206,15 @@ pub async fn enable_method(configuration: &configuration::Configuration, profile
 }
 
 /// Enable an issuer for a payment method on a specific profile.  Currently only the payment methods `voucher` and `giftcard` are supported.  When using a profile-specific API credential, the alias `me` can be used instead of the profile ID to refer to the current profile.
-pub async fn enable_method_issuer(configuration: &configuration::Configuration, profile_id: &str, method_id: &str, id: &str, idempotency_key: Option<&str>, enable_method_issuer_request: Option<models::EnableMethodIssuerRequest>) -> Result<models::EnableMethodIssuer200Response, Error<EnableMethodIssuerError>> {
+pub async fn enable_method_issuer(configuration: &configuration::Configuration, profile_id: &str, method_id: models::MethodIdWithIssuer, issuer_id: &str, idempotency_key: Option<&str>, enable_method_issuer_request: Option<models::EnableMethodIssuerRequest>) -> Result<models::EnableMethodIssuer200Response, Error<EnableMethodIssuerError>> {
     // add a prefix to parameters to efficiently prevent name collisions
     let p_path_profile_id = profile_id;
     let p_path_method_id = method_id;
-    let p_path_id = id;
+    let p_path_issuer_id = issuer_id;
     let p_header_idempotency_key = idempotency_key;
     let p_body_enable_method_issuer_request = enable_method_issuer_request;
 
-    let uri_str = format!("{}/profiles/{profileId}/methods/{methodId}/issuers/{id}", configuration.base_path, profileId=p_path_profile_id.to_string(), methodId=crate::apis::urlencode(p_path_method_id), id=crate::apis::urlencode(p_path_id));
+    let uri_str = format!("{}/v2/profiles/{profileId}/methods/{methodId}/issuers/{issuerId}", configuration.base_path, profileId=p_path_profile_id.to_string(), methodId=p_path_method_id.to_string(), issuerId=crate::apis::urlencode(p_path_issuer_id));
     let mut req_builder = configuration.client.request(reqwest::Method::POST, &uri_str);
 
     if let Some(ref user_agent) = configuration.user_agent {
@@ -240,6 +227,9 @@ pub async fn enable_method_issuer(configuration: &configuration::Configuration, 
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
     if let Some(ref token) = configuration.oauth_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
     req_builder = req_builder.json(&p_body_enable_method_issuer_request);
@@ -270,9 +260,9 @@ pub async fn enable_method_issuer(configuration: &configuration::Configuration, 
 }
 
 /// Retrieve a single payment method by its ID.  If a method is not available on this profile, a `404 Not Found` response is returned. If the method is available but not enabled yet, a status `403 Forbidden` is returned. You can enable payments methods via the [Enable payment method endpoint](enable-method) of the Profiles API, or via the Mollie Dashboard.  If you do not know the method's ID, you can use the [methods list endpoint](list-methods) to retrieve all payment methods that are available.  Additionally, it is possible to check if wallet methods such as Apple Pay are enabled by passing the wallet ID (`applepay`) as the method ID.
-pub async fn get_method(configuration: &configuration::Configuration, id: &str, locale: Option<&str>, currency: Option<&str>, profile_id: Option<&str>, include: Option<&str>, sequence_type: Option<models::SequenceType>, testmode: Option<bool>, idempotency_key: Option<&str>) -> Result<models::EntityMethod, Error<GetMethodError>> {
+pub async fn get_method(configuration: &configuration::Configuration, method_id: models::Method, locale: Option<models::Locale>, currency: Option<&str>, profile_id: Option<&str>, include: Option<&str>, sequence_type: Option<models::SequenceType>, testmode: Option<bool>, idempotency_key: Option<&str>) -> Result<models::EntityMethodGet, Error<GetMethodError>> {
     // add a prefix to parameters to efficiently prevent name collisions
-    let p_path_id = id;
+    let p_path_method_id = method_id;
     let p_query_locale = locale;
     let p_query_currency = currency;
     let p_query_profile_id = profile_id;
@@ -281,7 +271,7 @@ pub async fn get_method(configuration: &configuration::Configuration, id: &str, 
     let p_query_testmode = testmode;
     let p_header_idempotency_key = idempotency_key;
 
-    let uri_str = format!("{}/methods/{id}", configuration.base_path, id=crate::apis::urlencode(p_path_id));
+    let uri_str = format!("{}/v2/methods/{methodId}", configuration.base_path, methodId=p_path_method_id.to_string());
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
     if let Some(ref param_value) = p_query_locale {
@@ -314,6 +304,9 @@ pub async fn get_method(configuration: &configuration::Configuration, id: &str, 
     if let Some(ref token) = configuration.oauth_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
+    if let Some(ref token) = configuration.bearer_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
 
     let req = req_builder.build()?;
     let resp = configuration.client.execute(req).await?;
@@ -330,8 +323,8 @@ pub async fn get_method(configuration: &configuration::Configuration, id: &str, 
         let content = resp.text().await?;
         match content_type {
             ContentType::Json => serde_json::from_str(&content).map_err(Error::from),
-            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `models::EntityMethod`"))),
-            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `models::EntityMethod`")))),
+            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `models::EntityMethodGet`"))),
+            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `models::EntityMethodGet`")))),
         }
     } else {
         let content = resp.text().await?;
@@ -340,8 +333,8 @@ pub async fn get_method(configuration: &configuration::Configuration, id: &str, 
     }
 }
 
-/// Retrieve all payment methods that Mollie offers, regardless of the eligibility of the organization for the specific method. The results of this endpoint are **not** paginated — unlike most other list endpoints in our API.  The list can optionally be filtered using a number of parameters described below.
-pub async fn list_all_methods(configuration: &configuration::Configuration, locale: Option<&str>, amount: Option<models::Amount>, include: Option<&str>, sequence_type: Option<models::SequenceType>, profile_id: Option<&str>, testmode: Option<bool>, idempotency_key: Option<&str>) -> Result<models::ListAllMethods200Response, Error<ListAllMethodsError>> {
+/// Retrieve all payment methods that Mollie offers, regardless of the eligibility of the organization for the specific method. The results of this endpoint are **not** paginated — unlike most other list endpoints in our API.  The list can optionally be filtered using a number of parameters described below.  ℹ️ **Note:** This endpoint only returns **online** payment methods. If you wish to retrieve the information about a non-online payment method, you can use the [Get payment method endpoint](get-method).
+pub async fn list_all_methods(configuration: &configuration::Configuration, locale: Option<models::Locale>, amount: Option<models::Amount>, include: Option<&str>, sequence_type: Option<models::SequenceType>, profile_id: Option<&str>, testmode: Option<bool>, idempotency_key: Option<&str>) -> Result<models::ListAllMethods200Response, Error<ListAllMethodsError>> {
     // add a prefix to parameters to efficiently prevent name collisions
     let p_query_locale = locale;
     let p_query_amount = amount;
@@ -351,7 +344,7 @@ pub async fn list_all_methods(configuration: &configuration::Configuration, loca
     let p_query_testmode = testmode;
     let p_header_idempotency_key = idempotency_key;
 
-    let uri_str = format!("{}/methods/all", configuration.base_path);
+    let uri_str = format!("{}/v2/methods/all", configuration.base_path);
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
     if let Some(ref param_value) = p_query_locale {
@@ -384,6 +377,9 @@ pub async fn list_all_methods(configuration: &configuration::Configuration, loca
     if let Some(ref token) = configuration.oauth_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
+    if let Some(ref token) = configuration.bearer_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
 
     let req = req_builder.build()?;
     let resp = configuration.client.execute(req).await?;
@@ -410,8 +406,8 @@ pub async fn list_all_methods(configuration: &configuration::Configuration, loca
     }
 }
 
-/// Retrieve all enabled payment methods. The results of this endpoint are **not** paginated — unlike most other list endpoints in our API.  For test mode, all pending and enabled payment methods are returned. If no payment methods are requested yet, the most popular payment methods are returned in the test mode. For live mode, only fully enabled payment methods are returned.  Payment methods can be requested and enabled via the Mollie Dashboard, or via the [Enable payment method endpoint](enable-method) of the Profiles API.  The list can optionally be filtered using a number of parameters described below.  By default, only payment methods for the Euro currency are returned. If you wish to retrieve payment methods which exclusively support other currencies (e.g. Twint), you need to use the `amount` parameters.
-pub async fn list_methods(configuration: &configuration::Configuration, sequence_type: Option<models::SequenceType>, locale: Option<&str>, amount: Option<models::Amount>, resource: Option<&str>, billing_country: Option<&str>, include_wallets: Option<&str>, order_line_categories: Option<models::LineCategories>, profile_id: Option<&str>, include: Option<&str>, testmode: Option<bool>, idempotency_key: Option<&str>) -> Result<models::ListMethods200Response, Error<ListMethodsError>> {
+/// Retrieve all enabled payment methods. The results of this endpoint are **not** paginated — unlike most other list endpoints in our API.  For test mode, all pending and enabled payment methods are returned. If no payment methods are requested yet, the most popular payment methods are returned in the test mode. For live mode, only fully enabled payment methods are returned.  Payment methods can be requested and enabled via the Mollie Dashboard, or via the [Enable payment method endpoint](enable-method) of the Profiles API.  The list can optionally be filtered using a number of parameters described below.  By default, only payment methods for the Euro currency are returned. If you wish to retrieve payment methods which exclusively support other currencies (e.g. Twint), you need to use the `amount` parameters.  ℹ️ **Note:** This endpoint only returns **online** payment methods. If you wish to retrieve the information about a non-online payment method, you can use the [Get payment method endpoint](get-method).
+pub async fn list_methods(configuration: &configuration::Configuration, sequence_type: Option<models::SequenceType>, locale: Option<models::Locale>, amount: Option<models::Amount>, resource: Option<models::MethodResourceParameter>, billing_country: Option<&str>, include_wallets: Option<models::MethodIncludeWalletsParameter>, order_line_categories: Option<models::LineCategories>, profile_id: Option<&str>, include: Option<&str>, testmode: Option<bool>, idempotency_key: Option<&str>) -> Result<models::ListMethods200Response, Error<ListMethodsError>> {
     // add a prefix to parameters to efficiently prevent name collisions
     let p_query_sequence_type = sequence_type;
     let p_query_locale = locale;
@@ -425,7 +421,7 @@ pub async fn list_methods(configuration: &configuration::Configuration, sequence
     let p_query_testmode = testmode;
     let p_header_idempotency_key = idempotency_key;
 
-    let uri_str = format!("{}/methods", configuration.base_path);
+    let uri_str = format!("{}/v2/methods", configuration.base_path);
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
     if let Some(ref param_value) = p_query_sequence_type {
@@ -468,6 +464,9 @@ pub async fn list_methods(configuration: &configuration::Configuration, sequence
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
     if let Some(ref token) = configuration.oauth_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
 

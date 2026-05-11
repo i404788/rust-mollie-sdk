@@ -16,8 +16,10 @@ pub struct EntityRoute {
     /// Indicates the response contains a route object. Will always contain the string `route` for this endpoint.
     #[serde(rename = "resource", skip_serializing_if = "Option::is_none")]
     pub resource: Option<String>,
+    /// The identifier uniquely referring to this route. Mollie assigns this identifier at route creation time. Mollie will always refer to the route by this ID. Example: `crt_dyARQ3JzCgtPDhU2Pbq3J`.
     #[serde(rename = "id", skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
+    /// The unique identifier of the payment. For example: `tr_5B8cwPMGnU6qLbRvo7qEZo`. The full payment object can be retrieved via the payment URL in the `_links` object.
     #[serde(rename = "paymentId", skip_serializing_if = "Option::is_none")]
     pub payment_id: Option<String>,
     /// The amount of the route. That amount that will be routed to the specified destination.
@@ -28,11 +30,14 @@ pub struct EntityRoute {
     pub description: Option<String>,
     #[serde(rename = "destination", skip_serializing_if = "Option::is_none")]
     pub destination: Option<models::EntityRouteDestination>,
-    /// Whether to create the entity in test mode or live mode.  Most API credentials are specifically created for either live mode or test mode, in which case this parameter can be omitted. For organization-level credentials such as OAuth access tokens, you can enable test mode by setting `testmode` to `true`.
+    /// Whether to create the entity in test mode or live mode.  Most API credentials are specifically created for either live mode or test mode, in which case this parameter must not be sent. For organization-level credentials such as OAuth access tokens, you can enable test mode by setting `testmode` to `true`.
     #[serde(rename = "testmode", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
     pub testmode: Option<Option<bool>>,
+    /// The entity's date and time of creation, in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format.
+    #[serde(rename = "createdAt", skip_serializing_if = "Option::is_none")]
+    pub created_at: Option<String>,
     #[serde(rename = "_links", skip_serializing_if = "Option::is_none")]
-    pub _links: Option<models::EntityWebhookLinks>,
+    pub _links: Option<models::EntityRouteLinks>,
 }
 
 impl EntityRoute {
@@ -45,6 +50,7 @@ impl EntityRoute {
             description: None,
             destination: None,
             testmode: None,
+            created_at: None,
             _links: None,
         }
     }

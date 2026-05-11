@@ -39,7 +39,7 @@ pub async fn get_terminal(configuration: &configuration::Configuration, terminal
     let p_query_testmode = testmode;
     let p_header_idempotency_key = idempotency_key;
 
-    let uri_str = format!("{}/terminals/{terminalId}", configuration.base_path, terminalId=crate::apis::urlencode(p_path_terminal_id));
+    let uri_str = format!("{}/v2/terminals/{terminalId}", configuration.base_path, terminalId=crate::apis::urlencode(p_path_terminal_id));
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
     if let Some(ref param_value) = p_query_testmode {
@@ -55,6 +55,9 @@ pub async fn get_terminal(configuration: &configuration::Configuration, terminal
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
     if let Some(ref token) = configuration.oauth_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
 
@@ -84,7 +87,7 @@ pub async fn get_terminal(configuration: &configuration::Configuration, terminal
 }
 
 /// Retrieve a list of all physical point-of-sale devices.  The results are paginated.
-pub async fn list_terminals(configuration: &configuration::Configuration, from: Option<&str>, limit: Option<i32>, sort: Option<&str>, testmode: Option<bool>, idempotency_key: Option<&str>) -> Result<models::ListTerminals200Response, Error<ListTerminalsError>> {
+pub async fn list_terminals(configuration: &configuration::Configuration, from: Option<&str>, limit: Option<i32>, sort: Option<models::Sorting>, testmode: Option<bool>, idempotency_key: Option<&str>) -> Result<models::ListTerminals200Response, Error<ListTerminalsError>> {
     // add a prefix to parameters to efficiently prevent name collisions
     let p_query_from = from;
     let p_query_limit = limit;
@@ -92,7 +95,7 @@ pub async fn list_terminals(configuration: &configuration::Configuration, from: 
     let p_query_testmode = testmode;
     let p_header_idempotency_key = idempotency_key;
 
-    let uri_str = format!("{}/terminals", configuration.base_path);
+    let uri_str = format!("{}/v2/terminals", configuration.base_path);
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
     if let Some(ref param_value) = p_query_from {
@@ -117,6 +120,9 @@ pub async fn list_terminals(configuration: &configuration::Configuration, from: 
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
     if let Some(ref token) = configuration.oauth_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
 

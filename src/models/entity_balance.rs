@@ -14,23 +14,24 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
 pub struct EntityBalance {
     /// Indicates the response contains a balance object. Will always contain the string `balance` for this endpoint.
-    #[serde(rename = "resource", skip_serializing_if = "Option::is_none")]
-    pub resource: Option<String>,
-    #[serde(rename = "id", skip_serializing_if = "Option::is_none")]
-    pub id: Option<String>,
-    #[serde(rename = "mode", skip_serializing_if = "Option::is_none")]
-    pub mode: Option<models::Mode>,
+    #[serde(rename = "resource")]
+    pub resource: String,
+    /// The identifier uniquely referring to this balance.
+    #[serde(rename = "id")]
+    pub id: String,
+    #[serde(rename = "mode")]
+    pub mode: models::Mode,
     /// The entity's date and time of creation, in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format.
-    #[serde(rename = "createdAt", skip_serializing_if = "Option::is_none")]
-    pub created_at: Option<String>,
+    #[serde(rename = "createdAt")]
+    pub created_at: String,
     /// The balance's ISO 4217 currency code.
-    #[serde(rename = "currency", skip_serializing_if = "Option::is_none")]
-    pub currency: Option<models::Currencies>,
+    #[serde(rename = "currency")]
+    pub currency: models::Currencies,
     /// The description or name of the balance. Can be used to denote the purpose of the balance.
-    #[serde(rename = "description", skip_serializing_if = "Option::is_none")]
-    pub description: Option<String>,
-    #[serde(rename = "status", skip_serializing_if = "Option::is_none")]
-    pub status: Option<models::BalanceStatus>,
+    #[serde(rename = "description")]
+    pub description: String,
+    #[serde(rename = "status")]
+    pub status: models::BalanceStatus,
     #[serde(rename = "transferFrequency", skip_serializing_if = "Option::is_none")]
     pub transfer_frequency: Option<models::BalanceTransferFrequency>,
     /// The minimum amount configured for scheduled automatic settlements. As soon as the amount on the balance exceeds this threshold, the complete balance will be paid out to the transfer destination according to the configured frequency.
@@ -42,32 +43,32 @@ pub struct EntityBalance {
     #[serde(rename = "transferDestination", skip_serializing_if = "Option::is_none")]
     pub transfer_destination: Option<models::EntityBalanceTransferDestination>,
     /// The amount directly available on the balance, e.g. `{\"currency\":\"EUR\", \"value\":\"100.00\"}`.
-    #[serde(rename = "availableAmount", skip_serializing_if = "Option::is_none")]
-    pub available_amount: Option<models::Amount>,
+    #[serde(rename = "availableAmount")]
+    pub available_amount: models::Amount,
     /// The total amount that is queued to be transferred to your balance. For example, a credit card payment can take a few days to clear.
-    #[serde(rename = "pendingAmount", skip_serializing_if = "Option::is_none")]
-    pub pending_amount: Option<models::Amount>,
-    #[serde(rename = "_links", skip_serializing_if = "Option::is_none")]
-    pub _links: Option<models::EntityBalanceLinks>,
+    #[serde(rename = "pendingAmount")]
+    pub pending_amount: models::Amount,
+    #[serde(rename = "_links")]
+    pub _links: models::EntityBalanceLinks,
 }
 
 impl EntityBalance {
-    pub fn new() -> EntityBalance {
+    pub fn new(resource: String, id: String, mode: models::Mode, created_at: String, currency: models::Currencies, description: String, status: models::BalanceStatus, available_amount: models::Amount, pending_amount: models::Amount, _links: models::EntityBalanceLinks) -> EntityBalance {
         EntityBalance {
-            resource: None,
-            id: None,
-            mode: None,
-            created_at: None,
-            currency: None,
-            description: None,
-            status: None,
+            resource,
+            id,
+            mode,
+            created_at,
+            currency,
+            description,
+            status,
             transfer_frequency: None,
             transfer_threshold: None,
             transfer_reference: None,
             transfer_destination: None,
-            available_amount: None,
-            pending_amount: None,
-            _links: None,
+            available_amount,
+            pending_amount,
+            _links,
         }
     }
 }
