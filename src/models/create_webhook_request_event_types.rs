@@ -15,13 +15,12 @@ use serde::{Deserialize, Serialize};
 #[serde(untagged)]
 pub enum CreateWebhookRequestEventTypes {
     /// The list of events to enable for this webhook. You may specify `'*'` to add all events, except those that require explicit selection.
-    ArrayVecwebhook-event-types(Vec<models::WebhookEventTypes>),
+    ArrayVecWebhookEventTypes(Vec<models::WebhookEventTypes>),
     WebhookEventTypes(models::WebhookEventTypes),
 }
 
 impl Default for CreateWebhookRequestEventTypes {
     fn default() -> Self {
-        Self::ArrayVecwebhook-event-types(Default::default())
+        Self::ArrayVecWebhookEventTypes(Default::default())
     }
 }
-
