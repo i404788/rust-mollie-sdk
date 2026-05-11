@@ -72,9 +72,6 @@ pub async fn get_chargeback(configuration: &configuration::Configuration, paymen
     if let Some(ref token) = configuration.oauth_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
-    if let Some(ref token) = configuration.bearer_access_token {
-        req_builder = req_builder.bearer_auth(token.to_owned());
-    };
 
     let req = req_builder.build()?;
     let resp = configuration.client.execute(req).await?;
@@ -145,9 +142,6 @@ pub async fn list_all_chargebacks(configuration: &configuration::Configuration, 
     if let Some(ref token) = configuration.oauth_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
-    if let Some(ref token) = configuration.bearer_access_token {
-        req_builder = req_builder.bearer_auth(token.to_owned());
-    };
 
     let req = req_builder.build()?;
     let resp = configuration.client.execute(req).await?;
@@ -209,9 +203,6 @@ pub async fn list_chargebacks(configuration: &configuration::Configuration, paym
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
     if let Some(ref token) = configuration.oauth_access_token {
-        req_builder = req_builder.bearer_auth(token.to_owned());
-    };
-    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
 

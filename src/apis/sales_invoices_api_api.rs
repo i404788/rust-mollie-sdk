@@ -80,9 +80,6 @@ pub async fn create_sales_invoice(configuration: &configuration::Configuration, 
     if let Some(ref token) = configuration.oauth_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
-    if let Some(ref token) = configuration.bearer_access_token {
-        req_builder = req_builder.bearer_auth(token.to_owned());
-    };
     req_builder = req_builder.json(&p_body_sales_invoice_request);
 
     let req = req_builder.build()?;
@@ -132,9 +129,6 @@ pub async fn delete_sales_invoice(configuration: &configuration::Configuration, 
     if let Some(ref token) = configuration.oauth_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
-    if let Some(ref token) = configuration.bearer_access_token {
-        req_builder = req_builder.bearer_auth(token.to_owned());
-    };
     req_builder = req_builder.json(&p_body_delete_values_sales_invoice);
 
     let req = req_builder.build()?;
@@ -174,9 +168,6 @@ pub async fn get_sales_invoice(configuration: &configuration::Configuration, sal
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
     if let Some(ref token) = configuration.oauth_access_token {
-        req_builder = req_builder.bearer_auth(token.to_owned());
-    };
-    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
 
@@ -237,9 +228,6 @@ pub async fn list_sales_invoices(configuration: &configuration::Configuration, f
     if let Some(ref token) = configuration.oauth_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
-    if let Some(ref token) = configuration.bearer_access_token {
-        req_builder = req_builder.bearer_auth(token.to_owned());
-    };
 
     let req = req_builder.build()?;
     let resp = configuration.client.execute(req).await?;
@@ -286,9 +274,6 @@ pub async fn update_sales_invoice(configuration: &configuration::Configuration, 
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
     if let Some(ref token) = configuration.oauth_access_token {
-        req_builder = req_builder.bearer_auth(token.to_owned());
-    };
-    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
     req_builder = req_builder.json(&p_body_update_sales_invoice_request);

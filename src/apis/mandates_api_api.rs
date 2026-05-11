@@ -71,9 +71,6 @@ pub async fn create_mandate(configuration: &configuration::Configuration, custom
     if let Some(ref token) = configuration.oauth_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
-    if let Some(ref token) = configuration.bearer_access_token {
-        req_builder = req_builder.bearer_auth(token.to_owned());
-    };
     req_builder = req_builder.json(&p_body_mandate_request);
 
     let req = req_builder.build()?;
@@ -125,9 +122,6 @@ pub async fn get_mandate(configuration: &configuration::Configuration, customer_
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
     if let Some(ref token) = configuration.oauth_access_token {
-        req_builder = req_builder.bearer_auth(token.to_owned());
-    };
-    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
 
@@ -200,9 +194,6 @@ pub async fn list_mandates(configuration: &configuration::Configuration, custome
     if let Some(ref token) = configuration.oauth_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
-    if let Some(ref token) = configuration.bearer_access_token {
-        req_builder = req_builder.bearer_auth(token.to_owned());
-    };
 
     let req = req_builder.build()?;
     let resp = configuration.client.execute(req).await?;
@@ -250,9 +241,6 @@ pub async fn revoke_mandate(configuration: &configuration::Configuration, custom
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
     if let Some(ref token) = configuration.oauth_access_token {
-        req_builder = req_builder.bearer_auth(token.to_owned());
-    };
-    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
     req_builder = req_builder.json(&p_body_delete_payment_link_request);

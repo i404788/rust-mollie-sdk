@@ -52,9 +52,6 @@ pub async fn create_session(configuration: &configuration::Configuration, idempo
     if let Some(ref token) = configuration.oauth_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
-    if let Some(ref token) = configuration.bearer_access_token {
-        req_builder = req_builder.bearer_auth(token.to_owned());
-    };
     req_builder = req_builder.json(&p_body_session_request);
 
     let req = req_builder.build()?;
@@ -101,9 +98,6 @@ pub async fn get_session(configuration: &configuration::Configuration, session_i
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
     if let Some(ref token) = configuration.oauth_access_token {
-        req_builder = req_builder.bearer_auth(token.to_owned());
-    };
-    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
 

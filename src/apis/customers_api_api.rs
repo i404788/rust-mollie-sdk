@@ -95,9 +95,6 @@ pub async fn create_customer(configuration: &configuration::Configuration, idemp
     if let Some(ref token) = configuration.oauth_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
-    if let Some(ref token) = configuration.bearer_access_token {
-        req_builder = req_builder.bearer_auth(token.to_owned());
-    };
     req_builder = req_builder.json(&p_body_entity_customer);
 
     let req = req_builder.build()?;
@@ -145,9 +142,6 @@ pub async fn create_customer_payment(configuration: &configuration::Configuratio
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
     if let Some(ref token) = configuration.oauth_access_token {
-        req_builder = req_builder.bearer_auth(token.to_owned());
-    };
-    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
     req_builder = req_builder.json(&p_body_payment_request);
@@ -199,9 +193,6 @@ pub async fn delete_customer(configuration: &configuration::Configuration, custo
     if let Some(ref token) = configuration.oauth_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
-    if let Some(ref token) = configuration.bearer_access_token {
-        req_builder = req_builder.bearer_auth(token.to_owned());
-    };
     req_builder = req_builder.json(&p_body_delete_payment_link_request);
 
     let req = req_builder.build()?;
@@ -245,9 +236,6 @@ pub async fn get_customer(configuration: &configuration::Configuration, customer
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
     if let Some(ref token) = configuration.oauth_access_token {
-        req_builder = req_builder.bearer_auth(token.to_owned());
-    };
-    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
 
@@ -317,9 +305,6 @@ pub async fn list_customer_payments(configuration: &configuration::Configuration
     if let Some(ref token) = configuration.oauth_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
-    if let Some(ref token) = configuration.bearer_access_token {
-        req_builder = req_builder.bearer_auth(token.to_owned());
-    };
 
     let req = req_builder.build()?;
     let resp = configuration.client.execute(req).await?;
@@ -382,9 +367,6 @@ pub async fn list_customers(configuration: &configuration::Configuration, from: 
     if let Some(ref token) = configuration.oauth_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
-    if let Some(ref token) = configuration.bearer_access_token {
-        req_builder = req_builder.bearer_auth(token.to_owned());
-    };
 
     let req = req_builder.build()?;
     let resp = configuration.client.execute(req).await?;
@@ -431,9 +413,6 @@ pub async fn update_customer(configuration: &configuration::Configuration, custo
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
     if let Some(ref token) = configuration.oauth_access_token {
-        req_builder = req_builder.bearer_auth(token.to_owned());
-    };
-    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
     req_builder = req_builder.json(&p_body_update_customer_request);

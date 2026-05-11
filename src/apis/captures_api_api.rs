@@ -64,9 +64,6 @@ pub async fn create_capture(configuration: &configuration::Configuration, paymen
     if let Some(ref token) = configuration.oauth_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
-    if let Some(ref token) = configuration.bearer_access_token {
-        req_builder = req_builder.bearer_auth(token.to_owned());
-    };
     req_builder = req_builder.json(&p_body_entity_capture);
 
     let req = req_builder.build()?;
@@ -122,9 +119,6 @@ pub async fn get_capture(configuration: &configuration::Configuration, payment_i
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
     if let Some(ref token) = configuration.oauth_access_token {
-        req_builder = req_builder.bearer_auth(token.to_owned());
-    };
-    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
 
@@ -188,9 +182,6 @@ pub async fn list_captures(configuration: &configuration::Configuration, payment
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
     if let Some(ref token) = configuration.oauth_access_token {
-        req_builder = req_builder.bearer_auth(token.to_owned());
-    };
-    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
 

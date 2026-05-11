@@ -70,9 +70,6 @@ pub async fn get_unmatched_credit_transfer(configuration: &configuration::Config
     if let Some(ref token) = configuration.oauth_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
-    if let Some(ref token) = configuration.bearer_access_token {
-        req_builder = req_builder.bearer_auth(token.to_owned());
-    };
 
     let req = req_builder.build()?;
     let resp = configuration.client.execute(req).await?;
@@ -127,9 +124,6 @@ pub async fn list_unmatched_credit_transfers(configuration: &configuration::Conf
     if let Some(ref token) = configuration.oauth_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
-    if let Some(ref token) = configuration.bearer_access_token {
-        req_builder = req_builder.bearer_auth(token.to_owned());
-    };
 
     let req = req_builder.build()?;
     let resp = configuration.client.execute(req).await?;
@@ -178,9 +172,6 @@ pub async fn match_unmatched_credit_transfer(configuration: &configuration::Conf
     if let Some(ref token) = configuration.oauth_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
-    if let Some(ref token) = configuration.bearer_access_token {
-        req_builder = req_builder.bearer_auth(token.to_owned());
-    };
     req_builder = req_builder.json(&p_body_unmatched_credit_transfer_match_request);
 
     let req = req_builder.build()?;
@@ -227,9 +218,6 @@ pub async fn return_unmatched_credit_transfer(configuration: &configuration::Con
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
     if let Some(ref token) = configuration.oauth_access_token {
-        req_builder = req_builder.bearer_auth(token.to_owned());
-    };
-    if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
 

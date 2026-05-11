@@ -45,9 +45,6 @@ pub async fn request_apple_pay_payment_session(configuration: &configuration::Co
     if let Some(ref token) = configuration.oauth_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
-    if let Some(ref token) = configuration.bearer_access_token {
-        req_builder = req_builder.bearer_auth(token.to_owned());
-    };
     req_builder = req_builder.json(&p_body_request_apple_pay_payment_session_request);
 
     let req = req_builder.build()?;
